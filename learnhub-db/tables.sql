@@ -1,3 +1,6 @@
+create database learnhub;
+use learnhub;
+
 create table if not exists `account` (
 	id int primary key auto_increment,
     first_name nvarchar(255),
@@ -38,6 +41,7 @@ create table if not exists teacher_registration (
     email varchar(255) unique not null,
     phone varchar(255) not null,
     reason text,
+    teacher_manager_id int not null,
     -- t định ko cho password vào đây, để khi nào mình accept request rồi mới cho teacher vào tạo password
     -- như thế t nghĩ nó bảo mật hơn, để teacher manager ko biết password của người ta là gì ấy
     -- sau khi mình accept mình có thể cho teacher mật khẩu tạm thời (gửi qua email) để teacher đăng nhập bình thường, xong đăng nhập xong thì bảo người ta đổi mật khẩu
@@ -45,7 +49,8 @@ create table if not exists teacher_registration (
     check (`status` in ('accept', 'decline', 'pending')),
     response nvarchar(255), -- cái này gửi qua mail của teacher
     requested_at datetime not null default now(),
-    responsed_at datetime
+    responsed_at datetime,
+    foreign key (teacher_manager_id) references `account`(id)
 );
 
 -- course manager tạo và quản lí categories
@@ -54,20 +59,13 @@ create table if not exists category (
     `name` nvarchar(255) unique not null
 );
 
--- ("course 1", "Văn"), ("course 1", "Lớp 12"),
-create table if not exists course_category (
-	course_id int not null,
-    category_id int not null,
-    primary key (course_id, category_id)
-);
-
 create table if not exists course (
 	id int primary key auto_increment,
     `name` nvarchar(255) not null,
     price double not null,
 	-- các cái nội dung chữ như description của course hay bài giảng t nghĩ nên để dạng markdown (hoặc html) cho dễ format
 	-- xong mình lưu nguyên cả code markdown đấy vào đây, khi nào lấy ra thì parse.
-    description text, -- markdown
+    `description` text, -- markdown
     
     -- 1. teacher tạo course thì ban đầu là private(student chưa nhìn thấy, chưa submit cho course manager)
     -- 2. teacher tạo xong course rồi thì submit cho course manager, thì status chuyển sang pending
@@ -83,8 +81,16 @@ create table if not exists course (
     created_at datetime not null default now(),
     updated_at datetime,
     cancelled_at datetime,
-    archived_at datetime,
-	foreign key (category_id) references category(id)
+    archived_at datetime
+);
+
+-- ("course 1", "Văn"), ("course 1", "Lớp 12"),
+create table if not exists course_category (
+	course_id int not null,
+    category_id int not null,
+    primary key (course_id, category_id),
+    foreign key (course_id) references course(id),
+    foreign key (category_id) references category(id)
 );
 
 create table if not exists course_chapter (
@@ -92,7 +98,7 @@ create table if not exists course_chapter (
     course_id int not null,
     `name` nvarchar(255) not null,
     sequence_num int not null, -- cái này chạy từ 1...
-    description text,
+    `description` text,
     foreign key (course_id) references course(id)
 );
 
@@ -103,7 +109,7 @@ create table if not exists chapter_material (
     check (`type` in ('article', 'video', 'quiz')),
     title nvarchar(255) not null,
     sequence_number int not null,
-    foreign key (chapter_id) references chapter(id)
+    foreign key (chapter_id) references course_chapter(id)
 );
 
 create table if not exists article (
@@ -131,7 +137,7 @@ create table if not exists quiz_question (
     quiz_id int not null,
 	`text` text not null,
     explanation text,
-    foreign key (quiz_id) references quiz(id)
+    foreign key (quiz_id) references quiz(material_id)
 );
 
 create table if not exists question_option (
@@ -188,7 +194,7 @@ create table if not exists student_quiz_attempt (
     started_at datetime not null default now(),
     submitted_at datetime,
     foreign key (enrollment_id) references enrollment(id),
-    foreign key (quiz_id) references quiz(id)
+    foreign key (quiz_id) references quiz(material_id)
 );
 -- answer.json
 -- {
