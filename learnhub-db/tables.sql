@@ -122,6 +122,7 @@ create table if not exists quiz (
 	material_id int primary key,
     description text,
     pass_grade double not null default 0.0,
+    `time` int not null, -- đơn vị: phút
     foreign key (material_id) references chapter_material(id)
 );
 
@@ -141,7 +142,7 @@ create table if not exists question_option (
     foreign key (question_id) references quiz_question(id)
 );
 
-create table if not exists payment (
+create table if not exists course_purchase (
 	id int primary key auto_increment,
     course_id int not null,
     student_id int not null,
@@ -185,7 +186,7 @@ create table if not exists student_quiz_attempt (
     answer text, -- cái này là json
     grade double,
     started_at datetime not null default now(),
-    submitted_at datetime, -- làm quiz có cần giới hạn thời gian ko nhỉ?
+    submitted_at datetime,
     foreign key (enrollment_id) references enrollment(id),
     foreign key (quiz_id) references quiz(id)
 );
@@ -244,10 +245,10 @@ create table if not exists course_discussion (
 create table if not exists discussion_comment (
 	id int primary key auto_increment,
     user_id int not null,
-    course_id int not null,
+    discussion_id int not null,
     content text not null,
     approved boolean not null default false,
     created_at datetime not null default now(),
     foreign key (user_id) references `account`(id),
-    foreign key (course_id) references course(id)
+    foreign key (discussion_id) references course_discussion(id)
 );
