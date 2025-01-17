@@ -41,7 +41,7 @@ create table if not exists teacher_registration (
     email varchar(255) unique not null,
     phone varchar(255) not null,
     reason text,
-    teacher_manager_id int not null,
+    teacher_manager_id int,
     -- t định ko cho password vào đây, để khi nào mình accept request rồi mới cho teacher vào tạo password
     -- như thế t nghĩ nó bảo mật hơn, để teacher manager ko biết password của người ta là gì ấy
     -- sau khi mình accept mình có thể cho teacher mật khẩu tạm thời (gửi qua email) để teacher đăng nhập bình thường, xong đăng nhập xong thì bảo người ta đổi mật khẩu
