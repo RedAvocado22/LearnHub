@@ -6,6 +6,7 @@ create table if not exists `account` (
     `password` text not null, -- hash
     role varchar(255) not null,
     check (role in ('admin', 'teacher_manager', 'course_manager', 'teacher', 'student')),
+    `active` boolean not null default false,
     created_at datetime not null default now()
 );
 
