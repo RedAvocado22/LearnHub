@@ -1,17 +1,13 @@
 package com.learnhub.auth.jwt;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
@@ -27,13 +23,15 @@ public class JwtService {
     private long jwtExpiration;
 
     public JwtService() {
-        try {
-            KeyGenerator generator = KeyGenerator.getInstance("HmacSHA256");
-            SecretKey sk = generator.generateKey();
-            secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        }
+        //try {
+        //    KeyGenerator generator = KeyGenerator.getInstance("HmacSHA256");
+        //    SecretKey sk = generator.generateKey();
+        //    secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
+        //} catch (NoSuchAlgorithmException e) {
+        //    throw new RuntimeException(e);
+        //}
+        // NOTE: Khi nào deploy lên prod chạy 24/7 thì mình dùng cái bên trên
+        secretKey = "SuperSecretREFRESHKey1234567890abcdefghijklmnopqrstuvwxyz/+"; // fix cứng cho tiện dev, khi khởi động lại server đống token vẫn parse được
     }
 
     public String generateToken(UserDetails userDetails, long expiresMillis) {
@@ -52,15 +50,16 @@ public class JwtService {
         return buildToken(new HashMap<>(), userDetails, expiresMillis);
     }
 
-    // NOTE: Use ResponseCookie because jakarta.servlet.http.Cookie doesn't have the sameSite setter
-    public ResponseCookie generateRefreshTokenCookie(String token, long expiresSecs) {
-        return ResponseCookie.from("refresh_token", token)
-            .path("/")
-            .maxAge(expiresSecs)
-            .httpOnly(true)
-            .secure(true)
-            .sameSite("Strict")
-            .build();
+    // NOTE: Server với Client chạy port khác nhau nên muốn gửi cookie phải set Secure=true và SameSite=None
+    // https://stackoverflow.com/questions/46288437/set-cookies-for-cross-origin-requests
+    public Cookie generateRefreshTokenCookie(String token, int expiresSecs) {
+        final Cookie cookie = new Cookie("refresh_token", token);
+        cookie.setPath("/");
+        cookie.setMaxAge(expiresSecs);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true);
+        cookie.setAttribute("SameSite", "None");
+        return cookie;
     }
 
     private SecretKey getSignKey() {

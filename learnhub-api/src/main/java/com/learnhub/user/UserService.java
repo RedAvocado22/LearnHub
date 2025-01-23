@@ -1,33 +1,22 @@
 package com.learnhub.user;
 
+import com.learnhub.user.exception.UserNotFoundException;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class UserService {
-    //private final UserRepository userRepository;
-    //private final VerificationTokenRepository verificationTokenRepository;
-    //private final PasswordEncoder passwordEncoder;
-    //private final AuthenticationManager authenticationManager;
-    //private final JwtService jwtService;
-    //private final EmailService emailService;
-    //
-    //@Autowired
-    //public UserService(UserRepository userRepository,
-    //        VerificationTokenRepository verificationTokenRepository,
-    //        PasswordEncoder passwordEncoder, AuthenticationManager authenticationManager,
-    //        JwtService jwtService, EmailService emailService) {
-    //    this.userRepository = userRepository;
-    //    this.verificationTokenRepository = verificationTokenRepository;
-    //    this.passwordEncoder = passwordEncoder;
-    //    this.authenticationManager = authenticationManager;
-    //    this.jwtService = jwtService;
-    //    this.emailService = emailService;
-    //}
-    //
-    //public User getUserByEmail(String email) {
-    //    return userRepository.findByEmail(email)
-    //        .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists", email)));
-    //}
+    private final UserRepository userRepository;
+
+    @Autowired
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+            .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists", email)));
+    }
     //
     //@Transactional
     //public void register(RegistrationRequest req, String reqUrl) {

@@ -1,5 +1,5 @@
 frontend:
-  baseurl: http://localhost:8080
+  baseurl: http://localhost:5173
 
 spring:
   application:
@@ -14,7 +14,7 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: update
     show-sql: true
   mail:
     host: smtp.gmail.com

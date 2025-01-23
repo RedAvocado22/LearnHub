@@ -2,6 +2,7 @@ package com.learnhub.auth;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.exception.ExpiredTokenException;
@@ -9,13 +10,12 @@ import com.learnhub.auth.exception.InactiveAccountException;
 import com.learnhub.auth.exception.UserExistsException;
 import com.learnhub.auth.jwt.JwtService;
 import com.learnhub.user.User;
-import com.learnhub.user.UserNotFoundException;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
+import com.learnhub.user.exception.UserNotFoundException;
 import com.learnhub.user.student.Student;
 import com.learnhub.util.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -59,10 +59,10 @@ public class AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authReq.email(), authReq.password()));
 
         String jwt = jwtService.generateAccessToken(user);
-        long refreshTokenExpiresMillis = 24 * 60 * 60 * 1000; // TODO: make the expires longer for 'remember me'
+        int refreshTokenExpiresMillis = 24 * 60 * 60 * 1000; // TODO: make the expires longer for 'remember me'
         String refreshToken = jwtService.generateRefreshToken(user, refreshTokenExpiresMillis);
-        ResponseCookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken, refreshTokenExpiresMillis / 1000);
-        httpResp.addHeader("Set-Cookie", refreshTokenCookie.toString());
+        Cookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken, refreshTokenExpiresMillis / 1000);
+        httpResp.addCookie(refreshTokenCookie);
 
         RefreshToken token = refreshTokenRepository.findByUser(user.getId()).orElse(new RefreshToken());
         token.setUser(user);
@@ -87,7 +87,7 @@ public class AuthService {
                 encoded,
                 UserRole.STUDENT,
                 false,
-                req.type());
+                req.studentType());
         Student saved = userRepository.save(user);
         
         String token = jwtService.generateToken(saved, 30 * 60 * 1000); // NOTE: 30 minutes
@@ -127,14 +127,6 @@ public class AuthService {
             throw new IllegalStateException("Refresh token not found.");
         }
         String accessToken = jwtService.generateAccessToken(user); 
-        // TODO: Save the expires time
-        long refreshTokenExpiresMillis = 24 * 60 * 60 * 1000;
-        String newRT = jwtService.generateRefreshToken(user, refreshTokenExpiresMillis);
-        RefreshToken refreshToken = maybeToken.get();
-        refreshToken.setToken(newRT);
-        refreshTokenRepository.save(refreshToken);
-        ResponseCookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(newRT, refreshTokenExpiresMillis / 1000);
-        resp.addHeader("Set-Cookie", refreshTokenCookie.toString());
 
         return new AuthResponse(accessToken);
     }

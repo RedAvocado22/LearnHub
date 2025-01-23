@@ -32,7 +32,7 @@ public class EmailService {
 
     public void sendAccountActivationEmail(String to, String token) {
         SimpleMailMessage mail = new SimpleMailMessage();
-        String url = feBaseUrl + "/activate?token=" + token;
+        String url = feBaseUrl + "/activate/" + token;
         String message = "Click this link to activate your account: " + url;
         mail.setFrom(from);
         mail.setTo(to);

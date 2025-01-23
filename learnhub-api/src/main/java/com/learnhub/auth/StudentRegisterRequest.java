@@ -7,5 +7,5 @@ public record StudentRegisterRequest(
         String firstname,
         String lastname,
         String password,
-        StudentType type) {
+        StudentType studentType) {
 }

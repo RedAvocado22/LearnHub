@@ -1,4 +1,4 @@
-package com.learnhub.user;
+package com.learnhub.common;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
