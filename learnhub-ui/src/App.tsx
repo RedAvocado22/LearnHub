@@ -1,10 +1,12 @@
+import "react-toastify/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { NotFound, Home, Login, Register } from "./pages";
+import { NotFound, Home, Login, Register, Unauthorized } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
 import Dummy from "./pages/Dummy";
-import AuthProvider from "./hooks/UserProvider";
+import AuthProvider from "./hooks/useAuth";
+import { ToastContainer } from "react-toastify";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -39,8 +41,10 @@ export default function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />
                 </Route>
+                <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/*" element={<NotFound />} />
             </Routes>
+            <ToastContainer position="top-right" style={{ zIndex: 999999 }} />
         </AuthProvider>
     );
 }

@@ -33,6 +33,8 @@ public class LogoutHandlerImpl implements LogoutHandler {
             HttpServletRequest request,
             HttpServletResponse response,
             Authentication authentication) {
+        // NOTE: Chả hiểu sao cái Authentication đến đây thì null, cáu vl
+        // Tạm thời phải tự parse header
         final String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -40,11 +42,13 @@ public class LogoutHandlerImpl implements LogoutHandler {
         }
         final String jwt = authHeader.substring(7);
         final String email = jwtService.extractUsername(jwt);
-        User user = userRepository.findByEmail(email).orElseThrow();
-        RefreshToken stored = refreshTokenRepository.findByUser(user.getId()).orElse(null);
-        if (stored != null) {
-            refreshTokenRepository.delete(stored);
-            SecurityContextHolder.clearContext();
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user != null) {
+            RefreshToken stored = refreshTokenRepository.findByUser(user.getId()).orElse(null);
+            if (stored != null) {
+                refreshTokenRepository.delete(stored);
+                SecurityContextHolder.clearContext();
+            }
         }
 
         ResponseCookie rtCookie = ResponseCookie.from("refresh_token", "")
@@ -52,6 +56,7 @@ public class LogoutHandlerImpl implements LogoutHandler {
             .httpOnly(true)
             .secure(true)
             .maxAge(0)
+            .sameSite("None")
             .build();
         response.addHeader("Set-Cookie", rtCookie.toString());
     }

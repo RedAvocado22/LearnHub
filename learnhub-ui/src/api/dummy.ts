@@ -1,10 +1,10 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import { requestWithToken } from "./base";
+import API from "./base";
 
 export const dummy = async () => {
     try {
-        const resp = await requestWithToken("/dummy", "GET");
+        const resp = await API.get("/dummy");
         if (resp.status === 200) {
             return resp.data;
         } else {

@@ -5,16 +5,15 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
 export default function Register() {
-    const [registerRequest, setRegisterRequest] = useState({
-        email: "",
-        password: "",
-        firstname: "",
-        lastname: "",
-        studentType: StudentType.ELEMENTARY
-    });
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [firstname, setFirstname] = useState("");
+    const [lastname, setLastname] = useState("");
+    const [studentType, setStudentType] = useState<StudentType>(StudentType.ELEMENTARY);
+
     const navigate = useNavigate();
     const handleRegister = async () => {
-        const result = await register(registerRequest);
+        const result = await register({ email, password, firstname, lastname, studentType });
         if (result) {
             Swal.fire({
                 icon: "success",
@@ -23,13 +22,11 @@ export default function Register() {
             });
             navigate("/");
         } else {
-            setRegisterRequest({
-                email: "",
-                password: "",
-                firstname: "",
-                lastname: "",
-                studentType: StudentType.ELEMENTARY
-            });
+            setEmail("");
+            setPassword("");
+            setFirstname("");
+            setLastname("");
+            setStudentType(StudentType.ELEMENTARY);
         }
     };
 
@@ -58,10 +55,8 @@ export default function Register() {
                                         <input
                                             type="text"
                                             placeholder="Your First Name"
-                                            value={registerRequest.firstname}
-                                            onChange={(e) =>
-                                                setRegisterRequest({ ...registerRequest, firstname: e.target.value })
-                                            }
+                                            value={firstname}
+                                            onChange={(e) => setFirstname(e.target.value)}
                                             className="form-control"
                                             required
                                         />
@@ -74,10 +69,8 @@ export default function Register() {
                                         <input
                                             type="text"
                                             placeholder="Your Last Name"
-                                            value={registerRequest.lastname}
-                                            onChange={(e) =>
-                                                setRegisterRequest({ ...registerRequest, lastname: e.target.value })
-                                            }
+                                            value={lastname}
+                                            onChange={(e) => setLastname(e.target.value)}
                                             className="form-control"
                                             required
                                         />
@@ -90,10 +83,8 @@ export default function Register() {
                                         <input
                                             type="email"
                                             placeholder="Your Email Address"
-                                            value={registerRequest.email}
-                                            onChange={(e) =>
-                                                setRegisterRequest({ ...registerRequest, email: e.target.value })
-                                            }
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             className="form-control"
                                             required
                                         />
@@ -106,10 +97,8 @@ export default function Register() {
                                         <input
                                             type="password"
                                             placeholder="Your Password"
-                                            value={registerRequest.password}
-                                            onChange={(e) =>
-                                                setRegisterRequest({ ...registerRequest, password: e.target.value })
-                                            }
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             className="form-control"
                                             required
                                         />
@@ -122,13 +111,8 @@ export default function Register() {
                                     <div className="input-group">
                                         <select
                                             className="form-control form-select"
-                                            value={registerRequest.studentType}
-                                            onChange={(e) =>
-                                                setRegisterRequest({
-                                                    ...registerRequest,
-                                                    studentType: e.target.value as StudentType
-                                                })
-                                            }>
+                                            value={studentType}
+                                            onChange={(e) => setStudentType(e.target.value as StudentType)}>
                                             <option value={StudentType.ELEMENTARY}>Elementary student</option>
                                             <option value={StudentType.SECONDARY}>Secondary student</option>
                                             <option value={StudentType.HIGHSCHOOL}>Highschool student</option>

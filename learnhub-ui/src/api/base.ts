@@ -1,34 +1,60 @@
-import axios, { AxiosRequestConfig } from "axios";
-import { refreshToken } from "./auth";
+import axios from "axios";
 
 export const API = axios.create({
     baseURL: "http://localhost:8080/api/v1",
+    headers: {
+        "Content-Type": "application/json"
+    },
     withCredentials: true // NOTE: Phải thêm cái này vào server mới nhận được cookie
 });
 
-// NOTE: Khi nào gọi api mà cần Authorization thì dùng hàm này
-export const requestWithToken = async (url: string, method: string, body?: any) => {
-    let token = localStorage.getItem("access_token");
-    const config: AxiosRequestConfig = {
-        url: `${url}`,
-        method: `${method}`,
-        headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+const refreshToken = async (): Promise<string | null> => {
+    try {
+        const resp = await API.get("/auth/refresh-token");
+        if (resp.status === 200) {
+            const token = resp.data.access_token;
+            if (token) {
+                return token;
+            } else {
+                throw new Error("No access_token return by server.");
+            }
+        } else {
+            throw new Error("Refresh token failed.");
         }
-    };
-    if (body) {
-        config.data = body;
+    } catch (err) {
+        localStorage.removeItem("access_token");
+        console.error((err as Error).message);
+        return null;
     }
-
-    let resp = await API.request(config);
-    if (resp.status === 401 || resp.status === 403) {
-        // NOTE: Thử tạo token mới nếu request fail
-        if (await refreshToken()) {
-            resp = await requestWithToken(url, method, body);
-        }
-    }
-    return resp;
 };
 
+API.interceptors.request.use(
+    async (config) => {
+        const accessToken = localStorage.getItem("access_token");
+        if (accessToken) {
+            config.headers["Authorization"] = `Bearer ${accessToken}`;
+        }
+        return config;
+    },
+    (error) => Promise.reject(error)
+);
+
+let count = 0;
+API.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    async (error) => {
+        const originalRequest = error.config;
+        if (error.response?.status === 401 && count < 1) {
+            count++;
+            const newAccessToken = await refreshToken();
+            if (newAccessToken) {
+                localStorage.setItem("access_token", newAccessToken);
+                return API(originalRequest);
+            }
+        }
+        return Promise.reject(error);
+    }
+);
 export default API;

@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { activateAccount, login } from "../api/auth";
+import { activateAccount } from "../api/auth";
 import Swal from "sweetalert2";
+import { useAuth } from "../hooks/useAuth";
+import { toast } from "react-toastify";
 
 export default function Login() {
-    const [loginRequest, setLoginRequest] = useState({
-        email: "",
-        password: "",
-        rememberMe: false
-    });
     const { token } = useParams();
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+    const [rememberMe, setRememberMe] = useState(false);
+    const { login } = useAuth();
     const navigate = useNavigate();
     useEffect(() => {
         if (token) {
@@ -26,16 +27,15 @@ export default function Login() {
     }, [token]);
 
     const handleLogin = async () => {
-        const success = await login(loginRequest);
-        if (success) {
-            // NOTE: Kiểm tra quyền rồi chuyển hướng ở đây (thay cái này thành /student-dashboard, /teacher-dashboard,...)
+        try {
+            await login({ email, password, rememberMe });
+            toast.success("Login successfully");
             navigate("/");
-        } else {
-            setLoginRequest({
-                email: "",
-                password: "",
-                rememberMe: false
-            });
+        } catch (err) {
+            toast.warning((err as Error).message);
+            setEmail("");
+            setPassword("");
+            setRememberMe(false);
         }
     };
     return (
@@ -63,10 +63,8 @@ export default function Login() {
                                         <input
                                             type="email"
                                             placeholder="Your Email"
-                                            value={loginRequest.email}
-                                            onChange={(e) =>
-                                                setLoginRequest({ ...loginRequest, email: e.target.value })
-                                            }
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
                                             className="form-control"
                                             required
                                         />
@@ -79,10 +77,8 @@ export default function Login() {
                                         <input
                                             type="password"
                                             placeholder="Your Password"
-                                            value={loginRequest.password}
-                                            onChange={(e) =>
-                                                setLoginRequest({ ...loginRequest, password: e.target.value })
-                                            }
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
                                             className="form-control"
                                             required
                                         />
@@ -94,10 +90,8 @@ export default function Login() {
                                     <div className="custom-control custom-checkbox">
                                         <input
                                             type="checkbox"
-                                            checked={loginRequest.rememberMe}
-                                            onChange={(e) =>
-                                                setLoginRequest({ ...loginRequest, rememberMe: e.target.checked })
-                                            }
+                                            checked={rememberMe}
+                                            onChange={(e) => setRememberMe(e.target.checked)}
                                             className="custom-control-input"
                                             id="customControlAutosizing"
                                         />

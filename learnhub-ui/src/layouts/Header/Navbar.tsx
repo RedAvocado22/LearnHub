@@ -1,23 +1,14 @@
 import logo from "/assets/images/logo.png";
 import adv from "/assets/images/adv/adv.jpg";
-import { useEffect, useState } from "react";
-import { useAuth } from "../../hooks/UserProvider";
-import { logout } from "../../api/auth";
-import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 export default function Navbar() {
-    const auth = useAuth();
+    const { account, logout } = useAuth();
     const [searchVisible, setSearchVisible] = useState(false);
-    const [userMenuVisible, setUserMenuVisible] = useState(false);
-    const [userFullName, setUserFullName] = useState("");
     const navigate = useNavigate();
-
-    useEffect(() => {
-        if (auth?.account) {
-            setUserFullName(`${auth.account.firstName} ${auth.account.lastName}`);
-            setUserMenuVisible(true);
-        }
-    }, [auth]);
     const handleDisplaySearch = () => {
         setSearchVisible(true);
     };
@@ -25,8 +16,11 @@ export default function Navbar() {
         setSearchVisible(false);
     };
     const handleLogout = async () => {
-        if (await logout()) {
+        try {
+            logout();
             navigate("/");
+        } catch (err) {
+            toast.warning((err as Error).message);
         }
     };
     return (
@@ -304,17 +298,25 @@ export default function Navbar() {
                                     </li>
                                 </ul>
                             </li>
-                            {userMenuVisible && (
-                                <li>
-                                    <a href="#">
-                                        {userFullName} <i className="fa fa-chevron-down"></i>
-                                    </a>
-                                    <ul className="sub-menu">
-                                        <li>
-                                            <a onClick={handleLogout}>Logout</a>
-                                        </li>
-                                    </ul>
-                                </li>
+                            {account && (
+                                <>
+                                    <li>
+                                        <a href="#">
+                                            {account.firstname} {account.lastname}{" "}
+                                            <i className="fa fa-chevron-down"></i>
+                                        </a>
+                                        <ul className="sub-menu">
+                                            <li>
+                                                <a href="#" onClick={handleLogout}>
+                                                    Logout
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </li>
+                                    <li>
+                                        <Link to="/dummy">Dummy</Link>
+                                    </li>
+                                </>
                             )}
                         </ul>
                         <div className="nav-social-link">

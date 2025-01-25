@@ -1,18 +1,11 @@
 import Topbar from "./Topbar";
 import Navbar from "./Navbar";
-import { useAuth } from "../../hooks/UserProvider";
-import { useEffect, useState } from "react";
+import { useAuth } from "../../hooks/useAuth";
 export default function Header() {
-    const [displayTopbar, setDisplayTopbar] = useState(true);
-    const auth = useAuth();
-    useEffect(() => {
-        if (auth?.account) {
-            setDisplayTopbar(false);
-        }
-    }, [auth]);
+    const { account } = useAuth();
     return (
         <header className="header rs-nav">
-            {displayTopbar && <Topbar />}
+            {!account && <Topbar />}
             <Navbar />
         </header>
     );
