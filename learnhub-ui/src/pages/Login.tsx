@@ -9,7 +9,6 @@ export default function Login() {
     const { token } = useParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [rememberMe, setRememberMe] = useState(false);
     const { login } = useAuth();
     const navigate = useNavigate();
     useEffect(() => {
@@ -28,14 +27,13 @@ export default function Login() {
 
     const handleLogin = async () => {
         try {
-            await login({ email, password, rememberMe });
+            await login({ email, password });
             toast.success("Login successfully");
             navigate("/");
         } catch (err) {
             toast.warning((err as Error).message);
             setEmail("");
             setPassword("");
-            setRememberMe(false);
         }
     };
     return (
@@ -87,18 +85,6 @@ export default function Login() {
                             </div>
                             <div className="col-lg-12">
                                 <div className="form-group form-forget">
-                                    <div className="custom-control custom-checkbox">
-                                        <input
-                                            type="checkbox"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                            className="custom-control-input"
-                                            id="customControlAutosizing"
-                                        />
-                                        <label className="custom-control-label" htmlFor="customControlAutosizing">
-                                            Remember me
-                                        </label>
-                                    </div>
                                     <a href="/forget-password" className="ml-auto">
                                         Forgot Password?
                                     </a>

@@ -1,4 +1,4 @@
 package com.learnhub.auth;
 
-public record LoginRequest(String email, String password, boolean rememberMe) {
+public record LoginRequest(String email, String password) {
 }

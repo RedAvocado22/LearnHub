@@ -6,7 +6,9 @@ spring:
     name: learnhub-api
     security:
       jwt:
-        expiration: 900000
+        expiration: 900000 # 15 minutes
+        refresh-token:
+          expiration: 86400000 # 1 day
   datasource:
     url: jdbc:mysql://localhost:3306/learnhub
     username: root

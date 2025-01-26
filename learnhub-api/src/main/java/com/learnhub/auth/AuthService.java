@@ -1,12 +1,11 @@
 package com.learnhub.auth;
 
-import java.time.LocalDateTime;
 import java.util.Optional;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.exception.ExpiredTokenException;
 import com.learnhub.auth.exception.InactiveAccountException;
+import com.learnhub.auth.exception.RefreshTokenException;
 import com.learnhub.auth.exception.UserExistsException;
 import com.learnhub.auth.jwt.JwtService;
 import com.learnhub.user.User;
@@ -16,6 +15,8 @@ import com.learnhub.user.exception.UserNotFoundException;
 import com.learnhub.user.student.Student;
 import com.learnhub.util.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +25,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class AuthService {
     private final UserRepository userRepository;
-    private final RefreshTokenRepository refreshTokenRepository;
+    private final TokenRepository tokenRepository;
     private final EmailService emailService;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
@@ -33,20 +34,20 @@ public class AuthService {
     @Autowired
     public AuthService(
             UserRepository userRepository,
-            RefreshTokenRepository refreshTokenRepository,
+            TokenRepository refreshTokenRepository,
             EmailService emailService,
             JwtService jwtService,
             AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.refreshTokenRepository = refreshTokenRepository;
+        this.tokenRepository = refreshTokenRepository;
         this.emailService = emailService;
         this.jwtService = jwtService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
 
-    public AuthResponse login(LoginRequest authReq, HttpServletResponse httpResp) {
+    public AuthResponse login(LoginRequest authReq, HttpServletRequest httpReq, HttpServletResponse httpResp) {
         User user = userRepository.findByEmail(authReq.email())
             .orElseThrow(() -> new UserNotFoundException(
                         String.format("User with email %s does not exists. Register new account.", authReq.email())));
@@ -58,21 +59,24 @@ public class AuthService {
 
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(authReq.email(), authReq.password()));
 
-        String jwt = jwtService.generateAccessToken(user);
-        int refreshTokenExpiresMillis = 24 * 60 * 60 * 1000; // TODO: make the expires longer for 'remember me'
-        String refreshToken = jwtService.generateRefreshToken(user, refreshTokenExpiresMillis);
-        Cookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken, refreshTokenExpiresMillis / 1000);
-        httpResp.addCookie(refreshTokenCookie);
+        String ipAddress = httpReq.getRemoteAddr();
+        String deviceInfo = httpReq.getHeader(HttpHeaders.USER_AGENT);
+        String accessToken = jwtService.generateAccessToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
+        ResponseCookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken);
+        httpResp.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
 
-        RefreshToken token = refreshTokenRepository.findByUser(user.getId()).orElse(new RefreshToken());
-        token.setUser(user);
-        token.setToken(refreshToken);
-        token.setCreatedAt(LocalDateTime.now());
-        token.setExpiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpiresMillis / 1000));
-        token.setRevoked(false);
-        refreshTokenRepository.save(token);
+        tokenRepository.revokeUserTokens(user.getId());
+        Token token = Token.builder()
+            .user(user)
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .ipAddress(ipAddress)
+            .deviceInfo(deviceInfo)
+            .build();
+        tokenRepository.save(token);
 
-        return new AuthResponse(jwt);
+        return new AuthResponse(accessToken);
     }
 
     public AuthResponse registerStudent(StudentRegisterRequest req, HttpServletRequest httpReq) {
@@ -109,24 +113,40 @@ public class AuthService {
     public AuthResponse refreshToken(HttpServletRequest req, HttpServletResponse resp) {
         final String oldRT = jwtService.getTokenFromCookie(req, "refresh_token");
         if (oldRT == null) {
-            throw new IllegalStateException("Refresh token not found.");
+            throw new RefreshTokenException("Refresh token not found.");
         }
 
         final String email = jwtService.extractUsername(oldRT);
         if (email == null) {
-            throw new IllegalStateException("Invalid refresh token.");
+            throw new RefreshTokenException("Invalid refresh token.");
         }
 
-        User user = userRepository.findByEmail(email).orElseThrow();
-        if (!jwtService.isTokenValid(oldRT, user)) {
-            throw new IllegalStateException("Invalid refresh token.");
+        User user = userRepository.findByEmail(email).orElse(null);
+        if (user == null || !jwtService.isTokenValid(oldRT, user)) {
+            throw new RefreshTokenException("Invalid refresh token.");
         }
 
-        Optional<RefreshToken> maybeToken = refreshTokenRepository.findByToken(oldRT);
-        if (!maybeToken.isPresent()) {
-            throw new IllegalStateException("Refresh token not found.");
+        Optional<Token> maybeToken = tokenRepository.findByRefreshToken(oldRT);
+        if (!maybeToken.isPresent() || maybeToken.get().isRevoked()) {
+            throw new RefreshTokenException("Invalid refresh token.");
         }
+
+        String ipAddress = req.getRemoteAddr();
+        String deviceInfo = req.getHeader(HttpHeaders.USER_AGENT);
         String accessToken = jwtService.generateAccessToken(user); 
+        String refreshToken = jwtService.generateRefreshToken(user);
+        ResponseCookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken);
+        resp.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
+
+        tokenRepository.revokeUserTokens(user.getId());
+        Token token = Token.builder()
+            .user(user)
+            .accessToken(accessToken)
+            .refreshToken(refreshToken)
+            .ipAddress(ipAddress)
+            .deviceInfo(deviceInfo)
+            .build();
+        tokenRepository.save(token);
 
         return new AuthResponse(accessToken);
     }

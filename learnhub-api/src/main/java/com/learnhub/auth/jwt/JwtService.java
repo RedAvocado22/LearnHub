@@ -1,5 +1,6 @@
 package com.learnhub.auth.jwt;
 
+import java.time.Duration;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -8,6 +9,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import io.jsonwebtoken.Claims;
@@ -21,6 +23,9 @@ public class JwtService {
     
     @Value("${spring.application.security.jwt.expiration}")
     private long jwtExpiration;
+
+    @Value("${spring.application.security.jwt.refresh-token.expiration}")
+    private long refreshExpiration;
 
     public JwtService() {
         //try {
@@ -46,20 +51,20 @@ public class JwtService {
         return buildToken(extras, userDetails, jwtExpiration);
     }
 
-    public String generateRefreshToken(UserDetails userDetails, long expiresMillis) {
-        return buildToken(new HashMap<>(), userDetails, expiresMillis);
+    public String generateRefreshToken(UserDetails userDetails) {
+        return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
 
     // NOTE: Server với Client chạy port khác nhau nên muốn gửi cookie phải set Secure=true và SameSite=None
     // https://stackoverflow.com/questions/46288437/set-cookies-for-cross-origin-requests
-    public Cookie generateRefreshTokenCookie(String token, int expiresSecs) {
-        final Cookie cookie = new Cookie("refresh_token", token);
-        cookie.setPath("/");
-        cookie.setMaxAge(expiresSecs);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        cookie.setAttribute("SameSite", "None");
-        return cookie;
+    public ResponseCookie generateRefreshTokenCookie(String token) {
+        return ResponseCookie.from("refresh_token", token)
+            .path("/")
+            .maxAge(Duration.ofMillis(refreshExpiration))
+            .httpOnly(true)
+            .secure(true)
+            .sameSite("None")
+            .build();
     }
 
     private SecretKey getSignKey() {

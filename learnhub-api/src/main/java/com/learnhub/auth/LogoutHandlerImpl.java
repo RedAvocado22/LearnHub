@@ -2,10 +2,8 @@ package com.learnhub.auth;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import com.learnhub.auth.jwt.JwtService;
-import com.learnhub.user.User;
-import com.learnhub.user.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -14,18 +12,11 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class LogoutHandlerImpl implements LogoutHandler {
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final JwtService jwtService;
-    private final UserRepository userRepository;
+    private final TokenRepository tokenRepository;
 
     @Autowired
-    public LogoutHandlerImpl(
-            RefreshTokenRepository refreshTokenRepository,
-            JwtService jwtService,
-            UserRepository userRepository) {
-        this.refreshTokenRepository = refreshTokenRepository;
-        this.jwtService = jwtService;
-        this.userRepository = userRepository;
+    public LogoutHandlerImpl(TokenRepository tokenRepository) {
+        this.tokenRepository = tokenRepository;
     }
 
     @Override
@@ -35,22 +26,19 @@ public class LogoutHandlerImpl implements LogoutHandler {
             Authentication authentication) {
         // NOTE: Chả hiểu sao cái Authentication đến đây thì null, cáu vl
         // Tạm thời phải tự parse header
-        final String authHeader = request.getHeader("Authorization");
+        String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            return;
         }
-        final String jwt = authHeader.substring(7);
-        final String email = jwtService.extractUsername(jwt);
-        User user = userRepository.findByEmail(email).orElse(null);
-        if (user != null) {
-            RefreshToken stored = refreshTokenRepository.findByUser(user.getId()).orElse(null);
-            if (stored != null) {
-                refreshTokenRepository.delete(stored);
-                SecurityContextHolder.clearContext();
+        else {
+            String accessToken = authHeader.substring(7);
+            Token token = tokenRepository.findByAccessToken(accessToken).orElse(null);
+            if (token != null) {
+                tokenRepository.revokeUserTokens(token.getUser().getId());
             }
         }
 
+        SecurityContextHolder.clearContext();
         ResponseCookie rtCookie = ResponseCookie.from("refresh_token", "")
             .path("/")
             .httpOnly(true)
@@ -58,6 +46,6 @@ public class LogoutHandlerImpl implements LogoutHandler {
             .maxAge(0)
             .sameSite("None")
             .build();
-        response.addHeader("Set-Cookie", rtCookie.toString());
+        response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
     }
 }

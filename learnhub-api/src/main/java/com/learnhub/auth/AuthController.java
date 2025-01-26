@@ -22,8 +22,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest authReq, HttpServletResponse httpResp) {
-        AuthResponse resp = authService.login(authReq, httpResp);
+    public ResponseEntity<AuthResponse> login(
+            @RequestBody LoginRequest authReq,
+            HttpServletRequest httpReq,
+            HttpServletResponse httpResp) {
+        AuthResponse resp = authService.login(authReq, httpReq, httpResp);
         if (resp.getAccessToken() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
         }

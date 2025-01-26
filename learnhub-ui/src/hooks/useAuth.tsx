@@ -5,7 +5,6 @@ import { API } from "../api";
 interface LoginRequest {
     email: string;
     password: string;
-    rememberMe: boolean;
 }
 
 interface AuthContextType {
