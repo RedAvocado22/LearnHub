@@ -1,7 +1,7 @@
 import "react-toastify/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { NotFound, Home, Login, Register, Unauthorized } from "./pages";
+import { NotFound, Home, Login, Register, Unauthorized, ForgotPassword, ResetPassword } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
 import Dummy from "./pages/Dummy";
@@ -37,6 +37,12 @@ export default function App() {
                 </Route>
                 <Route element={<GuestRoute />}>
                     <Route path="/register" element={<Register />} />
+                </Route>
+                <Route element={<GuestRoute />}>
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                </Route>
+                <Route element={<GuestRoute />}>
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
                 </Route>
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />

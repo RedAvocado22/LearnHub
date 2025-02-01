@@ -150,4 +150,26 @@ public class AuthService {
 
         return new AuthResponse(accessToken);
     }
+
+    public void forgetPassword(String email) {
+        User user = userRepository.findByEmail(email).orElseThrow(
+                () -> new UserNotFoundException(String.format("User with email %s not found.", email))
+        );
+        emailService.sendAccountResetPasswordEmail(user.getEmail(), jwtService.generateToken(user, 30 * 60 * 1000));
+    }
+
+    public void resetPassword(ResetPasswordRequest resp) {
+        String email = jwtService.extractUsername(resp.token());
+        User user = userRepository.findByEmail(email).orElseThrow();
+
+        if(jwtService.isTokenExpired(resp.token())) {
+            emailService.sendAccountResetPasswordEmail(
+                    user.getEmail(),
+                    jwtService.generateToken(user, 30 * 60 * 1000)
+            );
+            throw new ExpiredTokenException("Your link is expired!.");
+        }
+        user.setPassword(passwordEncoder.encode(resp.password()));
+        userRepository.save(user);
+    }
 }

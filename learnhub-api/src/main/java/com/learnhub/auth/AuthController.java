@@ -48,4 +48,16 @@ public class AuthController {
     public ResponseEntity<AuthResponse> refreshToken(HttpServletRequest req, HttpServletResponse resp) {
         return ResponseEntity.ok().body(authService.refreshToken(req, resp));
     }
+
+    @PostMapping("/forgot-password")
+    public ResponseEntity<AuthResponse> forgotPassword(@RequestBody EmailRequest emailRequest) {
+        authService.forgetPassword(emailRequest.email());
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<AuthResponse> resetPassword(@RequestBody ResetPasswordRequest resetPasswordRequest) {
+        authService.resetPassword(resetPasswordRequest);
+        return ResponseEntity.ok().build();
+    }
 }

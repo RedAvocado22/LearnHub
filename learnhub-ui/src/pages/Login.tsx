@@ -85,7 +85,7 @@ export default function Login() {
                             </div>
                             <div className="col-lg-12">
                                 <div className="form-group form-forget">
-                                    <a href="/forget-password" className="ml-auto">
+                                    <a href="/forgot-password" className="ml-auto">
                                         Forgot Password?
                                     </a>
                                 </div>
