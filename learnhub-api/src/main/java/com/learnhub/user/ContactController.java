@@ -19,9 +19,4 @@ public class ContactController {
         contactService.saveContact(contact);
         return ResponseEntity.ok("Success");
     }
-
-    @GetMapping("/test")
-    public ResponseEntity<String> test() {
-        return ResponseEntity.ok("Success");
-    }
 }
