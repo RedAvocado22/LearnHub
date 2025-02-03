@@ -7,6 +7,7 @@ import ProtectedRoute from "./routers/ProtectedRoute";
 import Dummy from "./pages/Dummy";
 import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
+import ContactUs from "./pages/ContactUs";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -38,6 +39,7 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/register" element={<Register />} />
                 </Route>
+                <Route path="/contact" element={<ContactUs/>}/>
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />
                 </Route>
