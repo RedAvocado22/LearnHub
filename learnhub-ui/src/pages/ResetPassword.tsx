@@ -5,10 +5,11 @@ import { API } from "../api";
 
 export default function ResetPassword() {
     const { token } = useParams();
-    const navigate = useNavigate();
     const [password, setPassword] = useState("");
     const [confPassword, setConfPassword] = useState("");
-    const [display, setDisplay] = useState(false);
+    const [error, setError] = useState("");
+
+    const navigate = useNavigate();
 
     async function handleSubmit() {
         try {
@@ -25,11 +26,22 @@ export default function ResetPassword() {
         }
     }
 
+    const validatePassword = (password: string) => {
+        const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
+        return regex.test(password);
+    };
+
     useEffect(() => {
-        if (password.length != 0 && confPassword.length != 0 && password === confPassword) {
-            setDisplay(true);
+        if (password.length != 0 && confPassword.length != 0) {
+            if (!validatePassword(password)) {
+                setError(
+                    "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
+                );
+            } else {
+                setError("");
+            }
         } else {
-            setDisplay(false);
+            setError("Confirm password must match with password");
         }
     }, [password, confPassword]);
     return (
@@ -84,13 +96,19 @@ export default function ResetPassword() {
                                     </div>
                                 </div>
                             </div>
-                            <div className="col-lg-12 m-b30">
-                                {display && (
+                            {/* Display error message */}
+                            {!error ? (
+                                <div className="col-lg-12 m-b30">
+                                    {/* Only enable the button if there's no error */}
                                     <button type="button" className="btn button-md" onClick={handleSubmit}>
                                         Submit
                                     </button>
-                                )}
-                            </div>
+                                </div>
+                            ) : (
+                                <div className="col-lg-12 text-danger">
+                                    <p>{error}</p>
+                                </div>
+                            )}
                         </div>
                     </form>
                 </div>
