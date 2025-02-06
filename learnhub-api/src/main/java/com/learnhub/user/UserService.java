@@ -1,5 +1,6 @@
 package com.learnhub.user;
 
+import java.util.List;
 import com.learnhub.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,5 +17,9 @@ public class UserService {
     public User getUserByEmail(String email) {
         return userRepository.findByEmail(email)
             .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists", email)));
+    }
+
+    public List<User> getUsers() {
+        return userRepository.findAll();
     }
 }

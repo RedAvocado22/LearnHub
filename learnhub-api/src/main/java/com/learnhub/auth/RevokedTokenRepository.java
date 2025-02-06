@@ -9,10 +9,10 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface RevokedTokenRepository extends CrudRepository<RevokedToken, Long> {
-    @Query("select t from Token t where t.user.id = :user_id")
+    @Query("select t from RevokedToken t where t.user.id = :user_id")
     List<RevokedToken> findByUser(@Param("user_id") Long userId);
 
-    @Query("select t from Token t join User u on u.id = t.user.id and u.email = :email")
+    @Query("select t from RevokedToken t join User u on u.id = t.user.id and u.email = :email")
     List<RevokedToken> findByUserEmail(@Param("email") String email);
 
     Optional<RevokedToken> findByToken(String token);
