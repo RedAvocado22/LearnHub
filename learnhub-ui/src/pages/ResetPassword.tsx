@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { API } from "../api";
+import { isAxiosError } from "axios";
 
 export default function ResetPassword() {
     const { token } = useParams();
@@ -18,11 +19,17 @@ export default function ResetPassword() {
             if (resp.status === 200) {
                 toast.success("Reset your password successful.");
                 navigate("/login");
-            } else {
-                throw new Error("Something wrong!");
             }
         } catch (error) {
-            toast.error((error as Error).message);
+            if (isAxiosError(error)) {
+                if (error.status === 400) {
+                    toast(
+                        "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
+                    );
+                } else {
+                    toast("An error was occurred!");
+                }
+            }
         }
     }
 

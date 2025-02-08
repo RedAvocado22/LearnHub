@@ -2,6 +2,7 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { API } from "../api";
+import { isAxiosError } from "axios";
 
 export default function ForgotPassword() {
     const navigate = useNavigate();
@@ -14,11 +15,18 @@ export default function ForgotPassword() {
             if (resp.status === 200) {
                 toast.success("Sent to your email.");
                 navigate("/");
-            } else {
-                throw new Error("Something wrong!");
             }
         } catch (error) {
-            toast.error((error as Error).message);
+            if (isAxiosError(error)) {
+                switch (error.status) {
+                    case 404:
+                        toast.error("The email is not exist!");
+                        break;
+                    case 400:
+                        toast.error("Invalid email!");
+                        break;
+                }
+            }
         }
     }
 
@@ -40,8 +48,7 @@ export default function ForgotPassword() {
                             Forget <span>Password</span>
                         </h2>
                         <p>
-                            Login Your Account
-                            <a href="/login">Click here</a>
+                            Login Your Account <a href="/login">Click here</a>
                         </p>
                     </div>
                     <form className="contact-bx">

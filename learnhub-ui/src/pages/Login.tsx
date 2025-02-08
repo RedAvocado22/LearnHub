@@ -11,6 +11,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
+
     useEffect(() => {
         if (token) {
             activateAccount(token).then((result) => {
