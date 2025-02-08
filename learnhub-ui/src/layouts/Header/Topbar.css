@@ -1,0 +1,125 @@
+/*=================================
+	2. HEADER TOPBAR
+=================================*/
+.top-bar {
+    background-color: #ffffff;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    color: #000;
+    padding: 11px 0;
+}
+
+.topbar-left {
+    float: left;
+}
+
+.topbar-right {
+    float: right;
+}
+
+.topbar-center,
+.topbar-left,
+.topbar-right {
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.topbar-left ul li,
+.topbar-right ul li {
+    display: inline-block;
+    position: relative;
+}
+
+.topbar-left ul li a,
+.topbar-right ul li a {
+    color: #000;
+}
+
+.topbar-left ul,
+.topbar-right ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-family: rubik;
+    font-size: 14px;
+}
+
+.topbar-left ul li {
+    padding-right: 10px;
+    margin-right: 10px;
+}
+
+.topbar-right ul li {
+    padding-left: 10px;
+    margin-left: 10px;
+}
+
+.topbar-left ul li i {
+    margin-right: 5px;
+}
+
+.search-btn:after,
+.topbar-left ul li:after,
+.topbar-right ul li:after {
+    position: absolute;
+    width: 1px;
+    height: 20px;
+    background-color: #000;
+    right: 0;
+    content: "";
+    top: 2px;
+    opacity: 0.1;
+}
+
+.topbar-right ul li:after {
+    right: auto;
+    left: 0;
+}
+
+.topbar-right ul li:first-child:after,
+.topbar-left ul li:last-child:after {
+    content: none;
+}
+
+@media only screen and (max-width: 991px) {
+    .topbar-right {
+        padding-left: 0;
+        padding-right: 15px;
+    }
+
+    .topbar-left {
+        padding-left: 15px;
+        padding-right: 0;
+    }
+}
+
+@media only screen and (max-width: 767px) {
+    .top-bar [class*="col-"] {
+        width: 100%;
+        text-align: right;
+        padding: 10px 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .top-bar [class*="col-"]:last-child {
+        border-bottom: none;
+    }
+
+    .top-bar {
+        padding: 5px 0;
+    }
+
+    .topbar-center,
+    .topbar-left,
+    .topbar-right {
+        display: black;
+        width: 100%;
+        text-align: center;
+        padding: 3px 15px;
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .topbar-left ul li {
+        padding: 0 5px;
+    }
+}

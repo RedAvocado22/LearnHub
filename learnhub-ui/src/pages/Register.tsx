@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StudentType } from "../types/auth";
+import { StudentType } from "../types/Account";
 import { register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -48,7 +48,7 @@ export default function Register() {
                         </p>
                     </div>
                     <form className="contact-bx">
-                        <div className="row placeani">
+                        <div className="row">
                             <div className="col-lg-6">
                                 <div className="form-group">
                                     <div className="input-group">

@@ -2,12 +2,43 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import CountUp from "react-countup";
-import { Footer, Header } from "../layouts";
+import { MainLayout } from "../layouts";
+import CourseCard from "../layouts/elements/CourseCard";
+
+const popularCourses = [
+    {
+        id: 1,
+        title: "Introduction EduChamp – LMS plugin",
+        category: "Programming",
+        imagePath: "assets/images/courses/pic1.jpg",
+        price: 120
+    },
+    {
+        id: 2,
+        title: "Introduction EduChamp – LMS plugin",
+        category: "Programming",
+        imagePath: "assets/images/courses/pic2.jpg",
+        price: 120
+    },
+    {
+        id: 3,
+        title: "Introduction EduChamp – LMS plugin",
+        category: "Programming",
+        imagePath: "assets/images/courses/pic3.jpg",
+        price: 120
+    },
+    {
+        id: 4,
+        title: "Introduction EduChamp – LMS plugin",
+        category: "Programming",
+        imagePath: "assets/images/courses/pic4.jpg",
+        price: 120
+    }
+];
 
 export default function Home() {
     return (
-        <div className="page-wraper">
-            <Header />
+        <MainLayout>
             <div className="page-content bg-white">
                 {/* Main Slider */}
                 <div
@@ -41,7 +72,7 @@ export default function Home() {
                                         <div className="icon-box">
                                             <h3>
                                                 <i className="ti-user"></i>
-                                                <CountUp start={0} end={5} duration={5} />M
+                                                <CountUp start={0} end={5} duration={5} className="counter" />M
                                             </h3>
                                         </div>
                                         <span className="cours-search-text">Over 5 million student</span>
@@ -52,7 +83,7 @@ export default function Home() {
                                         <div className="icon-box">
                                             <h3>
                                                 <i className="ti-book"></i>
-                                                <CountUp start={0} end={30} duration={5} />K
+                                                <CountUp start={0} end={30} duration={5} className="counter" />K
                                             </h3>
                                         </div>
                                         <span className="cours-search-text">30,000 Courses.</span>
@@ -63,7 +94,7 @@ export default function Home() {
                                         <div className="icon-box">
                                             <h3>
                                                 <i className="ti-layout-list-post"></i>
-                                                <CountUp start={0} end={20} duration={5} />K
+                                                <CountUp start={0} end={20} duration={5} className="counter" />K
                                             </h3>
                                         </div>
                                         <span className="cours-search-text">Learn Anythink Online.</span>
@@ -97,174 +128,19 @@ export default function Home() {
                                     slidesToShow={4}
                                     slidesToScroll={1}
                                     className="courses-carousel col-12 p-lr0">
-                                    <div className="item">
-                                        <div className="cours-bx">
-                                            <div className="action-box">
-                                                <img src="assets/images/courses/pic1.jpg" alt="" />
-                                                <a href="#" className="btn">
-                                                    Read More
-                                                </a>
-                                            </div>
-                                            <div className="info-bx text-center">
-                                                <h5>
-                                                    <a href="#">Introduction EduChamp – LMS plugin</a>
-                                                </h5>
-                                                <span>Programming</span>
-                                            </div>
-                                            <div className="cours-more-info">
-                                                <div className="review">
-                                                    <span>3 Review</span>
-                                                    <ul className="cours-star">
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div className="price">
-                                                    <del>$190</del>
-                                                    <h5>$120</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="cours-bx">
-                                            <div className="action-box">
-                                                <img src="assets/images/courses/pic2.jpg" alt="" />
-                                                <a href="#" className="btn">
-                                                    Read More
-                                                </a>
-                                            </div>
-                                            <div className="info-bx text-center">
-                                                <h5>
-                                                    <a href="#">Introduction EduChamp – LMS plugin</a>
-                                                </h5>
-                                                <span>Programming</span>
-                                            </div>
-                                            <div className="cours-more-info">
-                                                <div className="review">
-                                                    <span>3 Review</span>
-                                                    <ul className="cours-star">
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div className="price">
-                                                    <del>$190</del>
-                                                    <h5>$120</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="cours-bx">
-                                            <div className="action-box">
-                                                <img src="assets/images/courses/pic3.jpg" alt="" />
-                                                <a href="#" className="btn">
-                                                    Read More
-                                                </a>
-                                            </div>
-                                            <div className="info-bx text-center">
-                                                <h5>
-                                                    <a href="#">Introduction EduChamp – LMS plugin</a>
-                                                </h5>
-                                                <span>Programming</span>
-                                            </div>
-                                            <div className="cours-more-info">
-                                                <div className="review">
-                                                    <span>3 Review</span>
-                                                    <ul className="cours-star">
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div className="price">
-                                                    <del>$190</del>
-                                                    <h5>$120</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="item">
-                                        <div className="cours-bx">
-                                            <div className="action-box">
-                                                <img src="assets/images/courses/pic4.jpg" alt="" />
-                                                <a href="#" className="btn">
-                                                    Read More
-                                                </a>
-                                            </div>
-                                            <div className="info-bx text-center">
-                                                <h5>
-                                                    <a href="#">Introduction EduChamp – LMS plugin</a>
-                                                </h5>
-                                                <span>Programming</span>
-                                            </div>
-                                            <div className="cours-more-info">
-                                                <div className="review">
-                                                    <span>3 Review</span>
-                                                    <ul className="cours-star">
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                    </ul>
-                                                </div>
-                                                <div className="price">
-                                                    <del>$190</del>
-                                                    <h5>$120</h5>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
+                                    {!!popularCourses.length &&
+                                        popularCourses.map((course) => {
+                                            return (
+                                                <CourseCard
+                                                    key={course.id.toString()}
+                                                    id={course.id}
+                                                    title={course.title}
+                                                    imagePath={course.imagePath}
+                                                    category={course.category}
+                                                    price={course.price}
+                                                />
+                                            );
+                                        })}
                                 </Slider>
                             </div>
                         </div>
@@ -281,7 +157,8 @@ export default function Home() {
                                             Learn a new skill online on <br /> your time
                                         </h2>
                                         <h4>
-                                            <CountUp start={0} end={57000} duration={5} /> Online Courses
+                                            <CountUp start={0} end={57000} duration={5} className="counter" /> Online
+                                            Courses
                                         </h4>
                                         <p>
                                             Lorem Ipsum is simply dummy text of the printing and typesetting industry.
@@ -292,7 +169,7 @@ export default function Home() {
                                             text ever since the 1500s, when an unknown printer took a galley of type and
                                             scrambled it to make a type specimen book.
                                         </p>
-                                        <a href="#" className="btn button-md">
+                                        <a href="/register" className="btn button-md">
                                             Join Now
                                         </a>
                                     </div>
@@ -310,14 +187,15 @@ export default function Home() {
                                         <br /> <span className="text-primary"> on your time</span>
                                     </h2>
                                     <h4>
-                                        <CountUp start={0} end={57000} duration={5} /> Online Courses
+                                        <CountUp start={0} end={57000} duration={5} className="counter" /> Online
+                                        Courses
                                     </h4>
                                     <p>
                                         Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
                                         Ipsum has been the industry's standard dummy text ever since the 1500s, when an
                                         unknown printer took a galley of type.
                                     </p>
-                                    <a href="#" className="btn button-md">
+                                    <a href="/register" className="btn button-md">
                                         Join Now
                                     </a>
                                 </div>
@@ -390,7 +268,7 @@ export default function Home() {
                                 <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={3000} duration={5} />
+                                            <CountUp start={0} end={3000} duration={5} className="counter" />
                                             <span>+</span>
                                         </div>
                                         <span className="counter-text">Completed Projects</span>
@@ -399,7 +277,7 @@ export default function Home() {
                                 <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={2500} duration={5} />
+                                            <CountUp start={0} end={2500} duration={5} className="counter" />
                                             <span>+</span>
                                         </div>
                                         <span className="counter-text">Happy Clients</span>
@@ -408,7 +286,7 @@ export default function Home() {
                                 <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={1500} duration={5} />
+                                            <CountUp start={0} end={1500} duration={5} className="counter" />
                                             <span>+</span>
                                         </div>
                                         <span className="counter-text">Questions Answered</span>
@@ -417,7 +295,7 @@ export default function Home() {
                                 <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={1000} duration={5} />
+                                            <CountUp start={0} end={1000} duration={5} className="counter" />
                                             <span>+</span>
                                         </div>
                                         <span className="counter-text">Ordered Coffee's</span>
@@ -491,7 +369,6 @@ export default function Home() {
                 </div>
                 {/* contact area END */}
             </div>
-            <Footer />
-        </div>
+        </MainLayout>
     );
 }

@@ -147,44 +147,44 @@ export default function Footer() {
                             <div className="col-12 col-lg-3 col-md-5 col-sm-12 footer-col-4">
                                 <div className="widget widget_gallery gallery-grid-4">
                                     <h5 className="footer-title">Our Gallery</h5>
-                                    <ul className="magnific-image">
+                                    <ul>
                                         <li>
-                                            <a href="assets/images/gallery/pic1.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic1.jpg">
                                                 <img src="assets/images/gallery/pic1.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic2.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic2.jpg">
                                                 <img src="assets/images/gallery/pic2.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic3.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic3.jpg">
                                                 <img src="assets/images/gallery/pic3.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic4.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic4.jpg">
                                                 <img src="assets/images/gallery/pic4.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic5.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic5.jpg">
                                                 <img src="assets/images/gallery/pic5.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic6.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic6.jpg">
                                                 <img src="assets/images/gallery/pic6.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic7.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic7.jpg">
                                                 <img src="assets/images/gallery/pic7.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic8.jpg" className="magnific-anchor">
+                                            <a href="assets/images/gallery/pic8.jpg">
                                                 <img src="assets/images/gallery/pic8.jpg" alt="" />
                                             </a>
                                         </li>
