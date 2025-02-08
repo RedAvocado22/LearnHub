@@ -9,7 +9,7 @@ import Dummy from "./pages/Dummy";
 import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/Account";
-import DashboardLayout from "./layouts/DashboardLayout";
+import DashboardLayout from "./layouts/dashboard/DashboardLayout";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);

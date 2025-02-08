@@ -1,9 +1,63 @@
+import { useState } from "react";
+import NotificationList from "./NotificationList";
+
+interface SidebarItem {
+    label: string;
+    icon: string;
+    link?: string;
+    submenu?: { label: string; link: string }[];
+}
+
+// NOTE: This is mock list, pass this as props later
+const items: SidebarItem[] = [
+    { label: "Dashboard", icon: "ti-home", link: "index.html" },
+    { label: "Courses", icon: "ti-book", link: "courses.html" },
+    {
+        label: "Mailbox",
+        icon: "ti-email",
+        submenu: [
+            { label: "Mail Box", link: "mailbox.html" },
+            { label: "Compose", link: "mailbox-compose.html" },
+            { label: "Mail Read", link: "mailbox-read.html" }
+        ]
+    },
+    {
+        label: "Calendar",
+        icon: "ti-calendar",
+        submenu: [
+            { label: "Basic Calendar", link: "basic-calendar.html" },
+            { label: "List View", link: "list-view-calendar.html" }
+        ]
+    },
+    { label: "Bookmarks", icon: "ti-bookmark-alt", link: "bookmark.html" },
+    { label: "Review", icon: "ti-comments", link: "review.html" },
+    { label: "Add Listing", icon: "ti-layout-accordion-list", link: "add-listing.html" },
+    {
+        label: "My Profile",
+        icon: "ti-user",
+        submenu: [
+            { label: "User Profile", link: "user-profile.html" },
+            { label: "Teacher Profile", link: "teacher-profile.html" }
+        ]
+    }
+];
+
 export default function DashboardLayout() {
+    const [displaySidebar, setDisplaySidebar] = useState(true);
+    const [displayNotifList, setDisplayNotifList] = useState(false);
+    const [displayProfile, setDisplayProfile] = useState(false);
+    const [openSidebarItem, setOpenSidebarItem] = useState<number | null>(null);
+
+    const handleToggleSidebarItem = (index: number) => {
+        setOpenSidebarItem(openSidebarItem === index ? null : index);
+    };
     return (
-        <div className="ttr-opened-sidebar ttr-pinned-sidebar">
+        <div className={`${displaySidebar ? "ttr-opened-sidebar " : ""}ttr-pinned-sidebar`}>
             <header className="ttr-header">
                 <div className="ttr-header-wrapper">
-                    <div className="ttr-toggle-sidebar ttr-material-button">
+                    <div
+                        onClick={() => setDisplaySidebar(!displaySidebar)}
+                        className="ttr-toggle-sidebar ttr-material-button">
                         <i className="ti-close ttr-open-icon"></i>
                         <i className="ti-menu ttr-close-icon"></i>
                     </div>
@@ -39,87 +93,38 @@ export default function DashboardLayout() {
                     <div className="ttr-header-right ttr-with-seperator">
                         <ul className="ttr-header-navigation">
                             <li>
-                                <a href="#" className="ttr-material-button ttr-submenu-toggle">
+                                <a
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setDisplayNotifList(!displayNotifList);
+                                    }}
+                                    className="ttr-material-button ttr-submenu-toggle">
                                     <i className="fa fa-bell"></i>
                                 </a>
-                                <div className="ttr-header-submenu noti-menu">
-                                    <div className="ttr-notify-header">
-                                        <span className="ttr-notify-text-top">9 New</span>
-                                        <span className="ttr-notify-text">User Notifications</span>
-                                    </div>
-                                    <div className="noti-box-list">
-                                        <ul>
-                                            <li>
-                                                <span className="notification-icon dashbg-gray">
-                                                    <i className="fa fa-check"></i>
-                                                </span>
-                                                <span className="notification-text">
-                                                    <span>Sneha Jogi</span> sent you a message.
-                                                </span>
-                                                <span className="notification-time">
-                                                    <a href="#" className="fa fa-close"></a>
-                                                    <span> 02:14</span>
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <span className="notification-icon dashbg-yellow">
-                                                    <i className="fa fa-shopping-cart"></i>
-                                                </span>
-                                                <span className="notification-text">
-                                                    <a href="#">Your order is placed</a> sent you a message.
-                                                </span>
-                                                <span className="notification-time">
-                                                    <a href="#" className="fa fa-close"></a>
-                                                    <span> 7 Min</span>
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <span className="notification-icon dashbg-red">
-                                                    <i className="fa fa-bullhorn"></i>
-                                                </span>
-                                                <span className="notification-text">
-                                                    <span>Your item is shipped</span> sent you a message.
-                                                </span>
-                                                <span className="notification-time">
-                                                    <a href="#" className="fa fa-close"></a>
-                                                    <span> 2 May</span>
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <span className="notification-icon dashbg-green">
-                                                    <i className="fa fa-comments-o"></i>
-                                                </span>
-                                                <span className="notification-text">
-                                                    <a href="#">Sneha Jogi</a> sent you a message.
-                                                </span>
-                                                <span className="notification-time">
-                                                    <a href="#" className="fa fa-close"></a>
-                                                    <span> 14 July</span>
-                                                </span>
-                                            </li>
-                                            <li>
-                                                <span className="notification-icon dashbg-primary">
-                                                    <i className="fa fa-file-word-o"></i>
-                                                </span>
-                                                <span className="notification-text">
-                                                    <span>Sneha Jogi</span> sent you a message.
-                                                </span>
-                                                <span className="notification-time">
-                                                    <a href="#" className="fa fa-close"></a>
-                                                    <span> 15 Min</span>
-                                                </span>
-                                            </li>
-                                        </ul>
-                                    </div>
+                                <div
+                                    className={`ttr-header-submenu noti-menu${displayNotifList ? " active" : ""}`}
+                                    style={{ display: "block" }}>
+                                    <NotificationList />
                                 </div>
                             </li>
                             <li>
-                                <a href="#" className="ttr-material-button ttr-submenu-toggle">
+                                <a
+                                    href="#"
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        e.preventDefault();
+                                        setDisplayProfile(!displayProfile);
+                                    }}
+                                    className="ttr-material-button ttr-submenu-toggle">
                                     <span className="ttr-user-avatar">
                                         <img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32" />
                                     </span>
                                 </a>
-                                <div className="ttr-header-submenu">
+                                <div
+                                    className={`ttr-header-submenu${displayProfile ? " active" : ""}`}
+                                    style={{ display: "block" }}>
                                     <ul>
                                         <li>
                                             <a href="user-profile.html">My profile</a>
@@ -146,126 +151,48 @@ export default function DashboardLayout() {
                         <a href="#">
                             <img alt="" src="assets/images/logo.png" width="122" height="27" />
                         </a>
-                        <div className="ttr-sidebar-toggle-button">
+                        <div onClick={() => setDisplaySidebar(false)} className="ttr-sidebar-toggle-button">
                             <i className="ti-arrow-left"></i>
                         </div>
                     </div>
                     <nav className="ttr-sidebar-navi">
                         <ul>
-                            <li>
-                                <a href="index.html" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-home"></i>
-                                    </span>
-                                    <span className="ttr-label">Dashborad</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="courses.html" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-book"></i>
-                                    </span>
-                                    <span className="ttr-label">Courses</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-email"></i>
-                                    </span>
-                                    <span className="ttr-label">Mailbox</span>
-                                    <span className="ttr-arrow-icon">
-                                        <i className="fa fa-angle-down"></i>
-                                    </span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="mailbox.html" className="ttr-material-button">
-                                            <span className="ttr-label">Mail Box</span>
+                            {items.map((item, index) =>
+                                item.submenu ? (
+                                    <li key={index} className={openSidebarItem === index ? "show" : ""}>
+                                        <a
+                                            href="#"
+                                            className="ttr-material-button"
+                                            onClick={() => handleToggleSidebarItem(index)}>
+                                            <span className="ttr-icon">
+                                                <i className={item.icon}></i>
+                                            </span>
+                                            <span className="ttr-label">{item.label}</span>
+                                            <span className="ttr-arrow-icon">
+                                                <i className="fa fa-angle-down"></i>
+                                            </span>
+                                        </a>
+                                        <ul style={{ display: openSidebarItem === index ? "block" : "none" }}>
+                                            {item.submenu.map((subItem, subIndex) => (
+                                                <li key={subIndex}>
+                                                    <a href={subItem.link} className="ttr-material-button">
+                                                        <span className="ttr-label">{subItem.label}</span>
+                                                    </a>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </li>
+                                ) : (
+                                    <li key={index}>
+                                        <a href={item.link} className="ttr-material-button">
+                                            <span className="ttr-icon">
+                                                <i className={item.icon}></i>
+                                            </span>
+                                            <span className="ttr-label">{item.label}</span>
                                         </a>
                                     </li>
-                                    <li>
-                                        <a href="mailbox-compose.html" className="ttr-material-button">
-                                            <span className="ttr-label">Compose</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="mailbox-read.html" className="ttr-material-button">
-                                            <span className="ttr-label">Mail Read</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="#" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-calendar"></i>
-                                    </span>
-                                    <span className="ttr-label">Calendar</span>
-                                    <span className="ttr-arrow-icon">
-                                        <i className="fa fa-angle-down"></i>
-                                    </span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="basic-calendar.html" className="ttr-material-button">
-                                            <span className="ttr-label">Basic Calendar</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="list-view-calendar.html" className="ttr-material-button">
-                                            <span className="ttr-label">List View</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li>
-                                <a href="bookmark.html" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-bookmark-alt"></i>
-                                    </span>
-                                    <span className="ttr-label">Bookmarks</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="review.html" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-comments"></i>
-                                    </span>
-                                    <span className="ttr-label">Review</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="add-listing.html" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-layout-accordion-list"></i>
-                                    </span>
-                                    <span className="ttr-label">Add listing</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#" className="ttr-material-button">
-                                    <span className="ttr-icon">
-                                        <i className="ti-user"></i>
-                                    </span>
-                                    <span className="ttr-label">My Profile</span>
-                                    <span className="ttr-arrow-icon">
-                                        <i className="fa fa-angle-down"></i>
-                                    </span>
-                                </a>
-                                <ul>
-                                    <li>
-                                        <a href="user-profile.html" className="ttr-material-button">
-                                            <span className="ttr-label">User Profile</span>
-                                        </a>
-                                    </li>
-                                    <li>
-                                        <a href="teacher-profile.html" className="ttr-material-button">
-                                            <span className="ttr-label">Teacher Profile</span>
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
+                                )
+                            )}
                             <li className="ttr-seperate"></li>
                         </ul>
                     </nav>
