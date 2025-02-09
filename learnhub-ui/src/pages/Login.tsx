@@ -30,7 +30,7 @@ export default function Login() {
         try {
             await login({ email, password });
             toast.success("Login successfully");
-            navigate("/");
+            navigate("/dashboard");
         } catch (err) {
             toast.warning((err as Error).message);
             setEmail("");
@@ -55,7 +55,7 @@ export default function Login() {
                         </p>
                     </div>
                     <form className="contact-bx">
-                        <div className="row placeani">
+                        <div className="row">
                             <div className="col-lg-12">
                                 <div className="form-group">
                                     <div className="input-group">

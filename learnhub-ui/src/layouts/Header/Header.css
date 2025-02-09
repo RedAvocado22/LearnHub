@@ -1,0 +1,132 @@
+.header {
+    position: relative;
+    z-index: 99999;
+}
+
+.header ul,
+.header ol {
+    margin-bottom: 0;
+}
+
+/*without top bar*/
+.secondary-menu {
+    float: right;
+    padding: 26px 0;
+    position: relative;
+    z-index: 9;
+}
+
+.secondary-menu .btn-link {
+    font-size: 15px;
+    padding: 0;
+}
+
+.secondary-menu .btn-link:hover {
+    color: var(--primary);
+}
+
+.secondary-menu .secondary-inner {
+    display: inline-block;
+    margin-left: 10px;
+}
+
+.nav-search-bar {
+    background-color: rgba(255, 255, 255, 0.95);
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+    display: none;
+    overflow: hidden;
+    padding: 0 15px;
+}
+
+.nav-search-bar.On {
+    display: block;
+}
+
+.nav-search-bar.On form {
+    transition: all 0.5s ease 0.5s;
+    -moz-transition: all 0.5s ease 0.5s;
+    -webkit-transition: all 0.5s ease 0.5s;
+    opacity: 1;
+}
+
+.nav-search-bar form {
+    width: 100%;
+    max-width: 700px;
+    margin: auto;
+    position: relative;
+    top: 50%;
+    transition: all 0.5s;
+    transition: all 0.5s;
+    -webkit-transition: all 0.5s;
+    -moz-transform: translate(0px, -50%);
+    -moz-transform: translate(0px, -50%);
+    -o-transform: translate(0px, -50%);
+    -webkit-transform: translate(0px, -50%);
+    opacity: 0;
+}
+
+.nav-search-bar .form-control {
+    padding: 15px 60px 15px 15px;
+    width: 100%;
+    height: 70px;
+    border: none;
+    background: none;
+    color: #000;
+    font-size: 20px;
+    border-bottom: 2px solid #000;
+}
+
+.nav-search-bar .form-control::-moz-placeholder {
+    color: #000;
+}
+
+.nav-search-bar .form-control:-moz-placeholder {
+    color: #000;
+}
+
+.nav-search-bar .form-control:-ms-input-placeholder {
+    color: #000;
+}
+
+.nav-search-bar .form-control::-webkit-input-placeholder {
+    color: #000;
+}
+
+.nav-search-bar form span {
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    margin: -15px 0;
+    height: 25px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000;
+}
+
+.nav-search-bar > span {
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    height: 25px;
+    font-size: 20px;
+    cursor: pointer;
+    color: #000;
+}
+
+@media only screen and (max-width: 767px) {
+    .secondary-menu {
+        margin-right: 5px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .secondary-menu {
+        margin: 0 1px 0 0;
+        text-align: right;
+    }
+}

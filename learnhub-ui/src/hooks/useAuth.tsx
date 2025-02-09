@@ -28,30 +28,35 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     const login = async (payload: LoginRequest): Promise<void> => {
         try {
             const resp = await API.post("/auth/login", payload);
-            const token = resp.data.access_token;
+            if (resp.status === 200) {
+                const token = resp.data.access_token;
 
-            if (!token) {
-                throw new Error("No login return by server");
-            }
+                if (!token) {
+                    throw new Error("No login return by server");
+                }
 
-            localStorage.setItem("access_token", token);
-            try {
-                const getUserResp = await API.get<Account>("/user/me");
-                setAccount(getUserResp.data);
-            } catch (err) {
-                throw new Error(`Get user failed: ${(err as Error).message}`);
+                localStorage.setItem("access_token", token);
+                try {
+                    const getUserResp = await API.get<Account>("/user/me");
+                    setAccount(getUserResp.data);
+                } catch (err) {
+                    throw new Error(`Get user failed: ${(err as Error).message}`);
+                }
+            } else if (resp.status === 202) {
+                throw new Error("Activate your account");
+            } else {
+                throw new Error("Please check your email and password.");
             }
         } catch (error) {
             if (isAxiosError(error)) {
-                switch (error.status) {
-                    case 202:
-                        throw new Error("Activate your account");
+                switch (error.response?.status) {
                     case 404:
                         throw new Error("Your account not exist");
-                    case 401:
+                    default:
                         throw new Error("Please check your email and password.");
                 }
             }
+            throw error;
         }
     };
 
