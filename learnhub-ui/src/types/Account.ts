@@ -7,13 +7,9 @@ export enum UserRole {
 }
 
 export enum StudentType {
-    ELEMENTARY = "ELEMENTARY",
-    SECONDARY = "SECONDARY",
-    HIGHSCHOOL = "HIGHSCHOOL",
-    UNDER_GRADUATE = "UNDER_GRADUATE",
-    MASTER = "MASTER",
-    DOCTORATE = "DOCTORATE",
-    WORKING = "WORKING"
+    GRADE10 = "GRADE10",
+    GRADE11 = "GRADE11",
+    GRADE12 = "GRADE12"
 }
 
 export class Account {
