@@ -27,7 +27,7 @@ export const register = async (req: RegisterRequest): Promise<boolean> => {
                 text: err.response?.data?.message || "An error occurred while signing up."
             });
         }
-        console.error(err);
+        // console.error(err);
         return false;
     }
 };

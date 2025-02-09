@@ -11,6 +11,7 @@ export default function Login() {
     const [password, setPassword] = useState("");
     const { login } = useAuth();
     const navigate = useNavigate();
+
     useEffect(() => {
         if (token) {
             activateAccount(token).then((result) => {
@@ -85,7 +86,7 @@ export default function Login() {
                             </div>
                             <div className="col-lg-12">
                                 <div className="form-group form-forget">
-                                    <a href="/forget-password" className="ml-auto">
+                                    <a href="/forgot-password" className="ml-auto">
                                         Forgot Password?
                                     </a>
                                 </div>

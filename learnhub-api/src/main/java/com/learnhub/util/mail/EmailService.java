@@ -40,4 +40,15 @@ public class EmailService {
         mail.setText(message);
         sender.send(mail);
     }
+
+    public void sendAccountResetPasswordEmail(String to, String token) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String url = feBaseUrl + "/reset-password/" + token;
+        String message = "Click this link to reset your password: " + url;
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Reset your password");
+        mail.setText(message);
+        sender.send(mail);
+    }
 }

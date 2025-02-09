@@ -5,3 +5,5 @@ export { default as NotFound } from "./NotFound";
 export { default as Unauthorized } from "./Unauthorized";
 export { default as StudentDashboard } from "./StudentDashboard";
 export { default as TeacherDashboard } from "./TeacherDashboard";
+export { default as ForgotPassword } from "./ForgotPassword";
+export { default as ResetPassword } from "./ResetPassword";

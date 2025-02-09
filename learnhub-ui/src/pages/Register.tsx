@@ -9,10 +9,47 @@ export default function Register() {
     const [password, setPassword] = useState("");
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
-    const [studentType, setStudentType] = useState<StudentType>(StudentType.ELEMENTARY);
+    const [studentType, setStudentType] = useState<StudentType>(StudentType.GRADE10);
+    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const navigate = useNavigate();
+
+    // Password validation: at least 6 characters, one uppercase letter, and one special character
+    const validatePassword = (password: string) => {
+        const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
+        return regex.test(password);
+    };
+
+    const validateEmail = (email: string) => {
+        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return regex.test(email.trim());
+    };
+
+    // Handle registration
     const handleRegister = async () => {
+        // Validate required fields
+        if (!email || !password || !firstname || !lastname) {
+            setErrorMessage("All fields are required.");
+            return;
+        }
+
+        // Validate password
+        if (!validatePassword(password)) {
+            setErrorMessage(
+                "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
+            );
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            setErrorMessage("Please enter a valid email address.");
+            return;
+        }
+
+        // Clear error message if validation passes
+        setErrorMessage("");
+
+        // Proceed with registration
         const result = await register({ email, password, firstname, lastname, studentType });
         if (result) {
             Swal.fire({
@@ -20,13 +57,13 @@ export default function Register() {
                 title: "Register successfully",
                 text: "Register successfully. Check your email to activate the account."
             });
-            navigate("/");
+            navigate("/login");
         } else {
             setEmail("");
             setPassword("");
             setFirstname("");
             setLastname("");
-            setStudentType(StudentType.ELEMENTARY);
+            setStudentType(StudentType.GRADE10);
         }
     };
 
@@ -105,7 +142,6 @@ export default function Register() {
                                     </div>
                                 </div>
                             </div>
-                            {/* Fix this combo box style */}
                             <div className="col-lg-12">
                                 <div className="form-group">
                                     <div className="input-group">
@@ -113,15 +149,9 @@ export default function Register() {
                                             className="form-control form-select"
                                             value={studentType}
                                             onChange={(e) => setStudentType(e.target.value as StudentType)}>
-                                            <option value={StudentType.ELEMENTARY}>Elementary student</option>
-                                            <option value={StudentType.SECONDARY}>Secondary student</option>
-                                            <option value={StudentType.HIGHSCHOOL}>Highschool student</option>
-                                            <option value={StudentType.UNDER_GRADUATE}>
-                                                University/College student
-                                            </option>
-                                            <option value={StudentType.MASTER}>I have master degree</option>
-                                            <option value={StudentType.DOCTORATE}>I have doctorate degree</option>
-                                            <option value={StudentType.WORKING}>I'm working</option>
+                                            <option value={StudentType.GRADE10}>Grade 10</option>
+                                            <option value={StudentType.GRADE11}>Grade 11</option>
+                                            <option value={StudentType.GRADE12}>Grade 12</option>
                                         </select>
                                     </div>
                                 </div>
@@ -131,6 +161,11 @@ export default function Register() {
                                     Sign Up
                                 </button>
                             </div>
+                            {errorMessage && (
+                                <div className="col-lg-12 text-danger">
+                                    <p>{errorMessage}</p>
+                                </div>
+                            )}
                             <div className="col-lg-12">
                                 <h6>Sign Up with Social media</h6>
                                 <div className="d-flex">
@@ -138,7 +173,7 @@ export default function Register() {
                                         <i className="fa fa-facebook"></i>Facebook
                                     </a>
                                     <a className="btn flex-fill m-l5 google-plus" href="#">
-                                        <i className="fa fa-google-plus"></i>Google Plus
+                                        <i className="fa fa-google-plus"></i>Google
                                     </a>
                                 </div>
                             </div>

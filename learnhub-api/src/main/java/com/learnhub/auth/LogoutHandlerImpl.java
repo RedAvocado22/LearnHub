@@ -60,12 +60,12 @@ public class LogoutHandlerImpl implements LogoutHandler {
 
         SecurityContextHolder.clearContext();
         ResponseCookie rtCookie = ResponseCookie.from("refresh_token", "")
-            .path("/")
-            .httpOnly(true)
-            .secure(true)
-            .maxAge(0)
-            .sameSite("None")
-            .build();
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .sameSite("None")
+                .build();
         response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
     }
 }

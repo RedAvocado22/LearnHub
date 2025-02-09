@@ -2,6 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { Account } from "../types/Account";
 import { API } from "../api";
 import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
 interface LoginRequest {
     email: string;
@@ -29,40 +30,48 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
             const resp = await API.post("/auth/login", payload);
             if (resp.status === 200) {
                 const token = resp.data.access_token;
-                if (token) {
-                    localStorage.setItem("access_token", token);
-                    try {
-                        const getUserResp = await API.get<Account>("/user/me");
-                        setAccount(getUserResp.data);
-                    } catch (err) {
-                        throw new Error(`Get user failed: ${(err as Error).message}`);
-                    }
-                } else {
-                    throw new Error("No login return by server.");
+
+                if (!token) {
+                    throw new Error("No login return by server");
+                }
+
+                localStorage.setItem("access_token", token);
+                try {
+                    const getUserResp = await API.get<Account>("/user/me");
+                    setAccount(getUserResp.data);
+                } catch (err) {
+                    throw new Error(`Get user failed: ${(err as Error).message}`);
                 }
             } else if (resp.status === 202) {
                 throw new Error("Activate your account");
             } else {
                 throw new Error("Please check your email and password.");
             }
-        } catch (err) {
-            if (isAxiosError(err)) {
-                if (err?.response?.status === 404) {
-                    throw new Error("User not found");
-                } else {
-                    throw new Error("Please check your email and password.");
+        } catch (error) {
+            if (isAxiosError(error)) {
+                switch (error.response?.status) {
+                    case 404:
+                        throw new Error("Your account not exist");
+                    default:
+                        throw new Error("Please check your email and password.");
                 }
             }
+            throw error;
         }
     };
 
     const logout = async () => {
-        const resp = await API.get("/auth/logout");
-        if (resp.status === 200) {
-            localStorage.removeItem("access_token");
-            setAccount(null);
-        } else {
-            throw new Error("Logout failed.");
+        try {
+            const resp = await API.get("/auth/logout");
+            if (resp.status === 200) {
+                localStorage.removeItem("access_token");
+                setAccount(null);
+                toast.success("Logout successful!");
+            }
+        } catch (error) {
+            if (!isAxiosError(error)) {
+                throw new Error("Can't logout. An error was occurred!");
+            }
         }
     };
 

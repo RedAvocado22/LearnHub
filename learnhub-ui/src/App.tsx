@@ -1,7 +1,17 @@
 import "react-toastify/ReactToastify.css";
 import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
-import { NotFound, Home, Login, Register, Unauthorized, StudentDashboard, TeacherDashboard } from "./pages";
+import {
+    NotFound,
+    Home,
+    Login,
+    Register,
+    Unauthorized,
+    ForgotPassword,
+    ResetPassword,
+    StudentDashboard,
+    TeacherDashboard
+} from "./pages";
 import { ManagerDashboard, ManagerLogin } from "./pages/manager";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -10,6 +20,7 @@ import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/Account";
 import DashboardLayout from "./layouts/dashboard/DashboardLayout";
+import ContactUs from "./pages/ContactUs";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -45,6 +56,13 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/register" element={<Register />} />
                 </Route>
+                <Route element={<GuestRoute />}>
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                </Route>
+                <Route element={<GuestRoute />}>
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
+                </Route>
+                <Route path="/contact" element={<ContactUs />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />
                 </Route>
