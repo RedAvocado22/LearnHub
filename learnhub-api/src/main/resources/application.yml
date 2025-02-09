@@ -9,10 +9,12 @@ spring:
         expiration: 900000 # 15 minutes
         refresh-token:
           expiration: 86400000 # 1 day
+  main:
+    banner-mode: off
   datasource:
     url: jdbc:mysql://localhost:3306/learnhub
-    username: root
-    password: Lam30112004
+    username: sa
+    password: 123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
@@ -29,3 +31,7 @@ spring:
           auth: true
           starttls:
             enable: true
+
+logging:
+  level:
+    root: warn

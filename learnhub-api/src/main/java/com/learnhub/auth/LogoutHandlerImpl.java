@@ -29,23 +29,19 @@ public class LogoutHandlerImpl implements LogoutHandler {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-        else {
+        } else {
             String accessToken = authHeader.substring(7);
-            Token token = tokenRepository.findByAccessToken(accessToken).orElse(null);
-            if (token != null) {
-                tokenRepository.revokeUserTokens(token.getUser().getId());
-            }
+            tokenRepository.findByAccessToken(accessToken).ifPresent(token -> tokenRepository.revokeUserTokens(token.getUser().getId()));
         }
 
         SecurityContextHolder.clearContext();
         ResponseCookie rtCookie = ResponseCookie.from("refresh_token", "")
-            .path("/")
-            .httpOnly(true)
-            .secure(true)
-            .maxAge(0)
-            .sameSite("None")
-            .build();
+                .path("/")
+                .httpOnly(true)
+                .secure(true)
+                .maxAge(0)
+                .sameSite("None")
+                .build();
         response.addHeader(HttpHeaders.SET_COOKIE, rtCookie.toString());
     }
 }
