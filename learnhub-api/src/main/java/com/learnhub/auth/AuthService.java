@@ -150,7 +150,7 @@ public class AuthService {
                     user.getEmail(),
                     jwtService.generateToken(user, 30 * 60 * 1000)
             );
-            throw new ExpiredTokenException("Your link is expired!.");
+            throw new InvalidTokenException("Your link is expired!.");
         }
         user.setPassword(passwordEncoder.encode(resp.password()));
         userRepository.save(user);
