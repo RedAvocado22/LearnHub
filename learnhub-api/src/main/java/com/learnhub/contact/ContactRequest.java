@@ -1,4 +1,4 @@
-package com.learnhub.user;
+package com.learnhub.contact;
 
 public record ContactRequest(
         String firstName,
