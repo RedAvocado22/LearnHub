@@ -19,8 +19,9 @@ import Dummy from "./pages/Dummy";
 import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/Account";
-import DashboardLayout from "./layouts/dashboard/DashboardLayout";
 import ContactUs from "./pages/ContactUs";
+import { DashboardLayout } from "./layouts";
+import Mailbox from "./pages/manager/teacher/Mailbox";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -45,7 +46,14 @@ export default function App() {
         <AuthProvider>
             <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/test" element={<DashboardLayout />} />
+                <Route
+                    path="/test"
+                    element={
+                        <DashboardLayout>
+                            <></>
+                        </DashboardLayout>
+                    }
+                />
                 <Route path="/activate/:token" element={<Login />} />
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
@@ -74,6 +82,9 @@ export default function App() {
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER, UserRole.COURSE_MANAGER]} />}>
                     <Route path="/manager/dashboard" element={<ManagerDashboard />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
+                    <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/*" element={<NotFound />} />

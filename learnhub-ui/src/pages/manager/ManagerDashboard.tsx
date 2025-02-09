@@ -1,8 +1,8 @@
 import { useAuth } from "../../hooks/useAuth";
 import { UserRole } from "../../types/Account";
 import NotFound from "../NotFound";
-import CourseManagerDashboard from "./CourseManagerDashboard";
-import TeacherManagerDashboard from "./TeacherManagerDashboard";
+import CourseManagerDashboard from "./course/CourseManagerDashboard";
+import TeacherManagerDashboard from "./teacher/TeacherManagerDashboard";
 
 export default function ManagerDashboard() {
     const { account } = useAuth();

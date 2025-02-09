@@ -43,23 +43,29 @@ export default function NotificationList() {
     };
 
     return (
-        <div className="noti-box-list">
-            <ul>
-                {notifications.map((notif, index) => (
-                    <li key={index}>
-                        <span className="notification-icon dashbg-yellow">
-                            <i className="fa fa-bullhorn"></i>
-                        </span>
-                        <span className="notification-text">
-                            <span>{notif.from}</span> sent you a message.
-                        </span>
-                        <span className="notification-time">
-                            <a href="#" onClick={() => handleCloseNotif(index)} className="fa fa-close"></a>
-                            <span> {formatDistanceToNow(notif.time, { addSuffix: true })}</span>
-                        </span>
-                    </li>
-                ))}
-            </ul>
-        </div>
+        <>
+            <div className="ttr-notify-header">
+                <span className="ttr-notify-text-top">{notifications.length} New</span>
+                <span className="ttr-notify-text">User Notifications</span>
+            </div>
+            <div className="noti-box-list">
+                <ul>
+                    {notifications.map((notif, index) => (
+                        <li key={index}>
+                            <span className="notification-icon dashbg-yellow">
+                                <i className="fa fa-bullhorn"></i>
+                            </span>
+                            <span className="notification-text">
+                                <span>{notif.from}</span> sent you a message.
+                            </span>
+                            <span className="notification-time">
+                                <a href="#" onClick={() => handleCloseNotif(index)} className="fa fa-close"></a>
+                                <span> {formatDistanceToNow(notif.time, { addSuffix: true })}</span>
+                            </span>
+                        </li>
+                    ))}
+                </ul>
+            </div>
+        </>
     );
 }
