@@ -22,6 +22,7 @@ import { UserRole } from "./types/Account";
 import ContactUs from "./pages/ContactUs";
 import { DashboardLayout } from "./layouts";
 import Mailbox from "./pages/manager/teacher/Mailbox";
+import UserProfile from "./pages/UserProfile";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -57,6 +58,9 @@ export default function App() {
                 <Route path="/activate/:token" element={<Login />} />
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
+                </Route>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/userProfile" element={<UserProfile />}></Route>
                 </Route>
                 <Route element={<GuestRoute />}>
                     <Route path="/manager/login" element={<ManagerLogin />} />
