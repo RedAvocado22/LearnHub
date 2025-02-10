@@ -3,6 +3,7 @@ import { Footer, Header } from "../layouts";
 import { API } from "../api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { isAxiosError } from "axios";
 
 export default function ContactUs() {
     const [firstName, setFirstName] = useState("");
@@ -12,19 +13,25 @@ export default function ContactUs() {
     const [subject, setSubject] = useState("");
     const [message, setMessage] = useState("");
     const navigate = useNavigate();
+
     const handleSubmit = async () => {
         try {
             const resp = await API.post("/contact", { firstName, lastName, email, phone, subject, message });
             if (resp.status === 200) {
                 navigate("/");
-                toast.success("successfull!");
-            } else {
-                throw new Error("can't send the information");
+                toast.success("Sent successful!");
             }
-        } catch (err) {
-            toast.error((err as Error).message);
+        } catch (error) {
+            if (isAxiosError(error)) {
+                switch (error.status) {
+                    case 400:
+                        toast.error("Invalid email or phone. Try again!");
+                        break;
+                }
+            }
         }
     };
+
     return (
         <div className="page-wraper">
             <Header />
