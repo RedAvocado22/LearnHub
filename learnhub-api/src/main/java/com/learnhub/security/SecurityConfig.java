@@ -35,8 +35,8 @@ public class SecurityConfig {
         "/swagger-ui/**",
         "/swagger-resources/**",
         "/api/v*/contact/**",
-        "/api/v*/teacher/**"
-
+        "/api/v*/teacher/**",
+        "/api/v*/courses/**"
     };
     private final LogoutHandler logoutHandler;
     private final UserDetailsService userDetailsService;

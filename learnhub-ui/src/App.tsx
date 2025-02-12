@@ -23,6 +23,8 @@ import ContactUs from "./pages/ContactUs";
 import { DashboardLayout } from "./layouts";
 import Mailbox from "./pages/manager/teacher/Mailbox";
 import TeacherProfile from "./pages/TeacherProfile";
+import CourseList from "./pages/CourseList";
+import UserProfile from "./pages/UserProfile";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -60,6 +62,9 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
                 </Route>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/userProfile" element={<UserProfile />}></Route>
+                </Route>
                 <Route element={<GuestRoute />}>
                     <Route path="/manager/login" element={<ManagerLogin />} />
                 </Route>
@@ -86,6 +91,7 @@ export default function App() {
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER, UserRole.COURSE_MANAGER]} />}>
                     <Route path="/manager/dashboard" element={<ManagerDashboard />} />
                 </Route>
+                <Route path="/courses" element={<CourseList />} />
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>
