@@ -12,7 +12,9 @@ import java.util.Optional;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @Query(value = "select* from course",nativeQuery = true)
+    @Query(value = "select * from course", nativeQuery = true)
     List<Course> findAll();
 
+    @Query(value = "select * from course where teacher_id = :id", nativeQuery = true)
+    List<Course> findByTeacherID(@Param("id") Long id);
 }

@@ -10,7 +10,9 @@ import {
     ForgotPassword,
     ResetPassword,
     StudentDashboard,
-    TeacherDashboard
+    TeacherDashboard,
+    TeacherProfile,
+    CourseList
 } from "./pages";
 import { ManagerDashboard, ManagerLogin } from "./pages/manager";
 import GuestRoute from "./routers/GuestRoute";
@@ -22,7 +24,6 @@ import { UserRole } from "./types/Account";
 import ContactUs from "./pages/ContactUs";
 import { DashboardLayout } from "./layouts";
 import Mailbox from "./pages/manager/teacher/Mailbox";
-import CourseList from "./pages/CourseList";
 import UserProfile from "./pages/UserProfile";
 
 export default function App() {
@@ -56,6 +57,7 @@ export default function App() {
                         </DashboardLayout>
                     }
                 />
+
                 <Route path="/activate/:token" element={<Login />} />
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
@@ -75,6 +77,7 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
                 </Route>
+                <Route path="/teacher-profile/:id" element={<TeacherProfile />}></Route>
                 <Route path="/contact" element={<ContactUs />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />

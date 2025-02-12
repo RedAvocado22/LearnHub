@@ -173,7 +173,7 @@ export default function CourseList() {
                                                             </div>
                                                             <div className="price">
                                                                 <del>$190</del>
-                                                                <h5>${course.price}</h5>
+                                                                <h5>{course.price}</h5>
                                                             </div>
                                                         </div>
                                                     </div>

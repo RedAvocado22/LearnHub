@@ -10,7 +10,15 @@ public class CourseService {
     private CourseRepository courseRepository;
 
     @Autowired
-    public CourseService(CourseRepository courseRepository) {this.courseRepository = courseRepository;}
+    public CourseService(CourseRepository courseRepository) {
+        this.courseRepository = courseRepository;
+    }
 
-    public List<Course> getAllCourses() {return courseRepository.findAll();}
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public List<Course> getCoursesByTeacher(Long id) {
+        return courseRepository.findByTeacherID(id);
+    }
 }
