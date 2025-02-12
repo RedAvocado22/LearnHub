@@ -13,8 +13,8 @@ spring:
     banner-mode: off
   datasource:
     url: jdbc:mysql://localhost:3306/learnhub
-    username: sa
-    password: 123
+    username: root
+    password: root
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
