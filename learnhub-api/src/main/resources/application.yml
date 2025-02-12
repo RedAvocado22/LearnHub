@@ -14,7 +14,7 @@ spring:
   datasource:
     url: jdbc:mysql://localhost:3306/learnhub
     username: root
-    password: Lam30112004
+    password: 123@123
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
