@@ -1,5 +1,6 @@
 package com.learnhub.course;
 
+import com.learnhub.user.teacher.Teacher;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -35,6 +36,10 @@ public class Course {
 
     @Column(name = "archived_at")
     private LocalDateTime archivedAt;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
+    private Teacher teacher;
 
     public Course() {
     }

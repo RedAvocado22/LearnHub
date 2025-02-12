@@ -1,12 +1,18 @@
 package com.learnhub.user.teacher;
 
+import com.learnhub.course.Course;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import jakarta.persistence.*;
 
+import java.util.Collection;
+
 @Entity
 @Table(name = "teacher_profile")
 public class Teacher extends User {
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Course> course;
+
     @Column(name = "major")
     private String major;
 
