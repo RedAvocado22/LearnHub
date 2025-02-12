@@ -7,3 +7,6 @@ export { default as StudentDashboard } from "./StudentDashboard";
 export { default as TeacherDashboard } from "./TeacherDashboard";
 export { default as ForgotPassword } from "./ForgotPassword";
 export { default as ResetPassword } from "./ResetPassword";
+export { default as UserProfile } from "./UserProfile";
+export { default as TeacherProfile } from "./TeacherProfile";
+export { default as CourseList } from "./CourseList";
