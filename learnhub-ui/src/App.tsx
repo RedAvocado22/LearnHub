@@ -22,6 +22,7 @@ import { UserRole } from "./types/Account";
 import ContactUs from "./pages/ContactUs";
 import { DashboardLayout } from "./layouts";
 import Mailbox from "./pages/manager/teacher/Mailbox";
+import CourseList from "./pages/CourseList";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -83,6 +84,7 @@ export default function App() {
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER, UserRole.COURSE_MANAGER]} />}>
                     <Route path="/manager/dashboard" element={<ManagerDashboard />} />
                 </Route>
+                <Route path="/courses" element={<CourseList />} />
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>
