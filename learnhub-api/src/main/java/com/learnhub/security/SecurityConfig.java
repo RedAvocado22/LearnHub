@@ -1,6 +1,7 @@
 package com.learnhub.security;
 
 import java.util.Arrays;
+
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,12 +30,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
     private static final String[] WHITE_LIST = {
-        "/api/v*/auth/**",
-        "/v3/api-docs/**",
-        "/swagger-ui.html",
-        "/swagger-ui/**",
-        "/swagger-resources/**",
-        "/api/v*/contact/**"
+            "/api/v*/auth/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/api/v*/contact/**"
     };
     private final LogoutHandler logoutHandler;
     private final UserDetailsService userDetailsService;
@@ -76,20 +77,25 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
+
         config.setAllowedOrigins(Arrays.asList("http://localhost:5173"));
         config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         config.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         config.setAllowCredentials(true);
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
+
         return source;
     }
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+
         provider.setPasswordEncoder(passwordEncoder);
         provider.setUserDetailsService(userDetailsService);
+
         return provider;
     }
 

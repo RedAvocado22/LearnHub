@@ -1,7 +1,4 @@
 package com.learnhub.auth;
 
-public record ResetPasswordRequest(
-        String password,
-        String token
-) {
+public record ResetPasswordRequest(String password, String token) {
 }

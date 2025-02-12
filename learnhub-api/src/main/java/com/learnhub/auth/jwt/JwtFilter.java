@@ -1,6 +1,7 @@
 package com.learnhub.auth.jwt;
 
 import java.io.IOException;
+
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,22 +48,24 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
+
             String accessToken = authHeader.substring(7);
             String username = jwtService.extractUsername(accessToken);
             if (username == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                 return;
             }
+
             User user = userRepository.findByEmail(username).orElse(null);
             if (user == null ||
-                !jwtService.isTokenValid(accessToken, user) ||
-                revokedTokenRepository.findByToken(accessToken).isPresent()) {
+                    !jwtService.isTokenValid(accessToken, user) ||
+                    revokedTokenRepository.findByToken(accessToken).isPresent()) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                 return;
             }
 
-            UsernamePasswordAuthenticationToken authToken = 
-                new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+            UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
 
             authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authToken);

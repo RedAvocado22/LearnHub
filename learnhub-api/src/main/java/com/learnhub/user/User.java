@@ -3,6 +3,7 @@ package com.learnhub.user;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,10 +48,11 @@ public class User implements UserDetails {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public User() {}
+    public User() {
+    }
 
     public User(String email, String firstName, String lastName, String password, UserRole role,
-            boolean active) {
+                boolean active) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -122,8 +124,7 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority(role.name().toLowerCase());
+        SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name().toLowerCase());
         return Collections.singleton(authority);
     }
 

@@ -6,7 +6,5 @@ public record ContactRequest(
         String email,
         String phone,
         String subject,
-        String message
-) {
-
+        String message) {
 }

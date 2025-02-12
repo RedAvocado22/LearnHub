@@ -47,7 +47,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest authReq, HttpServletRequest httpReq, HttpServletResponse httpResp) {
         User user = userRepository.findByEmail(authReq.email())
-            .orElseThrow(() -> new UserNotFoundException(
+                .orElseThrow(() -> new UserNotFoundException(
                         String.format("User with email %s does not exists. Register new account.", authReq.email())));
 
         if (!user.isActive()) {
@@ -69,6 +69,7 @@ public class AuthService {
         userRepository.findByEmail(req.email()).ifPresent(user -> {
             throw new UserExistsException(String.format("User with email %s is already exists.", req.email()));
         });
+
         String encoded = passwordEncoder.encode(req.password());
         Student user = new Student(
                 req.email(),
@@ -79,7 +80,7 @@ public class AuthService {
                 false,
                 req.studentType());
         Student saved = userRepository.save(user);
-        
+
         String token = jwtService.generateToken(saved, 30 * 60 * 1000);
         emailService.sendAccountActivationEmail(saved.getEmail(), token);
         return new AuthResponse(token); // NOTE: maybe we don't need to return the token?
@@ -92,7 +93,7 @@ public class AuthService {
         }
 
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists.", email)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists.", email)));
 
         if (jwtService.isTokenExpired(req.token())) {
             emailService.sendAccountActivationEmail(user.getEmail(), jwtService.generateToken(user, 30 * 60 * 1000));
@@ -119,14 +120,16 @@ public class AuthService {
         }
 
         revokedTokenRepository.findByToken(oldRT).ifPresentOrElse(
-            revoked -> { throw new InvalidTokenException("Invalid refresh token."); },
-            () -> revokedTokenRepository.save(RevokedToken.from(user, oldRT)
+                revoked -> {
+                    throw new InvalidTokenException("Invalid refresh token.");
+                },
+                () -> revokedTokenRepository.save(RevokedToken.from(user, oldRT)
                         .ipAddress(req.getRemoteAddr())
                         .deviceInfo(req.getHeader(HttpHeaders.USER_AGENT))
                         .build())
         );
 
-        String accessToken = jwtService.generateAccessToken(user); 
+        String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         ResponseCookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken);
         resp.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
@@ -145,13 +148,14 @@ public class AuthService {
         String email = jwtService.extractUsername(resp.token());
         User user = userRepository.findByEmail(email).orElseThrow();
 
-        if(jwtService.isTokenExpired(resp.token())) {
+        if (jwtService.isTokenExpired(resp.token())) {
             emailService.sendAccountResetPasswordEmail(
                     user.getEmail(),
                     jwtService.generateToken(user, 30 * 60 * 1000)
             );
             throw new InvalidTokenException("Your link is expired!.");
         }
+        
         user.setPassword(passwordEncoder.encode(resp.password()));
         userRepository.save(user);
     }

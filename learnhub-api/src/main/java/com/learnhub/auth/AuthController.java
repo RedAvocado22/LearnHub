@@ -30,18 +30,19 @@ public class AuthController {
             HttpServletRequest httpReq,
             HttpServletResponse httpResp) {
         AuthResponse resp = authService.login(authReq, httpReq, httpResp);
+
         if (resp.getAccessToken() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
         }
+
         return ResponseEntity.ok().body(resp);
     }
 
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerStudent(@RequestBody StudentRegisterRequest req, HttpServletRequest httpReq) {
         if (req.firstname() != null && req.lastname() != null && req.email() != null && req.password() != null && req.studentType() != null) {
-            if (req.password().matches(PASS_REGEX))
-                if (req.email().matches(EMAIL_REGEX))
-                    return ResponseEntity.ok().body(authService.registerStudent(req, httpReq));
+            if (req.password().matches(PASS_REGEX) && req.email().matches(EMAIL_REGEX))
+                return ResponseEntity.ok().body(authService.registerStudent(req, httpReq));
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(authService.registerStudent(req, httpReq));

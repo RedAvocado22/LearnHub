@@ -27,9 +27,11 @@ public class UserProfileController {
     @GetMapping("/studentProfile")
     public Student studentProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+
         String email = authentication.getName();
         Student student = studentService.getStudentByEmail(email);
 
@@ -39,18 +41,23 @@ public class UserProfileController {
     @PostMapping("/changeStudent")
     public ResponseEntity<String> changeStudent(@RequestBody ChangeStudentRequest studentRequest) {
         Student st = studentService.getStudentByEmail(studentRequest.email());
+
         st.setFirstName(studentRequest.firstName());
         st.setLastName(studentRequest.lastName());
+
         studentService.changeProfile(st);
+
         return ResponseEntity.ok("Student profile updated");
     }
 
 
     public User teacherProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+
         String email = authentication.getName();
         User user = userService.getUserByEmail(email);
 
@@ -60,19 +67,21 @@ public class UserProfileController {
     @PostMapping("/changePassword")
     public ResponseEntity<String> changePassword(@RequestBody ChangePasswordRequest passwordRequest) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+
         String email = authentication.getName();
         User user = userService.getUserByEmail(email);
         String password1 = passwordRequest.oldpassword();
         String password = passwordEncoder.encode(passwordRequest.oldpassword());
-        if(!passwordEncoder.matches(password1,user.getPassword())) {
+
+        if (!passwordEncoder.matches(password1, user.getPassword())) {
             return ResponseEntity.badRequest().body("Current password does not match");
         } else if (!passwordRequest.newpassword().equals(passwordRequest.repassword())) {
             return ResponseEntity.badRequest().body("Confirm Password does not match");
-        }
-        else {
+        } else {
             user.setPassword(passwordEncoder.encode(passwordRequest.newpassword()));
             userService.saveUser(user);
             return ResponseEntity.ok("Password changed successfully");
