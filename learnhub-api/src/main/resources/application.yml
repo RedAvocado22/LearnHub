@@ -2,11 +2,13 @@ frontend:
   baseurl: http://localhost:5173
 
 spring:
+  profiles:
+    active: dev
   application:
     name: learnhub-api
     security:
       jwt:
-        expiration: 900000 # 15 minutes
+        expiration: 300000 # 5 minutes
         refresh-token:
           expiration: 86400000 # 1 day
   main:
@@ -31,3 +33,7 @@ spring:
           auth: true
           starttls:
             enable: true
+
+logging:
+  level:
+    root: error
