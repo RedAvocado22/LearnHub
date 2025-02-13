@@ -12,11 +12,13 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/api/v1/courses")
 public class CourseController {
-    public static record CourseResponse(Long id, String name, double price) {
-    }
+
+    private CourseService service;
 
     @Autowired
-    private CourseService service;
+    public CourseController(CourseService service) {
+        this.service = service;
+    }
 
     @GetMapping
     public List<CourseResponse> getAllCourses() {

@@ -44,7 +44,10 @@ public class Course {
     public Course() {
     }
 
-    public Course(String name, double price, CourseStatus status, String description, LocalDateTime updatedAt, LocalDateTime createdAt, LocalDateTime cancelledAt, LocalDateTime archivedAt) {
+    public Course(String name, double price,
+                  CourseStatus status, String description,
+                  LocalDateTime updatedAt, LocalDateTime createdAt,
+                  LocalDateTime cancelledAt, LocalDateTime archivedAt) {
         this.name = name;
         this.price = price;
         this.status = status;
