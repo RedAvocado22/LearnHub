@@ -30,6 +30,7 @@ export default function ContactUs() {
             toast.error("Invalid phone. Try again!");
             return;
         }
+
         try {
             const resp = await API.post("/contact", { firstName, lastName, email, phone, subject, message });
             if (resp.status === 200) {
@@ -40,7 +41,7 @@ export default function ContactUs() {
             if (isAxiosError(error)) {
                 switch (error.status) {
                     case 400:
-                        toast.error("Invalid email or phone. Try again!");
+                        toast.error("An error was occurred!");
                         break;
                 }
             }

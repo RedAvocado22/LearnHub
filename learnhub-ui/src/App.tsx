@@ -11,8 +11,8 @@ import {
     ResetPassword,
     StudentDashboard,
     TeacherDashboard,
-    TeacherProfile,
-    CourseList
+    CourseList,
+    TeacherDetail
 } from "./pages";
 import { ManagerDashboard, ManagerLogin } from "./pages/manager";
 import GuestRoute from "./routers/GuestRoute";
@@ -77,7 +77,7 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
                 </Route>
-                <Route path="/teacher-profile/:id" element={<TeacherProfile />}></Route>
+                <Route path="/teacher-profile/:id" element={<TeacherDetail />}></Route>
                 <Route path="/contact" element={<ContactUs />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />
