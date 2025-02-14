@@ -29,8 +29,8 @@ public class CourseController {
                 ).collect(Collectors.toList());
     }
 
-    @GetMapping("/{teacherId}")
-    public List<CourseResponse> getCoursesByTeacher(@PathVariable("teacherId") Long teacherId) {
+    @GetMapping("/teacher/{id}")
+    public List<CourseResponse> getCoursesByTeacher(@PathVariable("id") Long teacherId) {
         return service.getCoursesByTeacher(teacherId)
                 .stream()
                 .map(course -> new CourseResponse(

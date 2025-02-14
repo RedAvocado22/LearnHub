@@ -3,6 +3,8 @@ import { StudentType } from "../types/Account";
 import { register } from "../api/auth";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
+import { validateEmail, validatePassword } from "../utils/Validate";
+import { toast } from "react-toastify";
 
 export default function Register() {
     const [email, setEmail] = useState("");
@@ -10,46 +12,27 @@ export default function Register() {
     const [firstname, setFirstname] = useState("");
     const [lastname, setLastname] = useState("");
     const [studentType, setStudentType] = useState<StudentType>(StudentType.GRADE10);
-    const [errorMessage, setErrorMessage] = useState<string>("");
 
     const navigate = useNavigate();
 
-    // Password validation: at least 6 characters, one uppercase letter, and one special character
-    const validatePassword = (password: string) => {
-        const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
-        return regex.test(password);
-    };
-
-    const validateEmail = (email: string) => {
-        const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-        return regex.test(email.trim());
-    };
-
-    // Handle registration
     const handleRegister = async () => {
-        // Validate required fields
         if (!email || !password || !firstname || !lastname) {
-            setErrorMessage("All fields are required.");
+            toast.error("All fields are required.");
             return;
         }
 
-        // Validate password
         if (!validatePassword(password)) {
-            setErrorMessage(
+            toast.error(
                 "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
             );
             return;
         }
 
         if (!validateEmail(email)) {
-            setErrorMessage("Please enter a valid email address.");
+            toast.error("Please enter a valid email address.");
             return;
         }
 
-        // Clear error message if validation passes
-        setErrorMessage("");
-
-        // Proceed with registration
         const result = await register({ email, password, firstname, lastname, studentType });
         if (result) {
             Swal.fire({
@@ -161,11 +144,6 @@ export default function Register() {
                                     Sign Up
                                 </button>
                             </div>
-                            {errorMessage && (
-                                <div className="col-lg-12 text-danger">
-                                    <p>{errorMessage}</p>
-                                </div>
-                            )}
                             <div className="col-lg-12">
                                 <h6>Sign Up with Social media</h6>
                                 <div className="d-flex">

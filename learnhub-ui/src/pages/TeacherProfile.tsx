@@ -3,8 +3,14 @@ import { Footer, Header } from "../layouts";
 import { API } from "../api";
 import { useParams } from "react-router-dom";
 
+interface Course {
+    id: number;
+    name: string;
+    price: number;
+}
+
 export default function TeacherProfile() {
-    const [courses, setCourses] = useState([]);
+    const [courses, setCourses] = useState<Course[]>([]);
 
     const { id } = useParams();
 
@@ -12,7 +18,6 @@ export default function TeacherProfile() {
         firstName: "",
         lastName: "",
         email: "",
-        phoneNo: "",
         major: "",
         address: "",
         city: "",
@@ -23,7 +28,7 @@ export default function TeacherProfile() {
         API.get(`/teacher/${id}`).then((resp) => {
             setProfile(resp?.data);
         });
-        API.get(`/courses?teacherId=${id}`).then((resp) => {
+        API.get(`/courses/teacher/${id}`).then((resp) => {
             setCourses(resp?.data || []);
             console.log(courses);
         });
@@ -38,18 +43,6 @@ export default function TeacherProfile() {
                     </div>
                 </div>
             </div>
-
-            <div className="breadcrumb-row">
-                <div className="container">
-                    <ul className="list-inline">
-                        <li>
-                            <a href="#">Home</a>
-                        </li>
-                        <li>Profile</li>
-                    </ul>
-                </div>
-            </div>
-
             <div className="content-block">
                 <div className="section-area section-sp1">
                     <div className="container">
@@ -57,7 +50,7 @@ export default function TeacherProfile() {
                             <div className="col-lg-3 col-md-4 col-sm-12 m-b30">
                                 <div className="profile-bx text-center">
                                     <div className="user-profile-thumb">
-                                        <img src="assets/images/profile/pic1.jpg" alt="" />
+                                        <img src="/assets/images/profile/pic1.jpg" alt="" />
                                     </div>
                                     <div className="profile-info">
                                         <h4>
@@ -94,13 +87,13 @@ export default function TeacherProfile() {
                                                 <div className="clearfix">
                                                     <ul id="masonry" className="ttr-gallery-listing magnific-image row">
                                                         {courses.map((course) => (
-                                                            <li
+                                                            <div
                                                                 key={course.id}
                                                                 className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish">
                                                                 <div className="cours-bx">
                                                                     <div className="action-box">
                                                                         <img
-                                                                            src="assets/images/courses/pic1.jpg"
+                                                                            src="/assets/images/courses/pic1.jpg"
                                                                             alt=""
                                                                         />
                                                                         <a href="#" className="btn">
@@ -140,7 +133,7 @@ export default function TeacherProfile() {
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </li>
+                                                            </div>
                                                         ))}
                                                     </ul>
                                                 </div>
@@ -162,41 +155,37 @@ export default function TeacherProfile() {
                                                         <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                             First name
                                                         </label>
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {profile.firstName}
-                                                        </div>
+                                                        <input
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            value={profile.firstName}
+                                                            readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
                                                         <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                             Last name
                                                         </label>
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {profile.lastName}
-                                                        </div>
+                                                        <input
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            value={profile.lastName}
+                                                            readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
                                                         <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                             Email
                                                         </label>
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {profile.email}
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Phone No.
-                                                        </label>
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {profile.phoneNo}
-                                                        </div>
+                                                        <input
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            value={profile.email}
+                                                            readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
                                                         <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                             Major
                                                         </label>
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {profile.major}
-                                                        </div>
+                                                        <input
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            value={profile.major}
+                                                            readOnly></input>
                                                     </div>
                                                     <div className="seperator"></div>
                                                 </div>
@@ -209,39 +198,28 @@ export default function TeacherProfile() {
                                                     <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                         Address
                                                     </label>
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                        {profile.address}
-                                                    </div>
+                                                    <input
+                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                        value={profile.address}
+                                                        readOnly></input>
                                                 </div>
                                                 <div className="form-group row">
                                                     <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                         City
                                                     </label>
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                        {profile.city}
-                                                    </div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        State
-                                                    </label>
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-7"></div>
+                                                    <input
+                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                        value={profile.city}
+                                                        readOnly></input>
                                                 </div>
                                                 <div className="form-group row">
                                                     <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                         School
                                                     </label>
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                        {profile.school}
-                                                    </div>
-                                                </div>
-
-                                                <div className="m-form__seperator m-form__seperator--dashed m-form__seperator--space-2x"></div>
-                                                <div className="form-group row">
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                        <h3>3. Description</h3>
-                                                    </div>
-                                                    <p></p>
+                                                    <input
+                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                        value={profile.school}
+                                                        readOnly></input>
                                                 </div>
                                             </form>
                                         </div>

@@ -4,6 +4,7 @@ import { API } from "../api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
+import { validateEmail, validatePhone } from "../utils/Validate";
 
 export default function ContactUs() {
     const [firstName, setFirstName] = useState("");
@@ -15,6 +16,20 @@ export default function ContactUs() {
     const navigate = useNavigate();
 
     const handleSubmit = async () => {
+        if (!firstName || !lastName || !email || !phone || !subject || !message) {
+            toast.error("All field are required!");
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            toast.error("Invalid email. Try again!");
+            return;
+        }
+
+        if (!validatePhone(phone)) {
+            toast.error("Invalid phone. Try again!");
+            return;
+        }
         try {
             const resp = await API.post("/contact", { firstName, lastName, email, phone, subject, message });
             if (resp.status === 200) {
@@ -154,7 +169,7 @@ export default function ContactUs() {
                                                         onChange={(e) => setMessage(e.target.value)}
                                                         name="message"
                                                         rows={4}
-                                                        placeholder="type message"
+                                                        placeholder="Your message"
                                                         className="form-control"
                                                         required></textarea>
                                                 </div>

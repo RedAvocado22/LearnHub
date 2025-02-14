@@ -63,7 +63,7 @@ export default function App() {
                     <Route path="/login" element={<Login />} />
                 </Route>
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/userProfile" element={<UserProfile />}></Route>
+                    <Route path="/user-profile" element={<UserProfile />}></Route>
                 </Route>
                 <Route element={<GuestRoute />}>
                     <Route path="/manager/login" element={<ManagerLogin />} />

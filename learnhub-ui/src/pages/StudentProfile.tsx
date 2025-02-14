@@ -14,7 +14,9 @@ export default function StudentProfile() {
     const [newpassword, setNewPassword] = useState("");
     const [repassword, setRePassword] = useState("");
     const [error, setError] = useState("");
+
     const navigate = useNavigate();
+
     useEffect(() => {
         API.get("/studentProfile").then((resp) => {
             setFirstName(resp.data.firstName);
@@ -27,17 +29,28 @@ export default function StudentProfile() {
     const handleSubmitProfile = async () => {
         try {
             const res = await API.post("/changeStudent", { firstName, lastName, email });
-            if ((res.status = 200)) {
-                navigate("/userProfile");
-                toast.success("Sent successful!");
+            if (res.status === 200) {
+                navigate("/user-profile");
+                toast.success("Edited successful!");
             }
-        } catch (err) {}
+        } catch (err) {
+            if (isAxiosError(err)) {
+                switch (err.status) {
+                    case 400:
+                        toast.error("");
+                        break;
+                    default:
+                        toast.success("Sent successful!");
+                        break;
+                }
+            }
+        }
     };
 
     const handleChangePassword = async () => {
         try {
             const res = await API.post("/changePassword", { oldpassword, newpassword, repassword });
-            if ((res.status = 200)) {
+            if (res.status === 200) {
                 navigate("/userProfile");
                 toast.success("change password successful!");
             }
@@ -62,18 +75,6 @@ export default function StudentProfile() {
                     </div>
                 </div>
             </div>
-
-            <div className="breadcrumb-row">
-                <div className="container">
-                    <ul className="list-inline">
-                        <li>
-                            <a href="#">Home</a>
-                        </li>
-                        <li>Profile</li>
-                    </ul>
-                </div>
-            </div>
-
             <div className="content-block">
                 <div className="section-area section-sp1">
                     <div className="container">
@@ -116,11 +117,6 @@ export default function StudentProfile() {
                                             <li className="nav-item">
                                                 <a className="nav-link active" data-toggle="tab" href="#courses">
                                                     <i className="ti-book"></i>Courses
-                                                </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" data-toggle="tab" href="#quiz-results">
-                                                    <i className="ti-bookmark-alt"></i>Quiz Results{" "}
                                                 </a>
                                             </li>
                                             <li className="nav-item">
