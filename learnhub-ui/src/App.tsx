@@ -12,7 +12,8 @@ import {
     StudentDashboard,
     TeacherDashboard,
     TeacherProfile,
-    CourseList
+    CourseList,
+    About
 } from "./pages";
 import { ManagerDashboard, ManagerLogin } from "./pages/manager";
 import GuestRoute from "./routers/GuestRoute";
@@ -92,6 +93,8 @@ export default function App() {
                     <Route path="/manager/dashboard" element={<ManagerDashboard />} />
                 </Route>
                 <Route path="/courses" element={<CourseList />} />
+                <Route path="/about" element={<About />} />
+
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>

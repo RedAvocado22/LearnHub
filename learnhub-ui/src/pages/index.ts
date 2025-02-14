@@ -10,3 +10,4 @@ export { default as ResetPassword } from "./ResetPassword";
 export { default as UserProfile } from "./UserProfile";
 export { default as TeacherProfile } from "./TeacherProfile";
 export { default as CourseList } from "./CourseList";
+export { default as About } from "./About";
