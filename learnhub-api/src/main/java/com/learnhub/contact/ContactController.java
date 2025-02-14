@@ -22,7 +22,7 @@ public class ContactController {
             return ResponseEntity.badRequest().build();
         }
 
-        final String PHONE_REGEX = "^[0-9]{10,11}";
+        final String PHONE_REGEX = "^\\d{10,11}";
         final String EMAIL_REGEX = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
 
         if (!contact.email().matches(EMAIL_REGEX) || !contact.phone().matches(PHONE_REGEX)) {
