@@ -8,3 +8,4 @@ export { default as TeacherDashboard } from "./TeacherDashboard";
 export { default as ForgotPassword } from "./ForgotPassword";
 export { default as ResetPassword } from "./ResetPassword";
 export { default as UserProfile } from "./UserProfile";
+export { default as FQA } from "./FAQ";

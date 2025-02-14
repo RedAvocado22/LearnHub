@@ -24,6 +24,7 @@ import { DashboardLayout } from "./layouts";
 import Mailbox from "./pages/manager/teacher/Mailbox";
 import CourseList from "./pages/CourseList";
 import UserProfile from "./pages/UserProfile";
+import FAQ from "./pages/FAQ";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -63,6 +64,7 @@ export default function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/userProfile" element={<UserProfile />}></Route>
                 </Route>
+                <Route path="/faq" element={<FAQ />}></Route>
                 <Route element={<GuestRoute />}>
                     <Route path="/manager/login" element={<ManagerLogin />} />
                 </Route>
