@@ -16,10 +16,8 @@ public class UserController {
     private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
-    public record UserResponse(Long id, String email, String firstname, String lastname, UserRole role) {
-        public static UserResponse from(User user) {
-            return new UserResponse(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getRole());
-        }
+    private static UserResponse from(User user) {
+        return new UserResponse(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getRole());
     }
 
     @Autowired
@@ -28,6 +26,7 @@ public class UserController {
         this.passwordEncoder = passwordEncoder;
     }
 
+
     @GetMapping("/me")
     public ResponseEntity<UserResponse> getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -35,12 +34,12 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
         String email = authentication.getName();
-        return ResponseEntity.ok(UserResponse.from(userService.getUserByEmail(email)));
+        return ResponseEntity.ok(UserController.from(userService.getUserByEmail(email)));
     }
 
     @GetMapping
     public ResponseEntity<List<UserResponse>> getUsers() {
-        return ResponseEntity.ok(userService.getUsers().stream().map(UserResponse::from).toList());
+        return ResponseEntity.ok(userService.getUsers().stream().map(UserController::from).toList());
     }
 
     //Vì do cái mấy cái hiện của trang profile nó chưa thành nhiều phần khác nhau kiểu nên mỗi phần khác sẽ có cái nút
