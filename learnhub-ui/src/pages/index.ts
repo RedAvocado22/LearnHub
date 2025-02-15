@@ -1,12 +1,14 @@
-export { default as Home } from "./Home";
+export { default as Landing } from "./Landing";
 export { default as Login } from "./Login";
+export { default as ManagerLogin } from "./ManagerLogin";
 export { default as Register } from "./Register";
 export { default as NotFound } from "./NotFound";
 export { default as Unauthorized } from "./Unauthorized";
-export { default as StudentDashboard } from "./StudentDashboard";
-export { default as TeacherDashboard } from "./TeacherDashboard";
 export { default as ForgotPassword } from "./ForgotPassword";
 export { default as ResetPassword } from "./ResetPassword";
 export { default as UserProfile } from "./UserProfile";
 export { default as TeacherDetail } from "./TeacherDetail";
 export { default as CourseList } from "./CourseList";
+export { default as ContactUs } from "./ContactUs";
+export { default as Home } from "./Home";
+export { default as Mailbox } from "./Mailbox";
