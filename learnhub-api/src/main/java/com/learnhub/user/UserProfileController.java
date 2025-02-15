@@ -30,6 +30,7 @@ public class UserProfileController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+
         String email = authentication.getName();
         Student student = studentService.getStudentByEmail(email);
 
@@ -51,6 +52,7 @@ public class UserProfileController {
         if (authentication == null || !authentication.isAuthenticated()) {
             return null;
         }
+
         String email = authentication.getName();
         User user = userService.getUserByEmail(email);
 
@@ -67,12 +69,12 @@ public class UserProfileController {
         User user = userService.getUserByEmail(email);
         String password1 = passwordRequest.oldpassword();
         String password = passwordEncoder.encode(passwordRequest.oldpassword());
-        if(!passwordEncoder.matches(password1,user.getPassword())) {
+
+        if (!passwordEncoder.matches(password1, user.getPassword())) {
             return ResponseEntity.badRequest().body("Current password does not match");
         } else if (!passwordRequest.newpassword().equals(passwordRequest.repassword())) {
             return ResponseEntity.badRequest().body("Confirm Password does not match");
-        }
-        else {
+        } else {
             user.setPassword(passwordEncoder.encode(passwordRequest.newpassword()));
             userService.saveUser(user);
             return ResponseEntity.ok("Password changed successfully");

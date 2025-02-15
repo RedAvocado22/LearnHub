@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { API } from "../api";
 import { isAxiosError } from "axios";
+import { validatePassword } from "../utils/Validate";
 
 export default function ResetPassword() {
     const { token } = useParams();
@@ -23,20 +24,15 @@ export default function ResetPassword() {
         } catch (error) {
             if (isAxiosError(error)) {
                 if (error.status === 400) {
-                    toast(
+                    toast.error(
                         "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
                     );
                 } else {
-                    toast("An error was occurred!");
+                    toast.error("An error was occurred!");
                 }
             }
         }
     }
-
-    const validatePassword = (password: string) => {
-        const regex = /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$/;
-        return regex.test(password);
-    };
 
     useEffect(() => {
         if (password.length != 0 && confPassword.length != 0) {

@@ -2,12 +2,18 @@ import { useEffect, useState } from "react";
 import { Footer, Header } from "../layouts";
 import { API } from "../api";
 
+interface Course {
+    id: number;
+    name: string;
+    price: number;
+}
+
 export default function CourseList() {
-    const [courses, setCourses] = useState([]);
+    const [courses, setCourses] = useState<Course[]>([]);
 
     useEffect(() => {
         API.get("/courses").then((resp) => {
-            setCourses(resp.data);
+            setCourses(resp?.data || []);
             console.log(courses);
         });
     }, []);
@@ -23,16 +29,6 @@ export default function CourseList() {
                         <div className="page-banner-entry">
                             <h1 className="text-white">Our Courses</h1>
                         </div>
-                    </div>
-                </div>
-                <div className="breadcrumb-row">
-                    <div className="container">
-                        <ul className="list-inline">
-                            <li>
-                                <a href="#">Home</a>
-                            </li>
-                            <li>Our Courses</li>
-                        </ul>
                     </div>
                 </div>
                 <div className="content-block">

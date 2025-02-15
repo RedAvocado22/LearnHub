@@ -16,7 +16,9 @@ public class ContactController {
 
     @PostMapping("/contact")
     public ResponseEntity<String> contactUs(@RequestBody ContactRequest contact) {
-        if (contact.email() == null || contact.phone() == null || contact.firstName() == null || contact.lastName() == null || contact.message() == null) {
+        if (contact.email().isEmpty() || contact.phone().isEmpty() ||
+                contact.firstName().isEmpty() || contact.lastName().isEmpty() ||
+                contact.message().isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
