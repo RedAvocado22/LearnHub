@@ -5,6 +5,7 @@ import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
 
 @Entity
@@ -16,58 +17,36 @@ public class Teacher extends User {
     @Column(name = "major")
     private String major;
 
-    @Column(name = "phone_no")
-    private String phone_no;
+    @Column(name = "website")
+    private String website;
 
-    @Column(name = "address")
-    private String address;
-
-    @Column(name = "school")
-    private String school;
-
-    @Column(name = "adress")
-    private String adress;
-
-    @Column(name = "city")
-    private String city;
+    @Column(name = "about")
+    private String about;
 
     public Teacher() {
     }
 
-    public Teacher(String email, String firstName, String lastName, String password, UserRole role, boolean active, String address, String adress, String city, String major, String phone_no, String school) {
-        super(email, firstName, lastName, password, role, active);
-        this.address = address;
-        this.adress = adress;
-        this.city = city;
+    public Teacher(String email,
+                   String firstName, String lastName,
+                   String password,
+                   UserRole role, boolean active,
+                   LocalDateTime createdAt,
+                   String phoneNo,
+                   String address, String city,
+                   String major, String website, String about) {
+        super(email, firstName, lastName, password, role, active, createdAt, phoneNo, address, city);
         this.major = major;
-        this.phone_no = phone_no;
-        this.school = school;
+        this.website = website;
+        this.about = about;
     }
 
-    public String getAddress() {
-        return address;
+    public Collection<Course> getCourse() {
+        return course;
     }
 
-    public void setAddress(String address) {
-        this.address = address;
+    public void setCourse(Collection<Course> course) {
+        this.course = course;
     }
-
-    public String getAdress() {
-        return adress;
-    }
-
-    public void setAdress(String adress) {
-        this.adress = adress;
-    }
-
-    public String getCity() {
-        return city;
-    }
-
-    public void setCity(String city) {
-        this.city = city;
-    }
-
 
     public String getMajor() {
         return major;
@@ -77,20 +56,19 @@ public class Teacher extends User {
         this.major = major;
     }
 
-    public String getPhone_no() {
-        return phone_no;
+    public String getWebsite() {
+        return website;
     }
 
-    public void setPhone_no(String phone_no) {
-        this.phone_no = phone_no;
+    public void setWebsite(String website) {
+        this.website = website;
     }
 
-    public String getSchool() {
-        return school;
+    public String getAbout() {
+        return about;
     }
 
-    public void setSchool(String school) {
-        this.school = school;
+    public void setAbout(String about) {
+        this.about = about;
     }
-    
 }
