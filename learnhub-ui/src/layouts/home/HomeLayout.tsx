@@ -1,5 +1,9 @@
 import { useState } from "react";
 import NotificationList from "./NotificationList";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { UserRole } from "../../types/Account";
 
 interface SidebarItem {
     label: string;
@@ -8,48 +12,64 @@ interface SidebarItem {
     submenu?: { label: string; link: string }[];
 }
 
-// NOTE: This is mock list, pass this as props later
-const items: SidebarItem[] = [
-    { label: "Dashboard", icon: "ti-home", link: "index.html" },
-    { label: "Courses", icon: "ti-book", link: "courses.html" },
-    {
-        label: "Mailbox",
-        icon: "ti-email",
-        submenu: [
-            { label: "Mail Box", link: "mailbox.html" },
-            { label: "Compose", link: "mailbox-compose.html" },
-            { label: "Mail Read", link: "mailbox-read.html" }
-        ]
-    },
-    {
-        label: "Calendar",
-        icon: "ti-calendar",
-        submenu: [
-            { label: "Basic Calendar", link: "basic-calendar.html" },
-            { label: "List View", link: "list-view-calendar.html" }
-        ]
-    },
-    { label: "Bookmarks", icon: "ti-bookmark-alt", link: "bookmark.html" },
-    { label: "Review", icon: "ti-comments", link: "review.html" },
-    { label: "Add Listing", icon: "ti-layout-accordion-list", link: "add-listing.html" },
-    {
-        label: "My Profile",
-        icon: "ti-user",
-        submenu: [
-            { label: "User Profile", link: "user-profile.html" },
-            { label: "Teacher Profile", link: "teacher-profile.html" }
-        ]
-    }
-];
+interface HomeLayoutProps {
+    children: React.ReactNode;
+}
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+const userMenus: Record<UserRole, SidebarItem[]> = {
+    STUDENT: [
+        { label: "Home", icon: "ti-home", link: "/home" },
+        {
+            label: "My Courses",
+            icon: "ti-book",
+            submenu: [
+                { label: "In Progress", link: "/courses/progress" },
+                { label: "Finished", link: "/courses/finished" }
+            ]
+        }
+    ],
+    TEACHER: [
+        { label: "Dashboard", icon: "ti-home", link: "/home" },
+        {
+            label: "My Courses",
+            icon: "ti-book",
+            submenu: [
+                { label: "Created", link: "/courses/created" },
+                { label: "Published", link: "/courses/published" },
+                { label: "Submitted", link: "/courses/submitted" },
+                { label: "Cancelled", link: "/courses/cancelled" }
+            ]
+        }
+    ],
+    TEACHER_MANAGER: [
+        { label: "Dashboard", icon: "ti-home", link: "/home" },
+        { label: "Mailbox", icon: "ti-email", link: "/manager/mailbox" }
+    ],
+    COURSE_MANAGER: [{ label: "Dashboard", icon: "ti-home", link: "/home" }],
+    ADMIN: []
+};
+
+export default function HomeLayout({ children }: HomeLayoutProps) {
     const [displaySidebar, setDisplaySidebar] = useState(false);
     const [displayNotifList, setDisplayNotifList] = useState(false);
     const [displayProfile, setDisplayProfile] = useState(false);
     const [openSidebarItem, setOpenSidebarItem] = useState<number | null>(null);
+    const { account, logout } = useAuth();
+    const navigate = useNavigate();
+
+    const menu: SidebarItem[] = userMenus[account?.role as UserRole] ?? [];
 
     const handleToggleSidebarItem = (index: number) => {
         setOpenSidebarItem(openSidebarItem === index ? null : index);
+    };
+
+    const handleLogout = async () => {
+        try {
+            logout();
+            navigate("/");
+        } catch (err) {
+            toast.warning((err as Error).message);
+        }
     };
     return (
         <div className={`${displaySidebar ? "ttr-opened-sidebar " : ""}ttr-pinned-sidebar`}>
@@ -67,14 +87,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                 <img
                                     alt=""
                                     className="ttr-logo-mobile"
-                                    src="assets/images/logo-mobile.png"
+                                    src="/assets/images/logo-mobile.png"
                                     width="30"
                                     height="30"
                                 />
                                 <img
                                     alt=""
                                     className="ttr-logo-desktop"
-                                    src="assets/images/logo-white.png"
+                                    src="/assets/images/logo-white.png"
                                     width="160"
                                     height="27"
                                 />
@@ -124,7 +144,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     }}
                                     className="ttr-material-button ttr-submenu-toggle">
                                     <span className="ttr-user-avatar">
-                                        <img alt="" src="assets/images/testimonials/pic3.jpg" width="32" height="32" />
+                                        <img alt="" src="/assets/images/testimonials/pic3.jpg" width="32" height="32" />
                                     </span>
                                 </a>
                                 <div
@@ -132,16 +152,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                                     style={{ display: "block" }}>
                                     <ul>
                                         <li>
-                                            <a href="user-profile.html">My profile</a>
+                                            <a href="/profile">My profile</a>
                                         </li>
                                         <li>
-                                            <a href="list-view-calendar.html">Activity</a>
-                                        </li>
-                                        <li>
-                                            <a href="mailbox.html">Messages</a>
-                                        </li>
-                                        <li>
-                                            <a href="../login.html">Logout</a>
+                                            <a href="#" onClick={handleLogout}>
+                                                Logout
+                                            </a>
                                         </li>
                                     </ul>
                                 </div>
@@ -154,7 +170,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 <div className="ttr-sidebar-wrapper content-scroll">
                     <div className="ttr-sidebar-logo">
                         <a href="#">
-                            <img alt="" src="assets/images/logo.png" width="122" height="27" />
+                            <img alt="" src="/assets/images/logo.png" width="122" height="27" />
                         </a>
                         <div onClick={() => setDisplaySidebar(false)} className="ttr-sidebar-toggle-button">
                             <i className="ti-arrow-left"></i>
@@ -162,7 +178,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                     </div>
                     <nav className="ttr-sidebar-navi">
                         <ul>
-                            {items.map((item, index) =>
+                            {menu.map((item, index) =>
                                 item.submenu ? (
                                     <li key={index} className={openSidebarItem === index ? "show" : ""}>
                                         <a

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAuth } from "../../hooks/useAuth";
+import { useAuth } from "../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function ManagerLogin() {
@@ -13,7 +13,7 @@ export default function ManagerLogin() {
         try {
             await login({ email, password });
             toast.success("Login successfully");
-            navigate("/dashboard");
+            navigate("/home");
         } catch (err) {
             toast.warning((err as Error).message);
             setEmail("");

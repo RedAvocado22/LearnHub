@@ -1,8 +1,8 @@
-import { DashboardLayout } from "../../../layouts";
+import { HomeLayout } from "../layouts";
 
 export default function Mailbox() {
     return (
-        <DashboardLayout>
+        <HomeLayout>
             <main className="ttr-wrapper">
                 <div className="container-fluid">
                     <div className="db-breadcrumb">
@@ -29,6 +29,12 @@ export default function Mailbox() {
                                         <div className="email-menu-bar-inner">
                                             <ul>
                                                 <li className="active">
+                                                    <a href="mailbox.html">
+                                                        <i className="fa-light fa-phone"></i>Contact{" "}
+                                                        <span className="badge badge-success">8</span>
+                                                    </a>
+                                                </li>
+                                                <li>
                                                     <a href="mailbox.html">
                                                         <i className="fa fa-envelope-o"></i>Inbox{" "}
                                                         <span className="badge badge-success">8</span>
@@ -875,6 +881,6 @@ export default function Mailbox() {
                     </div>
                 </div>
             </main>
-        </DashboardLayout>
+        </HomeLayout>
     );
 }

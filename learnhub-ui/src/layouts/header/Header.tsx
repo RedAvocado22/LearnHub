@@ -1,16 +1,11 @@
 import logo from "/assets/images/logo.png";
-import adv from "/assets/images/adv/adv.jpg";
 import "./Header.css";
 import Topbar from "./Topbar";
-import { useAuth } from "../../hooks/useAuth";
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { Link, useLocation } from "react-router-dom";
 
 export default function Header() {
-    const { account, logout } = useAuth();
     const [searchVisible, setSearchVisible] = useState(false);
-    const navigate = useNavigate();
     const location = useLocation();
 
     const isActive = (path: string) => location.pathname === path;
@@ -21,17 +16,9 @@ export default function Header() {
     const handleCloseSearch = () => {
         setSearchVisible(false);
     };
-    const handleLogout = async () => {
-        try {
-            logout();
-            navigate("/");
-        } catch (err) {
-            toast.warning((err as Error).message);
-        }
-    };
     return (
         <header className="header rs-nav">
-            {!account && <Topbar />}
+            <Topbar />
             <div className="sticky-header navbar-expand-lg">
                 <div className="menu-bar clearfix">
                     <div className="container clearfix">
@@ -109,9 +96,6 @@ export default function Header() {
                                 </Link>
                             </div>
                             <ul className="nav navbar-nav">
-                                <li className={isActive("/") ? "active" : ""}>
-                                    <Link to="/">Home</Link>
-                                </li>
                                 <li className={isActive("/courses") ? "active" : ""}>
                                     <Link to="/courses">Courses</Link>
                                 </li>
@@ -121,26 +105,6 @@ export default function Header() {
                                 <li className={isActive("/contact") ? "active" : ""}>
                                     <Link to="/contact">Contact Us</Link>
                                 </li>
-                                {account && (
-                                    <>
-                                        <li>
-                                            <a href="#">
-                                                {account.firstname} {account.lastname}{" "}
-                                                <i className="fa fa-chevron-down"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="/user-profile">Profile</a>
-                                                </li>
-                                                <li>
-                                                    <a href="" onClick={handleLogout}>
-                                                        Logout
-                                                    </a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </>
-                                )}
                             </ul>
                             <div className="nav-social-link">
                                 <a href="#">
