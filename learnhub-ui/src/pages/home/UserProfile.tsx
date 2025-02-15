@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
-import { UserRole } from "../types/Account";
+import { useAuth } from "../../hooks/useAuth";
+import { UserRole } from "../../types/Account";
 import StudentProfile from "./StudentProfile";
 import TeacherProfile from "./TeacherProfile";
 

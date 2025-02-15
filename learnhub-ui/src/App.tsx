@@ -11,7 +11,7 @@ import {
     ForgotPassword,
     ResetPassword,
     CourseList,
-    TeacherDetail,
+    TeacherDetails,
     ContactUs,
     Home,
     Mailbox
@@ -21,7 +21,7 @@ import ProtectedRoute from "./routers/ProtectedRoute";
 import Dummy from "./pages/Dummy";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/Account";
-import UserProfile from "./pages/UserProfile";
+import UserProfile from "./pages/home/UserProfile";
 import AuthProvider from "./hooks/useAuth";
 
 export default function App() {
@@ -54,7 +54,7 @@ export default function App() {
                 <Route path="/contact" element={<ContactUs />} />
                 <Route path="/activate/:token" element={<Login />} />
                 <Route path="/courses" element={<CourseList />} />
-                <Route path="/teacher/:id" element={<TeacherDetail />}></Route>
+                <Route path="/teacher/:id" element={<TeacherDetails />}></Route>
 
                 {/* Routes for unathenticated users */}
                 <Route element={<GuestRoute />}>

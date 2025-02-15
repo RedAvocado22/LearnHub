@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Footer, Header } from "../layouts";
-import { API } from "../api";
+import { MainLayout } from "../../layouts";
+import { API } from "../../api";
 
 interface Course {
     id: number;
@@ -19,8 +19,7 @@ export default function CourseList() {
     }, []);
 
     return (
-        <>
-            <Header />
+        <MainLayout>
             <div className="page-content bg-white">
                 <div
                     className="page-banner ovbl-dark"
@@ -211,7 +210,6 @@ export default function CourseList() {
                     </div>
                 </div>
             </div>
-            <Footer />
-        </>
+        </MainLayout>
     );
 }

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { HomeLayout } from "../layouts";
-import { API } from "../api";
+import { HomeLayout } from "../../../layouts";
+import { API } from "../../../api";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
 

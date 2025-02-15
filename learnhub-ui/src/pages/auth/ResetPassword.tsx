@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
-import { API } from "../api";
+import { API } from "../../api";
 import { isAxiosError } from "axios";
-import { validatePassword } from "../utils/Validate";
+import { validatePassword } from "../../utils/Validate";
 
 export default function ResetPassword() {
     const { token } = useParams();

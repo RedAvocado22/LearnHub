@@ -1,7 +1,7 @@
 import { useState } from "react";
 import NotificationList from "./NotificationList";
 import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { UserRole } from "../../types/Account";
 
@@ -83,7 +83,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     </div>
                     <div className="ttr-logo-box">
                         <div>
-                            <a href="/home" className="ttr-logo">
+                            <a href="/" className="ttr-logo">
                                 <img
                                     alt=""
                                     className="ttr-logo-mobile"
@@ -104,14 +104,14 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     <div className="ttr-header-menu">
                         <ul className="ttr-header-navigation">
                             <li>
-                                <a href="/home" className="ttr-material-button ttr-submenu-toggle">
+                                <Link to="/home" className="ttr-material-button ttr-submenu-toggle">
                                     HOME
-                                </a>
+                                </Link>
                             </li>
                             <li>
-                                <a href="/courses" className="ttr-material-button ttr-submenu-toggle">
+                                <Link to="/courses" className="ttr-material-button ttr-submenu-toggle">
                                     COURSES
-                                </a>
+                                </Link>
                             </li>
                         </ul>
                     </div>

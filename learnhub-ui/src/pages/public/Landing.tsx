@@ -2,8 +2,8 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import CountUp from "react-countup";
-import { MainLayout } from "../layouts";
-import CourseCard from "../layouts/elements/CourseCard";
+import { MainLayout } from "../../layouts";
+import CourseCard from "../../layouts/elements/CourseCard";
 
 const popularCourses = [
     {

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-import { API } from "../api";
+import { API } from "../../api";
 import { isAxiosError } from "axios";
 import { validateEmail } from "../utils/Validate";
 

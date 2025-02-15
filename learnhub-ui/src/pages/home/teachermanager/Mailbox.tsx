@@ -1,4 +1,4 @@
-import { HomeLayout } from "../layouts";
+import { HomeLayout } from "../../../layouts";
 
 export default function Mailbox() {
     return (

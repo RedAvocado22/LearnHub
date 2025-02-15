@@ -1,9 +1,9 @@
 import { useState } from "react";
-import { StudentType } from "../types/Account";
-import { register } from "../api/auth";
+import { StudentType } from "../../types/Account";
+import { register } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { validateEmail, validatePassword } from "../utils/Validate";
+import { validateEmail, validatePassword } from "../../utils/Validate";
 import { toast } from "react-toastify";
 
 export default function Register() {

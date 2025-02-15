@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { activateAccount } from "../api/auth";
+import { activateAccount } from "../../api/auth";
 import Swal from "sweetalert2";
-import { useAuth } from "../hooks/useAuth";
+import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 
 export default function Login() {

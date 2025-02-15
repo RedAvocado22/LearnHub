@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { Footer, Header } from "../layouts";
-import { API } from "../api";
+import { Footer, Header } from "../../layouts";
+import { API } from "../../api";
 import { useParams } from "react-router-dom";
 
 interface Course {
@@ -9,7 +9,7 @@ interface Course {
     price: number;
 }
 
-export default function TeacherProfile() {
+export default function TeacherDetails() {
     const [courses, setCourses] = useState<Course[]>([]);
 
     const { id } = useParams();

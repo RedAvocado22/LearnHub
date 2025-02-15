@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Footer, Header } from "../layouts";
-import { API } from "../api";
+import { MainLayout } from "../../layouts";
+import { API } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
-import { validateEmail, validatePhone } from "../utils/Validate";
+import { validateEmail, validatePhone } from "../../utils/Validate";
 
 export default function ContactUs() {
     const [firstName, setFirstName] = useState("");
@@ -49,8 +49,7 @@ export default function ContactUs() {
     };
 
     return (
-        <div className="page-wraper">
-            <Header />
+        <MainLayout>
             <div className="page-content bg-white">
                 {/* inner page banner */}
                 <div
@@ -212,7 +211,6 @@ export default function ContactUs() {
                     </div>
                 </div>
             </div>
-            <Footer />
-        </div>
+        </MainLayout>
     );
 }
