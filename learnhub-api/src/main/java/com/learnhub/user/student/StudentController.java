@@ -12,14 +12,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "/api/v1/students")
 public class StudentController {
 
-    @Autowired
     PasswordEncoder passwordEncoder;
 
-    @Autowired
     UserService userService;
 
-    @Autowired
     StudentService studentService;
+
+    @Autowired
+    public StudentController(PasswordEncoder passwordEncoder, UserService userService, StudentService studentService) {
+        this.passwordEncoder = passwordEncoder;
+        this.userService = userService;
+        this.studentService = studentService;
+    }
 
     @GetMapping("/me")
     public Student profile() {

@@ -6,8 +6,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class TeacherService {
-    @Autowired
     private TeacherRepositery teacherRepositery;
+
+    @Autowired
+    public TeacherService(TeacherRepositery teacherRepositery) {
+        this.teacherRepositery = teacherRepositery;
+    }
 
     public Teacher getTeacherById(Long id) {
         return teacherRepositery.findTeacherById(id);

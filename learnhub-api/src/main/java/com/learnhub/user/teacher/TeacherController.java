@@ -10,11 +10,15 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/v1/teachers")
 public class TeacherController {
-    @Autowired
     TeacherService teacherService;
 
-    @Autowired
     CourseService courseService;
+
+    @Autowired
+    public TeacherController(TeacherService teacherService, CourseService courseService) {
+        this.teacherService = teacherService;
+        this.courseService = courseService;
+    }
 
     @GetMapping("/{id}")
     public Teacher profile(@PathVariable Long id) {
