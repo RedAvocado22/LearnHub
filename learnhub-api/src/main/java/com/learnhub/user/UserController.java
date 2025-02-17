@@ -2,6 +2,7 @@ package com.learnhub.user;
 
 import java.util.List;
 
+import com.learnhub.constant.IConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -94,6 +95,9 @@ public class UserController {
         if (!passwordRequest.confirmPassword().equals(passwordRequest.newPassword()))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Passwords don't match");
 
+        if (!passwordRequest.newPassword().matches(IConstant.PASS_REGEX))
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Invalid password format");
+        
         user.setPassword(passwordEncoder.encode(passwordRequest.newPassword()));
         userService.change(user);
         return ResponseEntity.ok("Password changed successfully");
