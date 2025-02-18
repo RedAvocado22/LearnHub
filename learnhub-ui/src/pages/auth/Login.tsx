@@ -1,15 +1,15 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { activateAccount } from "../../api/auth";
+import { useUser } from "../../hooks/useUser";
 import Swal from "sweetalert2";
-import { useAuth } from "../../hooks/useAuth";
 import { toast } from "react-toastify";
 
 export default function Login() {
     const { token } = useParams();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const { login } = useAuth();
+    const { login } = useUser();
     const navigate = useNavigate();
 
     useEffect(() => {

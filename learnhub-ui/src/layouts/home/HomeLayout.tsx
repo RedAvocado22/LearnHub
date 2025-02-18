@@ -1,9 +1,9 @@
 import { useState } from "react";
 import NotificationList from "./NotificationList";
-import { useAuth } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { UserRole } from "../../types/Account";
+import { UserRole } from "../../types/User";
 
 interface SidebarItem {
     label: string;
@@ -54,10 +54,10 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const [displayNotifList, setDisplayNotifList] = useState(false);
     const [displayProfile, setDisplayProfile] = useState(false);
     const [openSidebarItem, setOpenSidebarItem] = useState<number | null>(null);
-    const { account, logout } = useAuth();
+    const { user, logout } = useUser();
     const navigate = useNavigate();
 
-    const menu: SidebarItem[] = userMenus[account?.role as UserRole] ?? [];
+    const menu: SidebarItem[] = userMenus[user?.role as UserRole] ?? [];
 
     const handleToggleSidebarItem = (index: number) => {
         setOpenSidebarItem(openSidebarItem === index ? null : index);
@@ -152,7 +152,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                     style={{ display: "block" }}>
                                     <ul>
                                         <li>
-                                            <a href="/profile">My profile</a>
+                                            <Link to="/profile">My profile</Link>
                                         </li>
                                         <li>
                                             <a href="#" onClick={handleLogout}>
@@ -196,21 +196,21 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                         <ul style={{ display: openSidebarItem === index ? "block" : "none" }}>
                                             {item.submenu.map((subItem, subIndex) => (
                                                 <li key={subIndex}>
-                                                    <a href={subItem.link} className="ttr-material-button">
+                                                    <Link to={subItem.link} className="ttr-material-button">
                                                         <span className="ttr-label">{subItem.label}</span>
-                                                    </a>
+                                                    </Link>
                                                 </li>
                                             ))}
                                         </ul>
                                     </li>
                                 ) : (
                                     <li key={index}>
-                                        <a href={item.link} className="ttr-material-button">
+                                        <Link to={item.link || "/home"} className="ttr-material-button">
                                             <span className="ttr-icon">
                                                 <i className={item.icon}></i>
                                             </span>
                                             <span className="ttr-label">{item.label}</span>
-                                        </a>
+                                        </Link>
                                     </li>
                                 )
                             )}

@@ -3,10 +3,10 @@ import "./Header.css";
 import Topbar from "./Topbar";
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
 
 export default function Header() {
-    const { account } = useAuth();
+    const { user } = useUser();
     const [searchVisible, setSearchVisible] = useState(false);
     const location = useLocation();
 
@@ -20,7 +20,7 @@ export default function Header() {
     };
     return (
         <header className="header rs-nav">
-            {!account && <Topbar />}
+            {!user && <Topbar />}
             <div className="sticky-header navbar-expand-lg">
                 <div className="menu-bar clearfix">
                     <div className="container clearfix">
@@ -98,6 +98,11 @@ export default function Header() {
                                 </Link>
                             </div>
                             <ul className="nav navbar-nav">
+                                {user && (
+                                    <li className={isActive("/home") ? "active" : ""}>
+                                        <Link to="/home">Home</Link>
+                                    </li>
+                                )}
                                 <li className={isActive("/courses") ? "active" : ""}>
                                     <Link to="/courses">Courses</Link>
                                 </li>

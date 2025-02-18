@@ -1,14 +1,14 @@
 import { Navigate } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
-import { UserRole } from "../../types/Account";
-import StudentProfile from "./StudentProfile";
-import TeacherProfile from "./TeacherProfile";
+import { UserRole } from "../../types/User";
+import { useUser } from "../../hooks/useUser";
+import StudentProfile from "./student/StudentProfile";
+import TeacherProfile from "./teacher/TeacherProfile";
 
 export default function UserProfile() {
-    const { account } = useAuth();
-    if (account?.role === UserRole.STUDENT) {
+    const { user } = useUser();
+    if (user?.role === UserRole.STUDENT) {
         return <StudentProfile />;
-    } else if (account?.role === UserRole.TEACHER) {
+    } else if (user?.role === UserRole.TEACHER) {
         return <TeacherProfile />;
     } else {
         return <Navigate to="/404" replace />;

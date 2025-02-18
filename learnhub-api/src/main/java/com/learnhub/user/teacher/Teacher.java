@@ -46,6 +46,10 @@ public class Teacher extends User {
         return major;
     }
 
+    public void setMajor(String major) {
+        this.major = major;
+    }
+
     public String getWebsite() {
         return website;
     }

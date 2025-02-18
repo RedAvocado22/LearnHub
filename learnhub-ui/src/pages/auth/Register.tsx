@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { StudentType } from "../../types/Account";
+import { StudentType } from "../../types/User";
 import { register } from "../../api/auth";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";

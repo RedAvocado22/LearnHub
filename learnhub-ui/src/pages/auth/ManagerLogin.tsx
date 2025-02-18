@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { useAuth } from "../../hooks/useAuth";
+import { useUser } from "../../hooks/useUser";
 import { useNavigate } from "react-router-dom";
 
 export default function ManagerLogin() {
-    const { login } = useAuth();
+    const { login } = useUser();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const navigate = useNavigate();

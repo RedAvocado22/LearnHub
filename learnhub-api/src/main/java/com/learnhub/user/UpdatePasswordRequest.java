@@ -1,13 +1,15 @@
-package com.learnhub.auth;
+package com.learnhub.user;
 
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import com.learnhub.util.validation.Validator;
 
-public record ResetPasswordRequest(
+public record UpdatePasswordRequest(
+        @NotEmpty
+        String oldPassword,
+
         @NotEmpty
         @Pattern(regexp = Validator.PASSWORD_REGEX, message = Validator.PASSWORD_MSG)
-        String password,
-        @NotEmpty String token
+        String newPassword
 ) {
 }

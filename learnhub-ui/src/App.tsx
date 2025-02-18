@@ -14,15 +14,15 @@ import {
     TeacherDetails,
     ContactUs,
     Home,
+    UserProfile,
     Mailbox
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
 import Dummy from "./pages/Dummy";
 import { ToastContainer } from "react-toastify";
-import { UserRole } from "./types/Account";
-import UserProfile from "./pages/home/UserProfile";
-import AuthProvider from "./hooks/useAuth";
+import { UserRole } from "./types/User";
+import UserProvider from "./hooks/useUser";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -44,7 +44,7 @@ export default function App() {
     }
 
     return (
-        <AuthProvider>
+        <UserProvider>
             <Routes>
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />
@@ -89,6 +89,6 @@ export default function App() {
                 <Route path="/*" element={<NotFound />} />
             </Routes>
             <ToastContainer position="top-right" style={{ zIndex: 999999 }} />
-        </AuthProvider>
+        </UserProvider>
     );
 }

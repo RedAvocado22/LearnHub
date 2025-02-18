@@ -1,11 +1,10 @@
-package com.learnhub.contact;
+package com.learnhub.user.teacher;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import com.learnhub.util.validation.Validator;
 
-public record ContactRequest(
+public record UpdateTeacherRequest(
         @NotEmpty
         String firstName,
 
@@ -13,18 +12,19 @@ public record ContactRequest(
         String lastName,
 
         @NotEmpty
-        @Email
-        String email,
+        String major,
 
         @NotEmpty
         @Pattern(regexp = Validator.PHONE_REGEX, message = Validator.PHONE_MSG)
         String phone,
 
         @NotEmpty
-        String subject,
+        String address,
 
         @NotEmpty
-        String message
-) {
+        String city,
 
+        @NotEmpty
+        String country
+) {
 }
