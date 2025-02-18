@@ -3,19 +3,19 @@ package com.learnhub.user.student;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class StudentService {
-    @Autowired
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
-    public Student getStudentByEmail(String email) {
-        return studentRepository.findByEmail(email);
+    @Autowired
+    public StudentService(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
     }
 
-    public void changeProfile(Student student) {
+    public void updateStudent(Student student, UpdateStudentRequest req) {
+        student.setFirstName(req.firstName());
+        student.setLastName(req.lastName());
+        student.setType(req.type());
         studentRepository.save(student);
     }
-
 }

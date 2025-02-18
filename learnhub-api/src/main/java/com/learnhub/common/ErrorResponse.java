@@ -4,14 +4,14 @@ import org.springframework.http.HttpStatus;
 
 public class ErrorResponse {
     private HttpStatus status;
-    private String message;
+    private Object error;
     private long timestamp;
 
     public ErrorResponse() {}
 
-    public ErrorResponse(HttpStatus status, String message) {
+    public ErrorResponse(HttpStatus status, Object error) {
         this.status = status;
-        this.message = message;
+        this.error = error;
         this.timestamp = System.currentTimeMillis();
     }
 
@@ -21,11 +21,11 @@ public class ErrorResponse {
     public void setStatus(HttpStatus status) {
         this.status = status;
     }
-    public String getMessage() {
-        return message;
+    public Object getError() {
+        return error;
     }
-    public void setMessage(String message) {
-        this.message = message;
+    public void setError(Object error) {
+        this.error = error;
     }
     public long getTimestamp() {
         return timestamp;

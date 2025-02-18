@@ -1,23 +1,30 @@
 package com.learnhub.user.teacher;
 
-import com.learnhub.course.CourseService;
+import jakarta.validation.Valid;
+import com.learnhub.user.User;
+import com.learnhub.user.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/teacher")
+@RequestMapping("/api/v1/teachers")
 public class TeacherController {
-    @Autowired
-    TeacherService teacherService;
+    private final TeacherService teacherService;
 
     @Autowired
-    CourseService courseService;
-
-    @GetMapping("/{id}")
-    public Teacher teacherProfile(@PathVariable Long id){
-        return teacherService.getTeacherById(id);
+    public TeacherController(TeacherService teacherService) {
+        this.teacherService = teacherService;
     }
 
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateCurrentStudent(
+            @AuthenticationPrincipal User user, @Valid @RequestBody UpdateTeacherRequest req) {
+        teacherService.updateTeacher((Teacher)user, req);
+        return ResponseEntity.ok(UserResponse.from(user));
+    }
 }

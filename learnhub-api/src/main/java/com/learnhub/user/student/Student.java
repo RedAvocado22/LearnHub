@@ -1,5 +1,6 @@
 package com.learnhub.user.student;
 
+import java.time.LocalDateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -15,12 +16,30 @@ public class Student extends User {
     @Column(name = "type", nullable = false)
     private StudentType type;
 
-    public Student() {}
+    @Column(name = "school")
+    private String school;
 
-    public Student(String email, String firstName, String lastName, String password, UserRole role,
-            boolean active, StudentType type) {
-        super(email, firstName, lastName, password, role, active);
+    public Student() {
+    }
+
+    public Student(String email,
+                   String firstName, String lastName,
+                   String password, boolean active,
+                   LocalDateTime createdAt,
+                   String phoneNo,
+                   String address, String city,
+                   StudentType type, String school) {
+        super(email, firstName, lastName, password, UserRole.STUDENT, active, createdAt, phoneNo, address, city);
         this.type = type;
+        this.school = school;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
     public StudentType getType() {

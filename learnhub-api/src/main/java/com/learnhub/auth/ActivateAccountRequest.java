@@ -1,4 +1,6 @@
 package com.learnhub.auth;
 
-public record ActivateAccountRequest(String token) {
+import jakarta.validation.constraints.NotEmpty;
+
+public record ActivateAccountRequest(@NotEmpty String token) {
 }
