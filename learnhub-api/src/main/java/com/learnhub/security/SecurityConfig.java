@@ -3,6 +3,7 @@ package com.learnhub.security;
 import java.util.Arrays;
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.jwt.JwtFilter;
+import com.learnhub.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,8 +35,7 @@ public class SecurityConfig {
         "/swagger-ui.html",
         "/swagger-ui/**",
         "/swagger-resources/**",
-        "/api/v*/contact/**",
-        "/api/v*/courses/**"
+        "/api/v*/public/**"
     };
     private final LogoutHandler logoutHandler;
     private final UserDetailsService userDetailsService;
@@ -61,6 +61,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(WHITE_LIST).permitAll()
+                        .requestMatchers("/api/v*/students/me/**").hasAuthority(UserRole.STUDENT.name())
+                        .requestMatchers("/api/v*/teachers/me/**").hasAuthority(UserRole.TEACHER.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())

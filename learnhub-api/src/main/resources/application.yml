@@ -2,20 +2,17 @@ frontend:
   baseurl: http://localhost:5173
 
 spring:
+  profiles:
+    active: dev
   application:
     name: learnhub-api
     security:
       jwt:
-        expiration: 900000 # 15 minutes
+        expiration: 300000 # 5 minutes
         refresh-token:
           expiration: 86400000 # 1 day
   main:
     banner-mode: off
-  datasource:
-    url: jdbc:mysql://localhost:3306/learnhub
-    username: root
-    password: 123@123
-    driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
       ddl-auto: update
@@ -31,3 +28,7 @@ spring:
           auth: true
           starttls:
             enable: true
+
+logging:
+  level:
+    root: error

@@ -1,10 +1,10 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import { useUser } from "../hooks/useUser";
 
 export default function GuestRoute() {
-    const { account } = useAuth();
-    if (account) {
-        return <Navigate to="/" replace />;
+    const { user } = useUser();
+    if (user) {
+        return <Navigate to="/home" replace />;
     }
     return <Outlet />;
 }
