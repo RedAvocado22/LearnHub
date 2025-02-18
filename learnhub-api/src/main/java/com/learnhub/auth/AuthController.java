@@ -58,7 +58,7 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<AuthResponse> forgotPassword(@RequestBody EmailRequest emailRequest) {
-        if (emailRequest.email() == null)
+        if (emailRequest.email().isEmpty())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
         if (!emailRequest.email().matches(IConstant.EMAIL_REGEX))
