@@ -3,28 +3,26 @@ import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import {
     NotFound,
-    Home,
+    Landing,
     Login,
+    ManagerLogin,
     Register,
     Unauthorized,
     ForgotPassword,
     ResetPassword,
-    StudentDashboard,
-    TeacherDashboard,
     CourseList,
-    TeacherDetail
+    TeacherDetails,
+    ContactUs,
+    Home,
+    UserProfile,
+    Mailbox
 } from "./pages";
-import { ManagerDashboard, ManagerLogin } from "./pages/manager";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
 import Dummy from "./pages/Dummy";
-import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
-import { UserRole } from "./types/Account";
-import ContactUs from "./pages/ContactUs";
-import { DashboardLayout } from "./layouts";
-import Mailbox from "./pages/manager/teacher/Mailbox";
-import UserProfile from "./pages/UserProfile";
+import { UserRole } from "./types/User";
+import UserProvider from "./hooks/useUser";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -46,24 +44,21 @@ export default function App() {
     }
 
     return (
-        <AuthProvider>
+        <UserProvider>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                    path="/test"
-                    element={
-                        <DashboardLayout>
-                            <></>
-                        </DashboardLayout>
-                    }
-                />
-
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/dummy" element={<Dummy />} />
+                </Route>
+                {/* Public Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/contact" element={<ContactUs />} />
                 <Route path="/activate/:token" element={<Login />} />
+                <Route path="/courses" element={<CourseList />} />
+                <Route path="/teacher/:id" element={<TeacherDetails />}></Route>
+
+                {/* Routes for unathenticated users */}
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
-                </Route>
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/user-profile" element={<UserProfile />}></Route>
                 </Route>
                 <Route element={<GuestRoute />}>
                     <Route path="/manager/login" element={<ManagerLogin />} />
@@ -77,28 +72,23 @@ export default function App() {
                 <Route element={<GuestRoute />}>
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
                 </Route>
-                <Route path="/teacher-profile/:id" element={<TeacherDetail />}></Route>
-                <Route path="/contact" element={<ContactUs />} />
+
+                {/* Routes for authenticated users */}
                 <Route element={<ProtectedRoute />}>
-                    <Route path="/dummy" element={<Dummy />} />
+                    <Route path="/home" element={<Home />} />
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
-                    <Route path="/learning" element={<StudentDashboard />} />
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/profile" element={<UserProfile />}></Route>
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
-                    <Route path="/dashboard" element={<TeacherDashboard />} />
-                </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER, UserRole.COURSE_MANAGER]} />}>
-                    <Route path="/manager/dashboard" element={<ManagerDashboard />} />
-                </Route>
-                <Route path="/courses" element={<CourseList />} />
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>
+
+                {/* Error Boundary */}
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/*" element={<NotFound />} />
             </Routes>
             <ToastContainer position="top-right" style={{ zIndex: 999999 }} />
-        </AuthProvider>
+        </UserProvider>
     );
 }

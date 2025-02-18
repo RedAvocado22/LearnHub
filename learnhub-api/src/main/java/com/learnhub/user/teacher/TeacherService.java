@@ -1,27 +1,31 @@
 package com.learnhub.user.teacher;
 
+import com.learnhub.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 public class TeacherService {
-    private TeacherRepositery teacherRepositery;
+    private final TeacherRepository teacherRepository;
 
     @Autowired
-    public TeacherService(TeacherRepositery teacherRepositery) {
-        this.teacherRepositery = teacherRepositery;
+    public TeacherService(TeacherRepository teacherRepository) {
+        this.teacherRepository = teacherRepository;
     }
 
-    public Teacher getTeacherById(Long id) {
-        return teacherRepositery.findTeacherById(id);
+    public Teacher getTeacherById(Long id){
+        return teacherRepository.findById(id)
+            .orElseThrow(() -> new UserNotFoundException(String.format("Teacher with id %d not found.", id)));
     }
-
-    public Teacher getTeacherByEmail(String email) {
-        return teacherRepositery.findTeacherByEmail(email);
-    }
-
-    public void editProfile(Teacher profile) {
-        teacherRepositery.save(profile);
+    
+    public void updateTeacher(Teacher teacher, UpdateTeacherRequest req) {
+        teacher.setFirstName(req.firstName());
+        teacher.setLastName(req.lastName());
+        teacher.setMajor(req.major());
+        teacher.setPhone(req.phone());
+        teacher.setAddress(req.address());
+        teacher.setCity(req.city());
+        teacher.setCountry(req.country());
+        teacherRepository.save(teacher);
     }
 }

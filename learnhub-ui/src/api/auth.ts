@@ -1,6 +1,6 @@
 import axios from "axios";
 import Swal from "sweetalert2";
-import { StudentType } from "../types/Account";
+import { StudentType } from "../types/User";
 import API from "./base";
 
 interface RegisterRequest {

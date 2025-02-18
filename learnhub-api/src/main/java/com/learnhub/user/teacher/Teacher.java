@@ -1,19 +1,20 @@
 package com.learnhub.user.teacher;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import com.learnhub.course.Course;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
-import jakarta.persistence.*;
-
-import java.time.LocalDateTime;
-import java.util.Collection;
 
 @Entity
 @Table(name = "teacher_profile")
 public class Teacher extends User {
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Collection<Course> course;
-
     @Column(name = "major")
     private String major;
 
@@ -23,31 +24,24 @@ public class Teacher extends User {
     @Column(name = "about")
     private String about;
 
-    public Teacher() {
-    }
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Course> courses;
+
+    public Teacher() {}
 
     public Teacher(String email,
                    String firstName, String lastName,
-                   String password,
-                   UserRole role, boolean active,
+                   String password, boolean active,
                    LocalDateTime createdAt,
                    String phoneNo,
                    String address, String city,
                    String major, String website, String about) {
-        super(email, firstName, lastName, password, role, active, createdAt, phoneNo, address, city);
+        super(email, firstName, lastName, password, UserRole.TEACHER, active, createdAt, phoneNo, address, city);
         this.major = major;
         this.website = website;
         this.about = about;
+        this.courses = new ArrayList<>();
     }
-
-    public Collection<Course> getCourse() {
-        return course;
-    }
-
-    public void setCourse(Collection<Course> course) {
-        this.course = course;
-    }
-
     public String getMajor() {
         return major;
     }
@@ -70,5 +64,13 @@ public class Teacher extends User {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
     }
 }

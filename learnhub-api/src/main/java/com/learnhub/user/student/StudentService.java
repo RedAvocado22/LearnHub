@@ -5,19 +5,17 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class StudentService {
-    private StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
 
     @Autowired
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
-    public Student getStudentByEmail(String email) {
-        return studentRepository.findByEmail(email);
-    }
-
-    public void editProfile(Student student) {
+    public void updateStudent(Student student, UpdateStudentRequest req) {
+        student.setFirstName(req.firstName());
+        student.setLastName(req.lastName());
+        student.setType(req.type());
         studentRepository.save(student);
     }
-
 }
