@@ -37,7 +37,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
 
                 localStorage.setItem("access_token", token);
                 try {
-                    const getUserResp = await API.get<Account>("/user/me");
+                    const getUserResp = await API.get<Account>("/users/me");
                     setAccount(getUserResp.data);
                 } catch (err) {
                     throw new Error(`Get user failed: ${(err as Error).message}`);
@@ -78,7 +78,7 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
     useEffect(() => {
         const accessToken = localStorage.getItem("access_token");
         if (accessToken) {
-            API.get("/user/me")
+            API.get("/users/me")
                 .then((resp) => {
                     setAccount(resp.data);
                 })

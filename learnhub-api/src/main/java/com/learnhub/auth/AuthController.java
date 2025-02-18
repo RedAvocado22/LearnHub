@@ -1,5 +1,6 @@
 package com.learnhub.auth;
 
+import com.learnhub.constant.IConstant;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
-    private final String PASS_REGEX = "^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])[A-Za-z0-9!@#$%^&*]{6,}$";
-    private final String EMAIL_REGEX = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-
 
     @Autowired
     public AuthController(AuthService authService) {
@@ -39,8 +37,8 @@ public class AuthController {
     @PostMapping("/register")
     public ResponseEntity<AuthResponse> registerStudent(@RequestBody StudentRegisterRequest req, HttpServletRequest httpReq) {
         if (req.firstname() != null && req.lastname() != null && req.email() != null && req.password() != null && req.studentType() != null) {
-            if (req.password().matches(PASS_REGEX))
-                if (req.email().matches(EMAIL_REGEX))
+            if (req.password().matches(IConstant.PASS_REGEX))
+                if (req.email().matches(IConstant.EMAIL_REGEX))
                     return ResponseEntity.ok().body(authService.registerStudent(req, httpReq));
         }
 
@@ -60,10 +58,10 @@ public class AuthController {
 
     @PostMapping("/forgot-password")
     public ResponseEntity<AuthResponse> forgotPassword(@RequestBody EmailRequest emailRequest) {
-        if (emailRequest.email() == null)
+        if (emailRequest.email().isEmpty())
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
-        if (!emailRequest.email().matches(EMAIL_REGEX))
+        if (!emailRequest.email().matches(IConstant.EMAIL_REGEX))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
         authService.forgetPassword(emailRequest.email());
@@ -75,7 +73,7 @@ public class AuthController {
         if (resetPasswordRequest.password() == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
-        if (!resetPasswordRequest.password().matches(PASS_REGEX))
+        if (!resetPasswordRequest.password().matches(IConstant.PASS_REGEX))
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
         authService.resetPassword(resetPasswordRequest);

@@ -37,4 +37,9 @@ public class CourseController {
                         course.getId(), course.getName(), course.getPrice())
                 ).collect(Collectors.toList());
     }
+
+    @GetMapping("/student/{id}")
+    public List<CourseResponse> getCoursesByStudent(@PathVariable("id") Long studentId) {
+        return null;
+    }
 }

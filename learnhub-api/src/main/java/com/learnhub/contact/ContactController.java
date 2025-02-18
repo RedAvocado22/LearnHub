@@ -1,5 +1,6 @@
 package com.learnhub.contact;
 
+import com.learnhub.constant.IConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,10 +23,7 @@ public class ContactController {
             return ResponseEntity.badRequest().build();
         }
 
-        final String PHONE_REGEX = "^[0-9]{10,11}";
-        final String EMAIL_REGEX = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
-
-        if (!contact.email().matches(EMAIL_REGEX) || !contact.phone().matches(PHONE_REGEX)) {
+        if (!contact.email().matches(IConstant.EMAIL_REGEX) || !contact.phone().matches(IConstant.PHONE_REGEX)) {
             return ResponseEntity.badRequest().build();
         }
 

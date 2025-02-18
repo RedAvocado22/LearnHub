@@ -1,6 +1,7 @@
 package com.learnhub.security;
 
 import java.util.Arrays;
+
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.jwt.JwtFilter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,14 +30,14 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
     private static final String[] WHITE_LIST = {
-        "/api/v*/auth/**",
-        "/v3/api-docs/**",
-        "/swagger-ui.html",
-        "/swagger-ui/**",
-        "/swagger-resources/**",
-        "/api/v*/contact/**",
-        "/api/v*/teacher/**",
-        "/api/v*/courses/**"
+            "/api/v*/auth/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/api/v*/contact/**",
+            "/api/v*/teachers/**",
+            "/api/v*/courses/**",
     };
     private final LogoutHandler logoutHandler;
     private final UserDetailsService userDetailsService;

@@ -36,23 +36,26 @@ export default function ResetPassword() {
 
     useEffect(() => {
         if (password.length != 0 && confPassword.length != 0) {
-            if (!validatePassword(password)) {
-                setError(
-                    "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
-                );
-            } else {
-                setError("");
+            if (password === confPassword) {
+                if (!validatePassword(password) && !validatePassword(confPassword)) {
+                    setError(
+                        "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
+                    );
+                } else {
+                    setError("");
+                }
             }
         } else {
             setError("Confirm password must match with password");
         }
     }, [password, confPassword]);
+
     return (
         <div className="account-form">
             <div
                 className="account-head"
                 style={{
-                    backgroundImage: "url(assets/images/background/bg2.jpg)"
+                    backgroundImage: "url(/assets/images/background/bg2.jpg)"
                 }}>
                 <a href="/">
                     <img src="assets/images/logo-white-2.png" alt="" />

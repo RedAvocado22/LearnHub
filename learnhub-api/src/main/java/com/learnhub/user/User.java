@@ -3,6 +3,7 @@ package com.learnhub.user;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -41,23 +42,50 @@ public class User implements UserDetails {
     @Column(name = "role")
     private UserRole role;
 
+    @Column(name = "phoneNo")
+    private String phoneNo;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "city")
+    private String city;
+
     @Column(name = "active")
     private boolean active;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public User() {}
+    public User() {
+    }
 
-    public User(String email, String firstName, String lastName, String password, UserRole role,
-            boolean active) {
+    public User(String email, String firstName, String lastName, String password, UserRole role, boolean active) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.role = role;
         this.active = active;
-        this.createdAt = LocalDateTime.now();
+    }
+
+    public User(String email,
+                String firstName, String lastName,
+                String password,
+                UserRole role, boolean active,
+                LocalDateTime createdAt,
+                String phoneNo,
+                String address, String city) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.role = role;
+        this.active = active;
+        this.createdAt = createdAt;
+        this.phoneNo = phoneNo;
+        this.address = address;
+        this.city = city;
     }
 
     public Long getId() {
@@ -118,6 +146,30 @@ public class User implements UserDetails {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public String getPhoneNo() {
+        return phoneNo;
+    }
+
+    public void setPhoneNo(String phoneNo) {
+        this.phoneNo = phoneNo;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
     }
 
     @Override
