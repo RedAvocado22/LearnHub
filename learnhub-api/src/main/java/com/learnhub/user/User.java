@@ -175,7 +175,7 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority(role.name().toLowerCase());
+                new SimpleGrantedAuthority(role.name());
         return Collections.singleton(authority);
     }
 

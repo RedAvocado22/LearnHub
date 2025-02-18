@@ -2,35 +2,52 @@ import { useEffect, useState } from "react";
 import { Footer, Header } from "../../layouts";
 import { API } from "../../api";
 import { useParams } from "react-router-dom";
+import NotFound from "../error/NotFound";
 
 interface Course {
     id: number;
     name: string;
+    category: { id: number; name: string };
     price: number;
 }
 
+interface Teacher {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    major: string;
+    phone: string;
+    school: string;
+    address: string;
+    city: string;
+    country: string;
+    courses: Course[];
+}
+
 export default function TeacherDetails() {
-    const [courses, setCourses] = useState<Course[]>([]);
-
     const { id } = useParams();
+    if (!id || !parseInt(id)) {
+        return <NotFound />;
+    }
 
-    const [profile, setProfile] = useState({
+    const [teacher, setTeacher] = useState<Teacher>({
+        id: parseInt(id),
+        email: "",
         firstName: "",
         lastName: "",
-        email: "",
         major: "",
+        phone: "",
+        school: "",
         address: "",
         city: "",
-        school: ""
+        country: "",
+        courses: []
     });
 
     useEffect(() => {
-        API.get(`/teachers/${id}`).then((resp) => {
-            setProfile(resp?.data);
-        });
-        API.get(`/courses/teacher/${id}`).then((resp) => {
-            setCourses(resp?.data || []);
-            console.log(courses);
+        API.get(`public/teachers/${id}`).then((resp) => {
+            setTeacher(resp.data);
         });
     }, []);
     return (
@@ -54,9 +71,9 @@ export default function TeacherDetails() {
                                     </div>
                                     <div className="profile-info">
                                         <h4>
-                                            {profile.firstName} {profile.lastName}
+                                            {teacher.firstName} {teacher.lastName}
                                         </h4>
-                                        <span>{profile.email}</span>
+                                        <span>{teacher.email}</span>
                                     </div>
                                     <div className="profile-tabnav">
                                         <ul className="nav nav-tabs">
@@ -79,12 +96,12 @@ export default function TeacherDetails() {
                                     <div className="tab-content">
                                         <div className="tab-pane active" id="courses">
                                             <div className="profile-head">
-                                                <h3>My Courses</h3>
+                                                <h3>Courses</h3>
                                             </div>
                                             <div className="courses-filter">
                                                 <div className="clearfix">
                                                     <ul id="masonry" className="ttr-gallery-listing magnific-image row">
-                                                        {courses.map((course) => (
+                                                        {teacher.courses.map((course: Course) => (
                                                             <div
                                                                 key={course.id}
                                                                 className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish">
@@ -102,7 +119,7 @@ export default function TeacherDetails() {
                                                                         <h5>
                                                                             <a href="#">{course.name}</a>
                                                                         </h5>
-                                                                        <span>Programming</span>
+                                                                        <span>{course.category.name}</span>
                                                                     </div>
                                                                     <div className="cours-more-info">
                                                                         <div className="review">
@@ -126,7 +143,6 @@ export default function TeacherDetails() {
                                                                             </ul>
                                                                         </div>
                                                                         <div className="price">
-                                                                            <del>$190</del>
                                                                             <h5>${course.price}</h5>
                                                                         </div>
                                                                     </div>
@@ -155,7 +171,7 @@ export default function TeacherDetails() {
                                                         </label>
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={profile.firstName}
+                                                            value={teacher.firstName}
                                                             readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
@@ -164,7 +180,7 @@ export default function TeacherDetails() {
                                                         </label>
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={profile.lastName}
+                                                            value={teacher.lastName}
                                                             readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
@@ -173,7 +189,7 @@ export default function TeacherDetails() {
                                                         </label>
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={profile.email}
+                                                            value={teacher.email}
                                                             readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
@@ -182,7 +198,7 @@ export default function TeacherDetails() {
                                                         </label>
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={profile.major}
+                                                            value={teacher.major}
                                                             readOnly></input>
                                                     </div>
                                                     <div className="seperator"></div>
@@ -198,7 +214,7 @@ export default function TeacherDetails() {
                                                     </label>
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={profile.address}
+                                                        value={teacher.address}
                                                         readOnly></input>
                                                 </div>
                                                 <div className="form-group row">
@@ -207,7 +223,16 @@ export default function TeacherDetails() {
                                                     </label>
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={profile.city}
+                                                        value={teacher.city}
+                                                        readOnly></input>
+                                                </div>
+                                                <div className="form-group row">
+                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                        Country
+                                                    </label>
+                                                    <input
+                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                        value={teacher.country}
                                                         readOnly></input>
                                                 </div>
                                                 <div className="form-group row">
@@ -216,7 +241,7 @@ export default function TeacherDetails() {
                                                     </label>
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={profile.school}
+                                                        value={teacher.school}
                                                         readOnly></input>
                                                 </div>
                                             </form>

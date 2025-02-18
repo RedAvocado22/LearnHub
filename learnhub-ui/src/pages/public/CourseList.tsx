@@ -5,14 +5,16 @@ import { API } from "../../api";
 interface Course {
     id: number;
     name: string;
+    category: { id: number; name: string };
     price: number;
+    teacher: { id: number; name: string };
 }
 
 export default function CourseList() {
     const [courses, setCourses] = useState<Course[]>([]);
 
     useEffect(() => {
-        API.get("/courses").then((resp) => {
+        API.get("/public/courses").then((resp) => {
             setCourses(resp?.data || []);
             console.log(courses);
         });
@@ -71,6 +73,7 @@ export default function CourseList() {
                                     <div className="widget recent-posts-entry widget-courses">
                                         <h5 className="widget-title style-1">Recent Courses</h5>
                                         <div className="widget-post-bx">
+                                            {/*
                                             <div className="widget-post clearfix">
                                                 <div className="ttr-post-media">
                                                     {" "}
@@ -124,6 +127,7 @@ export default function CourseList() {
                                                     </div>
                                                 </div>
                                             </div>
+                                            */}
                                         </div>
                                     </div>
                                 </div>
@@ -143,11 +147,15 @@ export default function CourseList() {
                                                             <h5>
                                                                 <a href="#">{course.name}</a>
                                                             </h5>
-                                                            <span>Programming</span>
+                                                            <span>{course.category.name}</span>
                                                         </div>
                                                         <div className="cours-more-info">
                                                             <div className="review">
-                                                                <span>3 Review</span>
+                                                                <span>
+                                                                    <a href={`/teacher/${course.teacher.id}`}>
+                                                                        {course.teacher.name}
+                                                                    </a>
+                                                                </span>
                                                                 <ul className="cours-star">
                                                                     <li className="active">
                                                                         <i className="fa fa-star"></i>
@@ -167,8 +175,9 @@ export default function CourseList() {
                                                                 </ul>
                                                             </div>
                                                             <div className="price">
-                                                                <del>$190</del>
-                                                                <h5>{course.price}</h5>
+                                                                <h5>
+                                                                    {course.price > 0 ? `$${course.price}` : "FREE"}
+                                                                </h5>
                                                             </div>
                                                         </div>
                                                     </div>
