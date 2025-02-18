@@ -31,8 +31,18 @@ public class Teacher extends User {
     @Column(name = "city")
     private String city;
 
-    @Column(name = "description")
-    private String description;
+    public Teacher() {
+    }
+
+    public Teacher(String email, String firstName, String lastName, String password, UserRole role, boolean active, String address, String adress, String city, String major, String phone_no, String school) {
+        super(email, firstName, lastName, password, role, active);
+        this.address = address;
+        this.adress = adress;
+        this.city = city;
+        this.major = major;
+        this.phone_no = phone_no;
+        this.school = school;
+    }
 
     public String getAddress() {
         return address;
@@ -58,13 +68,6 @@ public class Teacher extends User {
         this.city = city;
     }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
 
     public String getMajor() {
         return major;
@@ -89,18 +92,5 @@ public class Teacher extends User {
     public void setSchool(String school) {
         this.school = school;
     }
-
-    public Teacher(String email, String firstName, String lastName, String password, UserRole role, boolean active, String address, String adress, String city, String description, String major, String phone_no, String school) {
-        super(email, firstName, lastName, password, role, active);
-        this.address = address;
-        this.adress = adress;
-        this.city = city;
-        this.description = description;
-        this.major = major;
-        this.phone_no = phone_no;
-        this.school = school;
-    }
-
-    public Teacher() {
-    }
+    
 }

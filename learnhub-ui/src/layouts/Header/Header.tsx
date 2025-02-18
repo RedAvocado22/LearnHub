@@ -4,13 +4,17 @@ import "./Header.css";
 import Topbar from "./Topbar";
 import { useAuth } from "../../hooks/useAuth";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
 export default function Header() {
     const { account, logout } = useAuth();
     const [searchVisible, setSearchVisible] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isActive = (path: string) => location.pathname === path;
+
     const handleDisplaySearch = () => {
         setSearchVisible(true);
     };
@@ -100,203 +104,22 @@ export default function Header() {
                         {/* Navigation Menu */}
                         <div className="menu-links navbar-collapse collapse justify-content-start" id="menuDropdown">
                             <div className="menu-logo">
-                                <a href="">
+                                <Link to="/">
                                     <img src={logo} alt="Logo" />
-                                </a>
+                                </Link>
                             </div>
                             <ul className="nav navbar-nav">
-                                <li className="active">
-                                    <a href="#">
-                                        Home <i className="fa fa-chevron-down"></i>
-                                    </a>
-                                    <ul className="sub-menu">
-                                        <li>
-                                            <a href="index.html">Home 1</a>
-                                        </li>
-                                        <li>
-                                            <a href="index-2.html">Home 2</a>
-                                        </li>
-                                    </ul>
+                                <li className={isActive("/") ? "active" : ""}>
+                                    <Link to="/">Home</Link>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        Pages <i className="fa fa-chevron-down"></i>
-                                    </a>
-                                    <ul className="sub-menu">
-                                        <li>
-                                            <a href="#">
-                                                About<i className="fa fa-angle-right"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="about-1.html">About 1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="about-2.html">About 2</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                Event<i className="fa fa-angle-right"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="event.html">Event</a>
-                                                </li>
-                                                <li>
-                                                    <a href="events-details.html">Events Details</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                FAQ's<i className="fa fa-angle-right"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="faq-1.html">FAQ's 1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="faq-2.html">FAQ's 2</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                Contact Us<i className="fa fa-angle-right"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="contact-1.html">Contact Us 1</a>
-                                                </li>
-                                                <li>
-                                                    <a href="contact-2.html">Contact Us 2</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="portfolio.html">Portfolio</a>
-                                        </li>
-                                        <li>
-                                            <a href="profile.html">Profile</a>
-                                        </li>
-                                        <li>
-                                            <a href="membership.html">Membership</a>
-                                        </li>
-                                        <li>
-                                            <a href="error-404.html">404 Page</a>
-                                        </li>
-                                    </ul>
+                                <li className={isActive("/courses") ? "active" : ""}>
+                                    <Link to="/courses">Courses</Link>
                                 </li>
-                                <li className="add-mega-menu">
-                                    <a href="#">
-                                        Our Courses <i className="fa fa-chevron-down"></i>
-                                    </a>
-                                    <ul className="sub-menu add-menu">
-                                        <li className="add-menu-left">
-                                            <h5 className="menu-adv-title">Our Courses</h5>
-                                            <ul>
-                                                <li>
-                                                    <a href="courses.html">Courses </a>
-                                                </li>
-                                                <li>
-                                                    <a href="courses-details.html">Courses Details</a>
-                                                </li>
-                                                <li>
-                                                    <a href="profile.html">Instructor Profile</a>
-                                                </li>
-                                                <li>
-                                                    <a href="event.html">Upcoming Event</a>
-                                                </li>
-                                                <li>
-                                                    <a href="membership.html">Membership</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li className="add-menu-right">
-                                            <img src={adv} />
-                                        </li>
-                                    </ul>
+                                <li className={isActive("/about") ? "active" : ""}>
+                                    <Link to="/about">About</Link>
                                 </li>
-                                <li>
-                                    <a href="#">
-                                        Blog <i className="fa fa-chevron-down"></i>
-                                    </a>
-                                    <ul className="sub-menu">
-                                        <li>
-                                            <a href="blog-classic-grid.html">Blog Classic</a>
-                                        </li>
-                                        <li>
-                                            <a href="blog-classic-sidebar.html">Blog Classic Sidebar</a>
-                                        </li>
-                                        <li>
-                                            <a href="blog-list-sidebar.html">Blog List Sidebar</a>
-                                        </li>
-                                        <li>
-                                            <a href="blog-standard-sidebar.html">Blog Standard Sidebar</a>
-                                        </li>
-                                        <li>
-                                            <a href="blog-details.html">Blog Details</a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li className="nav-dashboard">
-                                    <a href="#">
-                                        Dashboard <i className="fa fa-chevron-down"></i>
-                                    </a>
-                                    <ul className="sub-menu">
-                                        <li>
-                                            <a href="admin/index.html">Dashboard</a>
-                                        </li>
-                                        <li>
-                                            <a href="admin/add-listing.html">Add Listing</a>
-                                        </li>
-                                        <li>
-                                            <a href="admin/bookmark.html">Bookmark</a>
-                                        </li>
-                                        <li>
-                                            <a href="admin/courses.html">Courses</a>
-                                        </li>
-                                        <li>
-                                            <a href="admin/review.html">Review</a>
-                                        </li>
-                                        <li>
-                                            <a href="admin/teacher-profile.html">Teacher Profile</a>
-                                        </li>
-                                        <li>
-                                            <a href="admin/user-profile.html">User Profile</a>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                Calendar<i className="fa fa-angle-right"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="admin/basic-calendar.html">Basic Calendar</a>
-                                                </li>
-                                                <li>
-                                                    <a href="admin/list-view-calendar.html">List View Calendar</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                        <li>
-                                            <a href="#">
-                                                Mailbox<i className="fa fa-angle-right"></i>
-                                            </a>
-                                            <ul className="sub-menu">
-                                                <li>
-                                                    <a href="admin/mailbox.html">Mailbox</a>
-                                                </li>
-                                                <li>
-                                                    <a href="admin/mailbox-compose.html">Compose</a>
-                                                </li>
-                                                <li>
-                                                    <a href="admin/mailbox-read.html">Mail Read</a>
-                                                </li>
-                                            </ul>
-                                        </li>
-                                    </ul>
+                                <li className={isActive("/contact") ? "active" : ""}>
+                                    <Link to="/contact">Contact Us</Link>
                                 </li>
                                 {account && (
                                     <>
@@ -307,14 +130,14 @@ export default function Header() {
                                             </a>
                                             <ul className="sub-menu">
                                                 <li>
-                                                    <a href="#" onClick={handleLogout}>
+                                                    <a href="/user-profile">Profile</a>
+                                                </li>
+                                                <li>
+                                                    <a href="" onClick={handleLogout}>
                                                         Logout
                                                     </a>
                                                 </li>
                                             </ul>
-                                        </li>
-                                        <li>
-                                            <Link to="/dummy">Dummy</Link>
                                         </li>
                                     </>
                                 )}
