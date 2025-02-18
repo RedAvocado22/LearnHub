@@ -11,10 +11,6 @@ spring:
         expiration: 300000 # 5 minutes
         refresh-token:
           expiration: 86400000 # 1 day
-    datasource:
-      url: "jdbc:mysql://localhost:3306/identity_service"
-      username: root
-      password: root
   main:
     banner-mode: off
   jpa:

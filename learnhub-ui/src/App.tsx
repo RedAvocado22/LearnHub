@@ -80,18 +80,6 @@ export default function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/profile" element={<UserProfile />}></Route>
                 </Route>
-<<<<<<< HEAD
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
-                    <Route path="/dashboard" element={<TeacherDashboard />} />
-                </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER, UserRole.COURSE_MANAGER]} />}>
-                    <Route path="/manager/dashboard" element={<ManagerDashboard />} />
-                </Route>
-                <Route path="/courses" element={<CourseList />} />
-                <Route path="/about" element={<About />} />
-
-=======
->>>>>>> 7d7f8cee20d9c58c8ee41c4197b8e955296f35c7
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>
