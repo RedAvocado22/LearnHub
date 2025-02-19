@@ -1,9 +1,8 @@
-import { Footer, Header } from "../layouts";
+import { MainLayout } from "../../layouts";
 
 export default function FAQ() {
     return (
-        <>
-            <Header />
+        <MainLayout>
             <div className="page-content bg-white">
                 <div
                     className="page-banner ovbl-dark"
@@ -323,7 +322,6 @@ export default function FAQ() {
                     </div>
                 </div>
             </div>
-            <Footer />
-        </>
+        </MainLayout>
     );
 }

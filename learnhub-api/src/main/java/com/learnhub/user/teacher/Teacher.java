@@ -1,6 +1,5 @@
 package com.learnhub.user.teacher;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import jakarta.persistence.CascadeType;
@@ -24,24 +23,33 @@ public class Teacher extends User {
     @Column(name = "about")
     private String about;
 
+    @Column(name = "school")
+    private String school;
+
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses;
 
     public Teacher() {}
 
-    public Teacher(String email,
-                   String firstName, String lastName,
-                   String password, boolean active,
-                   LocalDateTime createdAt,
-                   String phoneNo,
-                   String address, String city,
-                   String major, String website, String about) {
-        super(email, firstName, lastName, password, UserRole.TEACHER, active, createdAt, phoneNo, address, city);
+    public Teacher(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            boolean active,
+            String phone,
+            String address,
+            String city,
+            String major,
+            String website,
+            String about) {
+        super(email, firstName, lastName, password, UserRole.TEACHER, active, phone, address, city);
         this.major = major;
         this.website = website;
         this.about = about;
         this.courses = new ArrayList<>();
     }
+
     public String getMajor() {
         return major;
     }
@@ -64,6 +72,14 @@ public class Teacher extends User {
 
     public void setAbout(String about) {
         this.about = about;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
     public List<Course> getCourses() {

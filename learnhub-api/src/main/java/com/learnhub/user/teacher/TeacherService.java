@@ -25,7 +25,6 @@ public class TeacherService {
         teacher.setPhone(req.phone());
         teacher.setAddress(req.address());
         teacher.setCity(req.city());
-        teacher.setCountry(req.country());
         teacherRepository.save(teacher);
     }
 }

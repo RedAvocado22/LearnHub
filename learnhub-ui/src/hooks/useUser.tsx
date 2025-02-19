@@ -38,13 +38,8 @@ const UserProvider = ({ children }: UserProviderProps) => {
 
                 localStorage.setItem("access_token", token);
                 try {
-<<<<<<< HEAD:learnhub-ui/src/hooks/useAuth.tsx
-                    const getUserResp = await API.get<Account>("/users/me");
-                    setAccount(getUserResp.data);
-=======
                     const getUserResp = await API.get("/users/me");
                     setUser(getUserResp.data);
->>>>>>> 30d2a2f (feat: add spring validation):learnhub-ui/src/hooks/useUser.tsx
                 } catch (err) {
                     throw new Error(`Can't get user info: ${err}`);
                 }

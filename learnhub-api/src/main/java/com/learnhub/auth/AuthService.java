@@ -75,7 +75,8 @@ public class AuthService {
                 req.lastname(),
                 encoded,
                 false,
-                req.studentType());
+                req.studentType(),
+                null);
         Student saved = userRepository.save(user);
         
         String token = jwtService.generateToken(saved, 30 * 60 * 1000);

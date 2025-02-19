@@ -3,7 +3,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import { isAxiosError } from "axios";
-import { validateEmail } from "../utils/Validate";
+import { validateEmail } from "../../utils/Validate";
 
 export default function ForgotPassword() {
     const navigate = useNavigate();
@@ -41,10 +41,10 @@ export default function ForgotPassword() {
             <div
                 className="account-head"
                 style={{
-                    backgroundImage: "url(assets/images/background/bg2.jpg)"
+                    backgroundImage: "url(/assets/images/background/bg2.jpg)"
                 }}>
                 <a href="/">
-                    <img src="assets/images/logo-white-2.png" alt="" />
+                    <img src="/assets/images/logo-white-2.png" alt="" />
                 </a>
             </div>
             <div className="account-form-inner">

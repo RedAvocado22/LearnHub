@@ -21,7 +21,6 @@ interface Teacher {
     school: string;
     address: string;
     city: string;
-    country: string;
     courses: Course[];
 }
 
@@ -41,7 +40,6 @@ export default function TeacherDetails() {
         school: "",
         address: "",
         city: "",
-        country: "",
         courses: []
     });
 
@@ -224,15 +222,6 @@ export default function TeacherDetails() {
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
                                                         value={teacher.city}
-                                                        readOnly></input>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        Country
-                                                    </label>
-                                                    <input
-                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.country}
                                                         readOnly></input>
                                                 </div>
                                                 <div className="form-group row">

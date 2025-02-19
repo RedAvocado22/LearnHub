@@ -58,7 +58,7 @@ export default function ResetPassword() {
                     backgroundImage: "url(/assets/images/background/bg2.jpg)"
                 }}>
                 <a href="/">
-                    <img src="assets/images/logo-white-2.png" alt="" />
+                    <img src="/assets/images/logo-white-2.png" alt="" />
                 </a>
             </div>
             <div className="account-form-inner">

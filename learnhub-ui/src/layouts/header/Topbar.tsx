@@ -7,7 +7,7 @@ export default function Topbar() {
                     <div className="topbar-left">
                         <ul>
                             <li>
-                                <a href="faq-1.html">
+                                <a href="/faq">
                                     <i className="fa fa-question-circle"></i>Ask a Question
                                 </a>
                             </li>

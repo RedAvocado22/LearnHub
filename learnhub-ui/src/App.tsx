@@ -15,7 +15,9 @@ import {
     ContactUs,
     Home,
     UserProfile,
-    Mailbox
+    Mailbox,
+    FAQ,
+    About
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -55,6 +57,8 @@ export default function App() {
                 <Route path="/activate/:token" element={<Login />} />
                 <Route path="/courses" element={<CourseList />} />
                 <Route path="/teacher/:id" element={<TeacherDetails />}></Route>
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/about" element={<About />} />
 
                 {/* Routes for unathenticated users */}
                 <Route element={<GuestRoute />}>
