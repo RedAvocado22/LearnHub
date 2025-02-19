@@ -109,6 +109,9 @@ export default function Header() {
                                 <li className={isActive("/about") ? "active" : ""}>
                                     <Link to="/about">About</Link>
                                 </li>
+                                <li className={isActive("/about") ? "active" : ""}>
+                                    <Link to="/faq">FAQ</Link>
+                                </li>
                                 <li className={isActive("/contact") ? "active" : ""}>
                                     <Link to="/contact">Contact Us</Link>
                                 </li>
