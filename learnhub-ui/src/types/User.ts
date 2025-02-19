@@ -16,14 +16,14 @@ export enum StudentType {
 
 export interface Student {
     studentType: StudentType;
+    school: string;
 }
 
 export interface Teacher {
     major: string;
-    phone: string;
-    address: string;
-    city: string;
-    country: string;
+    website: string;
+    about: string;
+    school: string;
     courses: Course[];
 }
 
@@ -35,5 +35,8 @@ export interface User {
     firstName: string;
     lastName: string;
     role: UserRole;
+    phone: string;
+    address: string;
+    city: string;
     details: UserDetails;
 }

@@ -19,9 +19,9 @@ public record UserResponse(
 ) {
     public sealed interface UserDetailsResponse permits StudentResponse, TeacherResponse {}
 
-    public record StudentResponse(StudentType studentType) implements UserDetailsResponse {
+    public record StudentResponse(StudentType studentType, String school) implements UserDetailsResponse {
         public static StudentResponse from(Student student) {
-            return new StudentResponse(student.getType());
+            return new StudentResponse(student.getType(), student.getSchool());
         }
     }
 
@@ -31,7 +31,6 @@ public record UserResponse(
             String school,
             String address,
             String city,
-            String country,
             List<CourseResponse> courses
     ) implements UserDetailsResponse {
         public record CourseResponse(
@@ -67,7 +66,6 @@ public record UserResponse(
                     teacher.getSchool(),
                     teacher.getAddress(),
                     teacher.getCity(),
-                    teacher.getCountry(),
                     teacher.getCourses().stream().map(course -> CourseResponse.from(course)).toList());
         }
     }

@@ -3,7 +3,6 @@ package com.learnhub.user;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -42,8 +41,8 @@ public class User implements UserDetails {
     @Column(name = "role")
     private UserRole role;
 
-    @Column(name = "phoneNo")
-    private String phoneNo;
+    @Column(name = "phone")
+    private String phone;
 
     @Column(name = "address")
     private String address;
@@ -57,8 +56,7 @@ public class User implements UserDetails {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    public User() {
-    }
+    public User() {}
 
     public User(String email, String firstName, String lastName, String password, UserRole role, boolean active) {
         this.email = email;
@@ -67,23 +65,27 @@ public class User implements UserDetails {
         this.password = password;
         this.role = role;
         this.active = active;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public User(String email,
-                String firstName, String lastName,
-                String password,
-                UserRole role, boolean active,
-                LocalDateTime createdAt,
-                String phoneNo,
-                String address, String city) {
+    public User(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            UserRole role,
+            boolean active,
+            String phone,
+            String address,
+            String city) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
         this.password = password;
         this.role = role;
         this.active = active;
-        this.createdAt = createdAt;
-        this.phoneNo = phoneNo;
+        this.createdAt = LocalDateTime.now();
+        this.phone = phone;
         this.address = address;
         this.city = city;
     }
@@ -148,12 +150,12 @@ public class User implements UserDetails {
         this.createdAt = createdAt;
     }
 
-    public String getPhoneNo() {
-        return phoneNo;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setPhoneNo(String phoneNo) {
-        this.phoneNo = phoneNo;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getAddress() {

@@ -3,8 +3,6 @@ package com.learnhub.user;
 import java.util.List;
 import com.learnhub.user.exception.OldPasswordNotMatchedException;
 import com.learnhub.user.exception.UserNotFoundException;
-import com.learnhub.user.student.StudentService;
-import com.learnhub.user.teacher.TeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -12,19 +10,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
     private final UserRepository userRepository;
-    private final StudentService studentService;
-    private final TeacherService teacherService;
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
     public UserService(
             UserRepository userRepository,
-            StudentService studentService,
-            TeacherService teacherService,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
-        this.studentService = studentService;
-        this.teacherService = teacherService;
         this.passwordEncoder = passwordEncoder;
     }
 
