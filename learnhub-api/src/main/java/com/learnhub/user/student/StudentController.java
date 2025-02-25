@@ -24,7 +24,7 @@ public class StudentController {
     @PutMapping("/me")
     public ResponseEntity<UserResponse> updateCurrentStudent(
             @AuthenticationPrincipal User user, @Valid @RequestBody UpdateStudentRequest req) {
-        studentService.updateStudent((Student)user, req);
+        studentService.updateStudent((Student) user, req);
         return ResponseEntity.ok(UserResponse.from(user));
     }
 }
