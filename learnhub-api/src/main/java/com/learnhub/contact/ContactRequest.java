@@ -1,9 +1,9 @@
 package com.learnhub.contact;
 
+import com.learnhub.constant.IConstant;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
-import com.learnhub.util.validation.Validator;
 
 public record ContactRequest(
         @NotEmpty
@@ -17,7 +17,7 @@ public record ContactRequest(
         String email,
 
         @NotEmpty
-        @Pattern(regexp = Validator.PHONE_REGEX, message = Validator.PHONE_MSG)
+        @Pattern(regexp = IConstant.PHONE_REGEX, message = IConstant.PHONE_MSG)
         String phone,
 
         @NotEmpty
@@ -26,5 +26,4 @@ public record ContactRequest(
         @NotEmpty
         String message
 ) {
-
 }

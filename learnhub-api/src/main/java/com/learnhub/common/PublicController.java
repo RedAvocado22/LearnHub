@@ -1,6 +1,8 @@
 package com.learnhub.common;
 
 import java.util.List;
+
+import com.learnhub.user.teacher.Teacher;
 import jakarta.validation.Valid;
 import com.learnhub.contact.ContactRequest;
 import com.learnhub.contact.ContactService;
@@ -35,7 +37,7 @@ public class PublicController {
     @GetMapping("/courses")
     public ResponseEntity<List<CourseListResponse>> getAllPublishedCourses() {
         return ResponseEntity.ok(courseService.getAllPublicCourses().stream()
-                .map(course -> CourseListResponse.from(course)).toList());
+                .map(CourseListResponse::from).toList());
     }
 
     @GetMapping("/teachers/{id}")

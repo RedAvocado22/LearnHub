@@ -2,11 +2,8 @@ package com.learnhub.user.teacher;
 
 import java.util.ArrayList;
 import java.util.List;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+
+import jakarta.persistence.*;
 import com.learnhub.course.Course;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
@@ -20,7 +17,8 @@ public class Teacher extends User {
     @Column(name = "website")
     private String website;
 
-    @Column(name = "about")
+    @Lob
+    @Column(name = "about", columnDefinition = "LONGTEXT")
     private String about;
 
     @Column(name = "school")
@@ -29,7 +27,8 @@ public class Teacher extends User {
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses;
 
-    public Teacher() {}
+    public Teacher() {
+    }
 
     public Teacher(
             String email,

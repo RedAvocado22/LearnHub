@@ -13,8 +13,7 @@ public class StudentService {
     }
 
     public void updateStudent(Student student, UpdateStudentRequest req) {
-        student.setFirstName(req.firstName());
-        student.setLastName(req.lastName());
+        student.setSchool(req.school());
         student.setType(req.type());
         studentRepository.save(student);
     }
