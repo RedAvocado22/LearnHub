@@ -3,7 +3,7 @@ import { Footer, Header } from "../../layouts";
 import { API } from "../../api";
 import { useParams } from "react-router-dom";
 import NotFound from "../error/NotFound";
-
+import { isAxiosError } from "axios";
 interface Course {
     id: number;
     name: string;
@@ -21,17 +21,17 @@ interface Teacher {
     school: string;
     address: string;
     city: string;
+    website: string;
+    about: string;
     courses: Course[];
 }
 
 export default function TeacherDetails() {
     const { id } = useParams();
-    if (!id || !parseInt(id)) {
-        return <NotFound />;
-    }
 
+    const [notFound, setNotFound] = useState(false);
     const [teacher, setTeacher] = useState<Teacher>({
-        id: parseInt(id),
+        id: parseInt(id || "0"),
         email: "",
         firstName: "",
         lastName: "",
@@ -40,14 +40,31 @@ export default function TeacherDetails() {
         school: "",
         address: "",
         city: "",
+        website: "",
+        about: "",
         courses: []
     });
 
     useEffect(() => {
-        API.get(`public/teachers/${id}`).then((resp) => {
-            setTeacher(resp.data);
-        });
-    }, []);
+        const fetchTeacherData = async () => {
+            try {
+                const response = await API.get(`public/teachers/${id}`);
+                setTeacher(response?.data);
+                console.log(response);
+            } catch (error) {
+                if (isAxiosError(error) && error.response?.status === 404) {
+                    setNotFound(true);
+                }
+            }
+        };
+
+        fetchTeacherData();
+    }, [id]);
+
+    if (!id || isNaN(parseInt(id)) || notFound) {
+        return <NotFound />;
+    }
+
     return (
         <div className="page-content bg-white">
             <Header />
@@ -151,7 +168,6 @@ export default function TeacherDetails() {
                                                 </div>
                                             </div>
                                         </div>
-
                                         <div className="tab-pane" id="edit-profile">
                                             <div className="profile-head">
                                                 <h3>Teacher deatails</h3>
@@ -160,7 +176,19 @@ export default function TeacherDetails() {
                                                 <div className="">
                                                     <div className="form-group row">
                                                         <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                            <h3> 1.Personal Details</h3>
+                                                            <h3>1. About</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"></label>
+                                                        <span className="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                            {teacher.about}
+                                                        </span>
+                                                    </div>
+                                                    <div className="seperator"></div>
+                                                    <div className="form-group row">
+                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
+                                                            <h3>2. Personal Details</h3>
                                                         </div>
                                                     </div>
                                                     <div className="form-group row">
@@ -192,18 +220,31 @@ export default function TeacherDetails() {
                                                     </div>
                                                     <div className="form-group row">
                                                         <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Major
+                                                            Phone
                                                         </label>
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.major}
+                                                            value={teacher.phone || ""}
                                                             readOnly></input>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                            Website
+                                                        </label>
+                                                        <a
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            style={{ cursor: "pointer" }}
+                                                            href={teacher.website}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer">
+                                                            {teacher.website}
+                                                        </a>
                                                     </div>
                                                     <div className="seperator"></div>
                                                 </div>
                                                 <div className="form-group row">
                                                     <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                        <h3>2. Address</h3>
+                                                        <h3>3. Address</h3>
                                                     </div>
                                                 </div>
                                                 <div className="form-group row">
@@ -212,7 +253,7 @@ export default function TeacherDetails() {
                                                     </label>
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.address}
+                                                        value={teacher.address || ""}
                                                         readOnly></input>
                                                 </div>
                                                 <div className="form-group row">
@@ -221,7 +262,7 @@ export default function TeacherDetails() {
                                                     </label>
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.city}
+                                                        value={teacher.city || ""}
                                                         readOnly></input>
                                                 </div>
                                                 <div className="form-group row">
@@ -230,7 +271,7 @@ export default function TeacherDetails() {
                                                     </label>
                                                     <input
                                                         className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.school}
+                                                        value={teacher.school || ""}
                                                         readOnly></input>
                                                 </div>
                                             </form>

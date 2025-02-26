@@ -23,8 +23,9 @@ public class TeacherController {
 
     @PutMapping("/me")
     public ResponseEntity<UserResponse> updateCurrentStudent(
-            @AuthenticationPrincipal User user, @Valid @RequestBody UpdateTeacherRequest req) {
-        teacherService.updateTeacher((Teacher)user, req);
+            @AuthenticationPrincipal User user,
+            @Valid @RequestBody UpdateTeacherRequest req) {
+        teacherService.updateTeacher((Teacher) user, req);
         return ResponseEntity.ok(UserResponse.from(user));
     }
 }

@@ -1,6 +1,7 @@
 package com.learnhub.common;
 
 import java.util.List;
+
 import com.learnhub.course.Category;
 import com.learnhub.course.Course;
 import com.learnhub.user.teacher.Teacher;
@@ -15,6 +16,8 @@ public record TeacherDetailsResponse(
         String school,
         String address,
         String city,
+        String website,
+        String about,
         List<CourseListResponse> courses
 ) {
     public record CourseListResponse(Long id, String name, CategoryResponse category, Double price) {
@@ -23,6 +26,7 @@ public record TeacherDetailsResponse(
                 return new CategoryResponse(category.getId(), category.getName());
             }
         }
+
         public static CourseListResponse from(Course course) {
             return new CourseListResponse(
                     course.getId(),
@@ -43,6 +47,8 @@ public record TeacherDetailsResponse(
                 teacher.getSchool(),
                 teacher.getAddress(),
                 teacher.getCity(),
-                teacher.getCourses().stream().map(course -> CourseListResponse.from(course)).toList());
+                teacher.getWebsite(),
+                teacher.getAbout(),
+                teacher.getCourses().stream().map(CourseListResponse::from).toList());
     }
 }

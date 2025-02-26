@@ -60,7 +60,7 @@ export default function App() {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
 
-                {/* Routes for unathenticated users */}
+                {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
                 </Route>

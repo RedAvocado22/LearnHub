@@ -26,13 +26,15 @@ public class UserController {
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserResponse> updateCurrentUser(@AuthenticationPrincipal User user, @Valid @RequestBody UpdateUserRequest req) {
+    public ResponseEntity<UserResponse> updateCurrentUser(
+            @AuthenticationPrincipal User user, @Valid @RequestBody UpdateUserRequest req) {
         userService.updateUser(user, req);
         return ResponseEntity.ok(UserResponse.from(user));
     }
 
     @PutMapping("/me/password")
-    public ResponseEntity<UserResponse> updateCurrentUserPassword(@AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequest req) {
+    public ResponseEntity<UserResponse> updateCurrentUserPassword(
+            @AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequest req) {
         userService.changeUserPassword(user, req);
         return ResponseEntity.ok(UserResponse.from(user));
     }

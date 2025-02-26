@@ -13,18 +13,16 @@ public class TeacherService {
         this.teacherRepository = teacherRepository;
     }
 
-    public Teacher getTeacherById(Long id){
+    public Teacher getTeacherById(Long id) {
         return teacherRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(String.format("Teacher with id %d not found.", id)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("Teacher with id %d not found.", id)));
     }
-    
+
     public void updateTeacher(Teacher teacher, UpdateTeacherRequest req) {
-        teacher.setFirstName(req.firstName());
-        teacher.setLastName(req.lastName());
         teacher.setMajor(req.major());
-        teacher.setPhone(req.phone());
-        teacher.setAddress(req.address());
-        teacher.setCity(req.city());
+        teacher.setWebsite(req.website());
+        teacher.setAbout(req.about());
+        teacher.setSchool(req.school());
         teacherRepository.save(teacher);
     }
 }

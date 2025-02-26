@@ -1,6 +1,7 @@
 package com.learnhub.user;
 
 import java.util.List;
+
 import com.learnhub.user.exception.OldPasswordNotMatchedException;
 import com.learnhub.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +29,9 @@ public class UserService {
     public void updateUser(User user, UpdateUserRequest req) {
         user.setFirstName(req.firstName());
         user.setLastName(req.lastName());
+        user.setPhone(req.phone());
+        user.setAddress(req.address());
+        user.setCity(req.city());
         userRepository.save(user);
     }
 
