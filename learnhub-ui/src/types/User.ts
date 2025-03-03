@@ -23,6 +23,7 @@ export interface Teacher {
     website: string;
     about: string;
     school: string;
+    major: string;
     courses: Course[];
 }
 

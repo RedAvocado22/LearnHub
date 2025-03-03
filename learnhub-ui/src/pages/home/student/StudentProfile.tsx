@@ -41,11 +41,11 @@ const initialState: Form = {
     rePassword: ""
 };
 
-function isUser(value: any): value is User {
+function isUser(value: unknown): value is User {
     return value && typeof value.firstName === "string" && typeof value.lastName === "string";
 }
 
-function isStudent(value: any): value is Student {
+function isStudent(value: unknown): value is Student {
     const isStudentType = value && typeof value.studentType === "string";
     return isStudentType;
 }

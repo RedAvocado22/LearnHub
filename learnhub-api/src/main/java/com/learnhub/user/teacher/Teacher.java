@@ -24,7 +24,7 @@ public class Teacher extends User {
     @Column(name = "school")
     private String school;
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Course> courses;
 
     public Teacher() {

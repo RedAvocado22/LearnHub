@@ -3,6 +3,7 @@ package com.learnhub.user.teacher;
 import com.learnhub.user.exception.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TeacherService {
@@ -18,6 +19,7 @@ public class TeacherService {
                 .orElseThrow(() -> new UserNotFoundException(String.format("Teacher with id %d not found.", id)));
     }
 
+    @Transactional
     public void updateTeacher(Teacher teacher, UpdateTeacherRequest req) {
         teacher.setMajor(req.major());
         teacher.setWebsite(req.website());

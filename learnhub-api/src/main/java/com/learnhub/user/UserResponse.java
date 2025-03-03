@@ -36,6 +36,8 @@ public record UserResponse(
             String school,
             String address,
             String city,
+            String website,
+            String about,
             List<CourseResponse> courses
     ) implements UserDetailsResponse {
         public record CourseResponse(
@@ -72,7 +74,9 @@ public record UserResponse(
                     teacher.getSchool(),
                     teacher.getAddress(),
                     teacher.getCity(),
-                    teacher.getCourses().stream().map(course -> CourseResponse.from(course)).toList());
+                    teacher.getWebsite(),
+                    teacher.getAbout(),
+                    teacher.getCourses().stream().map(CourseResponse::from).toList());
         }
     }
 
