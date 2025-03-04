@@ -42,12 +42,24 @@ const initialState: Form = {
 };
 
 function isUser(value: unknown): value is User {
-    return value && typeof value.firstName === "string" && typeof value.lastName === "string";
+    return (
+        typeof value === "object" &&
+        value !== null &&
+        "firstName" in value &&
+        "lastName" in value &&
+        typeof (value as User).firstName === "string" &&
+        typeof (value as User).lastName === "string"
+    );
 }
 
 function isStudent(value: unknown): value is Student {
-    const isStudentType = value && typeof value.studentType === "string";
-    return isStudentType;
+    return (
+        typeof value === "object" &&
+        value !== null &&
+        "studentType" in value &&
+        "school" in value &&
+        typeof (value as Student).studentType === "string"
+    );
 }
 const formReducer = (state: Form, action: Action): Form => {
     switch (action.type) {

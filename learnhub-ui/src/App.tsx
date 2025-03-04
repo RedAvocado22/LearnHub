@@ -17,7 +17,8 @@ import {
     UserProfile,
     Mailbox,
     FAQ,
-    About
+    About,
+    UserCourseList
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -83,6 +84,9 @@ export default function App() {
                 </Route>
                 <Route element={<ProtectedRoute />}>
                     <Route path="/profile" element={<UserProfile />}></Route>
+                </Route>
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />

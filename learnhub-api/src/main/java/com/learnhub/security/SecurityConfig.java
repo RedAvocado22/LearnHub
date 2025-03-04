@@ -1,6 +1,7 @@
 package com.learnhub.security;
 
 import java.util.Arrays;
+
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.jwt.JwtFilter;
 import com.learnhub.user.UserRole;
@@ -30,12 +31,12 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
     private static final String[] WHITE_LIST = {
-        "/api/v*/auth/**",
-        "/v3/api-docs/**",
-        "/swagger-ui.html",
-        "/swagger-ui/**",
-        "/swagger-resources/**",
-        "/api/v*/public/**"
+            "/api/v*/auth/**",
+            "/v3/api-docs/**",
+            "/swagger-ui.html",
+            "/swagger-ui/**",
+            "/swagger-resources/**",
+            "/api/v*/public/**"
     };
     private final LogoutHandler logoutHandler;
     private final UserDetailsService userDetailsService;
@@ -63,6 +64,7 @@ public class SecurityConfig {
                         .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers("/api/v*/students/me/**").hasAuthority(UserRole.STUDENT.name())
                         .requestMatchers("/api/v*/teachers/me/**").hasAuthority(UserRole.TEACHER.name())
+                        .requestMatchers("/api/v*/courses/teacher/**").hasAuthority(UserRole.TEACHER.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())

@@ -16,6 +16,7 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 // User home
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
+export { default as UserCourseList } from "./home/UserCourseList";
 export { default as Mailbox } from "./home/teachermanager/Mailbox";
 
 // Error boundary

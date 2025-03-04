@@ -34,10 +34,11 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
             label: "My Courses",
             icon: "ti-book",
             submenu: [
-                { label: "Created", link: "/courses/created" },
-                { label: "Published", link: "/courses/published" },
-                { label: "Submitted", link: "/courses/submitted" },
-                { label: "Cancelled", link: "/courses/cancelled" }
+                { label: "All", link: "/home/courses/all" },
+                { label: "Public", link: "/home/courses/public" },
+                { label: "Private", link: "/home/courses/private" },
+                { label: "Pending", link: "/home/courses/pending" },
+                { label: "Canceled", link: "/home/courses/cancelled" }
             ]
         }
     ],
