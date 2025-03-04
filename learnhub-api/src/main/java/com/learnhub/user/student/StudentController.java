@@ -6,6 +6,9 @@ import com.learnhub.user.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +22,16 @@ public class StudentController {
     @Autowired
     public StudentController(StudentService studentService) {
         this.studentService = studentService;
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<StudentDetailsResponse> getById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(StudentDetailsResponse.from(studentService.getStudentById(id)));
+    }
+
+    @PostMapping
+    public ResponseEntity<Long> addStudent(@Valid @RequestBody AddStudentRequest req) {
+        return ResponseEntity.ok(studentService.addStudentWithDefaultPassword(req));
     }
 
     @PutMapping("/me")

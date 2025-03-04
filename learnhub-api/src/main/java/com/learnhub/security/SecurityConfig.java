@@ -63,6 +63,7 @@ public class SecurityConfig {
                         .requestMatchers(WHITE_LIST).permitAll()
                         .requestMatchers("/api/v*/students/me/**").hasAuthority(UserRole.STUDENT.name())
                         .requestMatchers("/api/v*/teachers/me/**").hasAuthority(UserRole.TEACHER.name())
+                        .requestMatchers("/api/v*/contacts/**").hasAuthority(UserRole.TEACHER_MANAGER.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())

@@ -1,9 +1,8 @@
 package com.learnhub.common;
 
 import java.util.List;
-
 import jakarta.validation.Valid;
-import com.learnhub.contact.ContactRequest;
+import com.learnhub.contact.AddContactRequest;
 import com.learnhub.contact.ContactService;
 import com.learnhub.course.CourseService;
 import com.learnhub.user.teacher.TeacherService;
@@ -45,7 +44,7 @@ public class PublicController {
     }
 
     @PostMapping("/contacts")
-    public ResponseEntity<String> createContact(@Valid @RequestBody ContactRequest req) {
+    public ResponseEntity<String> createContact(@Valid @RequestBody AddContactRequest req) {
         contactService.saveContact(req);
         return ResponseEntity.ok("Success");
     }

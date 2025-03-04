@@ -1179,6 +1179,18 @@
 .widget-inner .edit-profile {
     padding: 0;
 }
+.download {
+    border: 2px solid;
+    padding: 5px 10px;
+    display: inline-block;
+    color: var(--primary);
+    border-radius: 4px;
+}
+.download:hover {
+    border: 2px solid var(--primary);
+    background-color: var(--primary);
+    color: #fff;
+}
 .delete {
     border: 2px solid;
     padding: 5px 10px;

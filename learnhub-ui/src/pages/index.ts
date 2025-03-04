@@ -16,7 +16,11 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 // User home
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
-export { default as Mailbox } from "./home/teachermanager/Mailbox";
+export { default as ContactList } from "./home/teachermanager/ContactList";
+export { default as ContactDetails } from "./home/teachermanager/ContactDetails";
+export { default as UserList } from "./home/teachermanager/UserList";
+export { default as UserDetails } from "./home/teachermanager/UserDetails";
+export { default as AddUser } from "./home/teachermanager/AddUser";
 
 // Error boundary
 export { default as NotFound } from "./error/NotFound";

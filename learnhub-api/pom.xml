@@ -95,7 +95,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!--Dev-tools-->
+		<!-- Dev-tools -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-devtools</artifactId>
