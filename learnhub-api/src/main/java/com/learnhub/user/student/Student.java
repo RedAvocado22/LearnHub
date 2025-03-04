@@ -15,12 +15,46 @@ public class Student extends User {
     @Column(name = "type", nullable = false)
     private StudentType type;
 
+    @Column(name = "school")
+    private String school;
+
     public Student() {}
 
-    public Student(String email, String firstName, String lastName, String password, UserRole role,
-            boolean active, StudentType type) {
-        super(email, firstName, lastName, password, role, active);
+    public Student(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            boolean active,
+            StudentType type,
+            String school) {
+        super(email, firstName, lastName, password, UserRole.STUDENT, active);
         this.type = type;
+        this.school = school;
+    }
+
+    public Student(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            boolean active,
+            String phone,
+            String address,
+            String city,
+            StudentType type,
+            String school) {
+        super(email, firstName, lastName, password, UserRole.STUDENT, active, phone, address, city);
+        this.type = type;
+        this.school = school;
+    }
+
+    public String getSchool() {
+        return school;
+    }
+
+    public void setSchool(String school) {
+        this.school = school;
     }
 
     public StudentType getType() {

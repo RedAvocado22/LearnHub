@@ -8,7 +8,6 @@ import com.learnhub.auth.exception.UserExistsException;
 import com.learnhub.auth.jwt.JwtService;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
-import com.learnhub.user.UserRole;
 import com.learnhub.user.exception.UserNotFoundException;
 import com.learnhub.user.student.Student;
 import com.learnhub.util.mail.EmailService;
@@ -75,9 +74,9 @@ public class AuthService {
                 req.firstname(),
                 req.lastname(),
                 encoded,
-                UserRole.STUDENT,
                 false,
-                req.studentType());
+                req.studentType(),
+                null);
         Student saved = userRepository.save(user);
         
         String token = jwtService.generateToken(saved, 30 * 60 * 1000);

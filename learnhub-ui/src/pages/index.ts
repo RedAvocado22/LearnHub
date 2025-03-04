@@ -1,12 +1,23 @@
-export { default as Home } from "./Home";
-export { default as Login } from "./Login";
-export { default as Register } from "./Register";
-export { default as NotFound } from "./NotFound";
-export { default as Unauthorized } from "./Unauthorized";
-export { default as StudentDashboard } from "./StudentDashboard";
-export { default as TeacherDashboard } from "./TeacherDashboard";
-export { default as ForgotPassword } from "./ForgotPassword";
-export { default as ResetPassword } from "./ResetPassword";
-export { default as UserProfile } from "./UserProfile";
-export { default as TeacherDetail } from "./TeacherDetail";
-export { default as CourseList } from "./CourseList";
+// Public pages
+export { default as Landing } from "./public/Landing";
+export { default as TeacherDetails } from "./public/TeacherDetails";
+export { default as CourseList } from "./public/CourseList";
+export { default as ContactUs } from "./public/ContactUs";
+export { default as FAQ } from "./public/FAQ";
+export { default as About } from "./public/About";
+
+// Auth pages
+export { default as Register } from "./auth/Register";
+export { default as Login } from "./auth/Login";
+export { default as ManagerLogin } from "./auth/ManagerLogin";
+export { default as ForgotPassword } from "./auth/ForgotPassword";
+export { default as ResetPassword } from "./auth/ResetPassword";
+
+// User home
+export { default as Home } from "./home/Home";
+export { default as UserProfile } from "./home/UserProfile";
+export { default as Mailbox } from "./home/teachermanager/Mailbox";
+
+// Error boundary
+export { default as NotFound } from "./error/NotFound";
+export { default as Unauthorized } from "./error/Unauthorized";

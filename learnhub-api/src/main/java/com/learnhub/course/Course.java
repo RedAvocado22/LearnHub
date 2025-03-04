@@ -1,9 +1,17 @@
 package com.learnhub.course;
 
-import com.learnhub.user.teacher.Teacher;
-import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
+import com.learnhub.user.teacher.Teacher;
 
 @Entity
 @Table(name = "course")
@@ -15,6 +23,10 @@ public class Course {
     @Column(name = "name")
     private String name;
 
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id")
+    private Category category;
+
     @Column(name = "price")
     private double price;
 
@@ -24,6 +36,10 @@ public class Course {
 
     @Column(name = "description")
     private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
+    private Teacher teacher;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt = LocalDateTime.now();
@@ -37,25 +53,33 @@ public class Course {
     @Column(name = "archived_at")
     private LocalDateTime archivedAt;
 
-    @ManyToOne
-    @JoinColumn(name = "teacher_id", referencedColumnName = "id")
-    private Teacher teacher;
-
     public Course() {
     }
 
-    public Course(String name, double price,
-                  CourseStatus status, String description,
+    public Course(String name, Category category, double price,
+                  CourseStatus status, String description, Teacher teacher,
                   LocalDateTime updatedAt, LocalDateTime createdAt,
                   LocalDateTime cancelledAt, LocalDateTime archivedAt) {
         this.name = name;
+        this.category = category;
         this.price = price;
         this.status = status;
         this.description = description;
+        this.teacher = teacher;
         this.updatedAt = updatedAt;
         this.createdAt = createdAt;
         this.cancelledAt = cancelledAt;
         this.archivedAt = archivedAt;
+    }
+
+    public Course(String name, Category category, double price, CourseStatus status, String description, Teacher teacher) {
+        this.name = name;
+        this.category = category;
+        this.price = price;
+        this.status = status;
+        this.description = description;
+        this.teacher = teacher;
+        this.createdAt = LocalDateTime.now();
     }
 
     public Long getId() {
@@ -129,5 +153,20 @@ public class Course {
     public void setArchivedAt(LocalDateTime archivedAt) {
         this.archivedAt = archivedAt;
     }
-}
 
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
+    public void setTeacher(Teacher teacher) {
+        this.teacher = teacher;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
+}

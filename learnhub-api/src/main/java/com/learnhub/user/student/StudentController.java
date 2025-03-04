@@ -1,37 +1,30 @@
 package com.learnhub.user.student;
 
-import com.learnhub.user.UserService;
+import jakarta.validation.Valid;
+import com.learnhub.user.User;
+import com.learnhub.user.UserResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/v1/student")
+@RequestMapping(path = "/api/v1/students")
 public class StudentController {
+    private final StudentService studentService;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    public StudentController(StudentService studentService) {
+        this.studentService = studentService;
+    }
 
-    @Autowired
-    UserService userService;
-
-    @Autowired
-    StudentService studentService;
-    
-    @GetMapping("/")
-    public Student studentProfile() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !authentication.isAuthenticated()) {
-            return null;
-        }
-
-        String email = authentication.getName();
-        Student student = studentService.getStudentByEmail(email);
-
-        return student;
+    @PutMapping("/me")
+    public ResponseEntity<UserResponse> updateCurrentStudent(
+            @AuthenticationPrincipal User user, @Valid @RequestBody UpdateStudentRequest req) {
+        studentService.updateStudent((Student) user, req);
+        return ResponseEntity.ok(UserResponse.from(user));
     }
 }

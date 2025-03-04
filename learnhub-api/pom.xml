@@ -17,10 +17,18 @@
 		<java.version>17</java.version>
 	</properties>
 	<dependencies>
+        <!-- Web -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
+        <!-- Validation -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
         <!-- Database -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>

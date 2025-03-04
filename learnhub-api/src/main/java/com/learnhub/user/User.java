@@ -41,6 +41,15 @@ public class User implements UserDetails {
     @Column(name = "role")
     private UserRole role;
 
+    @Column(name = "phone")
+    private String phone;
+
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "city")
+    private String city;
+
     @Column(name = "active")
     private boolean active;
 
@@ -49,8 +58,7 @@ public class User implements UserDetails {
 
     public User() {}
 
-    public User(String email, String firstName, String lastName, String password, UserRole role,
-            boolean active) {
+    public User(String email, String firstName, String lastName, String password, UserRole role, boolean active) {
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -58,6 +66,28 @@ public class User implements UserDetails {
         this.role = role;
         this.active = active;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public User(
+            String email,
+            String firstName,
+            String lastName,
+            String password,
+            UserRole role,
+            boolean active,
+            String phone,
+            String address,
+            String city) {
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.password = password;
+        this.role = role;
+        this.active = active;
+        this.createdAt = LocalDateTime.now();
+        this.phone = phone;
+        this.address = address;
+        this.city = city;
     }
 
     public Long getId() {
@@ -120,10 +150,34 @@ public class User implements UserDetails {
         this.createdAt = createdAt;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority =
-                new SimpleGrantedAuthority(role.name().toLowerCase());
+                new SimpleGrantedAuthority(role.name());
         return Collections.singleton(authority);
     }
 
