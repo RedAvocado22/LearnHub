@@ -14,6 +14,7 @@ interface UserContextType {
     setUser: React.Dispatch<React.SetStateAction<User | null>>;
     login: (payload: LoginRequest) => Promise<void>;
     logout: () => void;
+    refresh: () => void;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -76,6 +77,26 @@ const UserProvider = ({ children }: UserProviderProps) => {
         }
     };
 
+    const refresh = async () => {
+        try {
+            const resp = await API.get("/users/me");
+            if (resp.status === 200) {
+                setUser(resp.data);
+            }
+        } catch (error) {
+            if (isAxiosError(error)) {
+                switch (error.response?.status) {
+                    case 401:
+                        localStorage.removeItem("access_token");
+                        setUser(null);
+                        break;
+                    default:
+                        throw new Error("Can't refresh user info.");
+                }
+            }
+        }
+    };
+
     useEffect(() => {
         const accessToken = localStorage.getItem("access_token");
         if (accessToken) {
@@ -95,7 +116,9 @@ const UserProvider = ({ children }: UserProviderProps) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser, login, logout }}>{ready ? children : null}</UserContext.Provider>
+        <UserContext.Provider value={{ user, setUser, login, logout, refresh }}>
+            {ready ? children : null}
+        </UserContext.Provider>
     );
 };
 

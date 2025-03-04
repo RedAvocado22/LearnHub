@@ -27,33 +27,7 @@ public class CourseService {
         return courseRepository.findById(id).orElse(null);
     }
 
-    public Course updateCourse(Course course, UpdateCourseRequest updateCourseRequest) {
-        course.setName(updateCourseRequest.name());
-        course.setCategory(updateCourseRequest.category());
-        course.setPrice(updateCourseRequest.price());
-
-        switch (updateCourseRequest.status()) {
-            case PUBLIC:
-                course.setStatus(CourseStatus.PUBLIC);
-                course.setUpdatedAt(LocalDateTime.now());
-                break;
-            case PRIVATE:
-                course.setStatus(CourseStatus.PRIVATE);
-                course.setCreatedAt(LocalDateTime.now());
-                break;
-            case ARCHIVED:
-                course.setStatus(CourseStatus.ARCHIVED);
-                course.setArchivedAt(LocalDateTime.now());
-                break;
-            case PENDING:
-                course.setStatus(CourseStatus.PENDING);
-                course.setUpdatedAt(LocalDateTime.now());
-                break;
-            case CANCELLED:
-                course.setStatus(CourseStatus.CANCELLED);
-                course.setCancelledAt(LocalDateTime.now());
-                break;
-        }
+    public Course updateCourse(Course course) {
         return courseRepository.save(course);
     }
 }

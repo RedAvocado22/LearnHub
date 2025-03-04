@@ -1,38 +1,19 @@
-import { useEffect, useState } from "react";
-import { isAxiosError } from "axios";
+import { useState } from "react";
 import { useTeacher } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
-import NotFound from "../../error/NotFound";
 import { Course, CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function TeacherCourseList() {
-    const { user } = useTeacher();
+    const { user, refresh } = useTeacher();
     const id = user.id;
 
     const { status = "" } = useParams<{ status: string }>();
     const navigate = useNavigate();
 
-    const [notFound, setNotFound] = useState(false);
-    const [courses, setCourses] = useState<Course[]>([]);
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
     const [newStatus, setNewStatus] = useState<CourseStatus>();
-
-    useEffect(() => {
-        const fetchTeacherData = async () => {
-            try {
-                const response = await API.get(`courses/teacher`);
-                setCourses(response?.data);
-            } catch (error) {
-                if (isAxiosError(error) && error.response?.status === 404) {
-                    setNotFound(true);
-                }
-            }
-        };
-
-        fetchTeacherData();
-    }, [id, status]);
 
     const handleEditClick = (course: Course) => {
         setEditingCourse(course);
@@ -40,11 +21,11 @@ export default function TeacherCourseList() {
     };
 
     const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedStatus = e.target.value as unknown as CourseStatus;
+        const selectedStatus = e.target.value as CourseStatus;
         setNewStatus(selectedStatus);
     };
 
-    const handleSave = async (courseId: number) => {
+    const handleSave = async () => {
         try {
             if (!editingCourse) return;
 
@@ -58,7 +39,7 @@ export default function TeacherCourseList() {
                 status: updatedCourse.status
             });
 
-            setCourses((prevCourses) => prevCourses.map((course) => (course.id === courseId ? updatedCourse : course)));
+            refresh();
 
             setEditingCourse(null);
         } catch (error) {
@@ -70,18 +51,12 @@ export default function TeacherCourseList() {
         setEditingCourse(null);
     };
 
-    if (!id || id == 0 || notFound) {
-        return <NotFound />;
-    }
-
     const filteredCourses =
         status === "all"
-            ? courses
-            : courses.filter((course) => {
+            ? user.details.courses
+            : user.details.courses.filter((course) => {
                   return course.status.toString().toLowerCase() === status!.toLowerCase();
               });
-
-    console.log(filteredCourses);
 
     return (
         <HomeLayout>
@@ -136,8 +111,9 @@ export default function TeacherCourseList() {
                                                                             Canceled
                                                                         </option>
                                                                     </select>
+
                                                                     <button
-                                                                        onClick={() => handleSave(course.id)}
+                                                                        onClick={() => handleSave()}
                                                                         className="btn-save">
                                                                         Save
                                                                     </button>
