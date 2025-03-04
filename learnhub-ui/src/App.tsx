@@ -17,7 +17,12 @@ import {
     UserProfile,
     Mailbox,
     FAQ,
-    About
+    About,
+    CourseManagerDashboard,
+    CourseListManager,
+    BookList,
+    Cart,
+    Order
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -59,7 +64,11 @@ export default function App() {
                 <Route path="/teacher/:id" element={<TeacherDetails />}></Route>
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
-
+                <Route path="/coursemanager" element={<CourseManagerDashboard />} />
+                <Route path="/courselistmanager" element={<CourseListManager />} />
+                <Route path="/bookList" element={<BookList />} />
+                <Route path="/cart" element={<Cart />} />
+                <Route path="/order" element={<Order />} />
                 {/* Routes for unathenticated users */}
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />

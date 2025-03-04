@@ -2,6 +2,7 @@ package com.learnhub.user;
 
 import java.time.LocalDateTime;
 import java.util.List;
+
 import com.learnhub.course.Category;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
@@ -17,7 +18,8 @@ public record UserResponse(
         UserRole role,
         UserDetailsResponse details
 ) {
-    public sealed interface UserDetailsResponse permits StudentResponse, TeacherResponse {}
+    public sealed interface UserDetailsResponse permits StudentResponse, TeacherResponse {
+    }
 
     public record StudentResponse(StudentType studentType, String school) implements UserDetailsResponse {
         public static StudentResponse from(Student student) {
@@ -37,7 +39,7 @@ public record UserResponse(
                 Long id,
                 String name,
                 Category category,
-                Double price,
+                Float price,
                 CourseStatus status,
                 String description,
                 LocalDateTime createdAt,
@@ -59,6 +61,7 @@ public record UserResponse(
                         course.getArchivedAt());
             }
         }
+
         public static TeacherResponse from(Teacher teacher) {
             return new TeacherResponse(
                     teacher.getMajor(),

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import com.learnhub.user.student.StudentType;
 import com.learnhub.util.validation.Validator;
 
+
 public record StudentRegisterRequest(
         @NotEmpty
         @Email

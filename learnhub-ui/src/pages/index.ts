@@ -5,6 +5,11 @@ export { default as CourseList } from "./public/CourseList";
 export { default as ContactUs } from "./public/ContactUs";
 export { default as FAQ } from "./public/FAQ";
 export { default as About } from "./public/About";
+export { default as CourseManagerDashboard } from "./public/CourseManagerDashboard";
+export { default as CourseListManager } from "./public/CourseListManager";
+export { default as BookList } from "./public/BookList";
+export { default as Cart } from "./public/Cart";
+export { default as Order } from "./public/Order";
 
 // Auth pages
 export { default as Register } from "./auth/Register";

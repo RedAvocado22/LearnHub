@@ -1,10 +1,11 @@
-package com.learnhub.common;
+package com.learnhub.user.admin;
 
 import com.learnhub.course.Category;
 import com.learnhub.course.Course;
+import com.learnhub.course.CourseStatus;
 import com.learnhub.user.teacher.Teacher;
 
-public record CourseListResponse(Long id, String name, CategoryResponse category, Float price,
+public record CourseListResponse(Long id, String name, CategoryResponse category, Float price, CourseStatus status,
                                  TeacherResponse teacher) {
     public record CategoryResponse(Long id, String name) {
         public static CategoryResponse from(Category category) {
@@ -24,6 +25,7 @@ public record CourseListResponse(Long id, String name, CategoryResponse category
                 course.getName(),
                 CategoryResponse.from(course.getCategory()),
                 course.getPrice(),
+                course.getStatus(),
                 TeacherResponse.from(course.getTeacher()));
     }
 }
