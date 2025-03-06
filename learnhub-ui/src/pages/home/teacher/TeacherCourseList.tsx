@@ -13,23 +13,16 @@ export default function TeacherCourseList() {
     const navigate = useNavigate();
 
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
-    const [newStatus, setNewStatus] = useState<CourseStatus>();
 
     const handleEditClick = (course: Course) => {
         setEditingCourse(course);
-        setNewStatus(course.status);
     };
 
-    const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-        const selectedStatus = e.target.value as CourseStatus;
-        setNewStatus(selectedStatus);
-    };
-
-    const handleSave = async () => {
+    const handleSave = async (newStatus: CourseStatus) => {
         try {
             if (!editingCourse) return;
 
-            const updatedCourse: Course = { ...editingCourse, status: newStatus! };
+            const updatedCourse: Course = { ...editingCourse, status: newStatus };
 
             await API.put(`courses/teacher`, {
                 id: updatedCourse.id,
@@ -74,55 +67,87 @@ export default function TeacherCourseList() {
                                                 <div className="cours-bx">
                                                     <div className="action-box">
                                                         <img src="/assets/images/courses/pic1.jpg" alt="" />
-                                                        <div className="button-container">
-                                                            <button
-                                                                onClick={() => handleEditClick(course)}
-                                                                className="btn">
-                                                                Edit
-                                                            </button>
-                                                        </div>
+                                                        {course.status !== "PENDING" && (
+                                                            <div className="button-container">
+                                                                <button
+                                                                    onClick={() => handleEditClick(course)}
+                                                                    className="btn">
+                                                                    Edit
+                                                                </button>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                     <div className="info-bx text-center edit-course-container">
                                                         {editingCourse?.id === course.id ? (
                                                             <div>
-                                                                <div className="button-container">
-                                                                    <button
-                                                                        onClick={() =>
-                                                                            navigate(`/add-material/${course.id}`)
-                                                                        }
-                                                                        className="btn m-b15">
-                                                                        Add Material
-                                                                    </button>
-                                                                </div>
-                                                                <div>
-                                                                    <select
-                                                                        value={newStatus}
-                                                                        onChange={handleStatusChange}>
-                                                                        <option value={CourseStatus.PUBLIC}>
-                                                                            Public
-                                                                        </option>
-                                                                        <option value={CourseStatus.PRIVATE}>
-                                                                            Private
-                                                                        </option>
-                                                                        <option value={CourseStatus.PENDING}>
-                                                                            Pending
-                                                                        </option>
-                                                                        <option value={CourseStatus.CANCELLED}>
-                                                                            Canceled
-                                                                        </option>
-                                                                    </select>
-
-                                                                    <button
-                                                                        onClick={() => handleSave()}
-                                                                        className="btn-save">
-                                                                        Save
-                                                                    </button>
-                                                                    <button
-                                                                        onClick={handleCancel}
-                                                                        className="btn-cancel">
-                                                                        Cancel
-                                                                    </button>
-                                                                </div>
+                                                                {editingCourse.status === "PRIVATE" && (
+                                                                    <div className="button-container">
+                                                                        <div>
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    navigate(
+                                                                                        `/add-material/${course.id}`
+                                                                                    )
+                                                                                }
+                                                                                className="btn m-b15">
+                                                                                Add Material
+                                                                            </button>
+                                                                        </div>
+                                                                        <div>
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    handleSave(CourseStatus.PENDING)
+                                                                                }
+                                                                                className="btn m-b15 m-r15">
+                                                                                Submit Course
+                                                                            </button>
+                                                                            <button
+                                                                                onClick={() =>
+                                                                                    handleSave(CourseStatus.CANCELLED)
+                                                                                }
+                                                                                className="btn m-b15">
+                                                                                Cancel Course
+                                                                            </button>
+                                                                        </div>
+                                                                        <button
+                                                                            onClick={handleCancel}
+                                                                            className="btn m-b15">
+                                                                            Cancel
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                                {editingCourse.status === "PUBLIC" && (
+                                                                    <div className="button-container">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleSave(CourseStatus.PRIVATE)
+                                                                            }
+                                                                            className="btn m-b15 m-r15">
+                                                                            Update Course
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={handleCancel}
+                                                                            className="btn m-b15">
+                                                                            Cancel
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                                {editingCourse.status === "CANCELLED" && (
+                                                                    <div className="button-container">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleSave(CourseStatus.PRIVATE)
+                                                                            }
+                                                                            className="btn m-b15 m-r15">
+                                                                            Reactivate Course
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={handleCancel}
+                                                                            className="btn m-b15">
+                                                                            Cancel
+                                                                        </button>
+                                                                    </div>
+                                                                )}
                                                             </div>
                                                         ) : (
                                                             <div>
