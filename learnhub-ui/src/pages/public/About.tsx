@@ -9,18 +9,8 @@ export default function About() {
                     style={{ backgroundImage: "url(/assets/images/banner/banner3.jpg)" }}>
                     <div className="container">
                         <div className="page-banner-entry">
-                            <h1 className="text-white">About Us 2</h1>
+                            <h1 className="text-white">About Us</h1>
                         </div>
-                    </div>
-                </div>
-                <div className="breadcrumb-row">
-                    <div className="container">
-                        <ul className="list-inline">
-                            <li>
-                                <a href="#">Home</a>
-                            </li>
-                            <li>About Us 2</li>
-                        </ul>
                     </div>
                 </div>
                 <div className="content-block">

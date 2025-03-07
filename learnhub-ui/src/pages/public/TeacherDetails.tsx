@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Footer, Header } from "../../layouts";
+import { MainLayout } from "../../layouts";
 import { API } from "../../api";
 import { useParams } from "react-router-dom";
 import NotFound from "../error/NotFound";
@@ -18,10 +18,10 @@ interface Teacher {
     lastName: string;
     major: string;
     phone: string;
+    website: string;
     school: string;
     address: string;
     city: string;
-    website: string;
     about: string;
     courses: Course[];
 }
@@ -37,10 +37,10 @@ export default function TeacherDetails() {
         lastName: "",
         major: "",
         phone: "",
+        website: "",
         school: "",
         address: "",
         city: "",
-        website: "",
         about: "",
         courses: []
     });
@@ -66,105 +66,101 @@ export default function TeacherDetails() {
     }
 
     return (
-        <div className="page-content bg-white">
-            <Header />
-            <div className="page-banner ovbl-dark" style={{ backgroundImage: "url(assets/images/banner/banner1.jpg)" }}>
-                <div className="container">
-                    <div className="page-banner-entry">
-                        <h1 className="text-white">Profile</h1>
-                    </div>
-                </div>
-            </div>
-            <div className="content-block">
-                <div className="section-area section-sp1">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                <div className="profile-bx text-center">
-                                    <div className="user-profile-thumb">
-                                        <img src="/assets/images/profile/pic1.jpg" alt="" />
-                                    </div>
-                                    <div className="profile-info">
-                                        <h4>
-                                            {teacher.firstName} {teacher.lastName}
-                                        </h4>
-                                        <span>{teacher.email}</span>
-                                    </div>
-                                    <div className="profile-tabnav">
-                                        <ul className="nav nav-tabs">
-                                            <li className="nav-item">
-                                                <a className="nav-link active" data-toggle="tab" href="#courses">
-                                                    <i className="ti-book"></i>Courses
-                                                </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" data-toggle="tab" href="#edit-profile">
-                                                    <i className="ti-pencil-alt"></i>Teacher information
-                                                </a>
-                                            </li>
-                                        </ul>
+        <MainLayout>
+            <div className="page-content bg-white">
+                <div className="content-block">
+                    <div className="section-area section-sp1">
+                        <div className="container">
+                            <div className="row">
+                                <div className="col-lg-3 col-md-4 col-sm-12 m-b30">
+                                    <div className="profile-bx text-center">
+                                        <div className="user-profile-thumb">
+                                            <img src="/assets/images/profile/pic1.jpg" alt="" />
+                                        </div>
+                                        <div className="profile-info">
+                                            <h4>
+                                                {teacher.firstName} {teacher.lastName}
+                                            </h4>
+                                            <span>{teacher.email}</span>
+                                        </div>
+                                        <div className="profile-tabnav">
+                                            <ul className="nav nav-tabs">
+                                                <li className="nav-item">
+                                                    <a className="nav-link active" data-toggle="tab" href="#courses">
+                                                        <i className="ti-book"></i>Courses
+                                                    </a>
+                                                </li>
+                                                <li className="nav-item">
+                                                    <a className="nav-link" data-toggle="tab" href="#edit-profile">
+                                                        <i className="ti-pencil-alt"></i>Teacher information
+                                                    </a>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-lg-9 col-md-8 col-sm-12 m-b30">
-                                <div className="profile-content-bx">
-                                    <div className="tab-content">
-                                        <div className="tab-pane active" id="courses">
-                                            <div className="profile-head">
-                                                <h3>Courses</h3>
-                                            </div>
-                                            <div className="courses-filter">
-                                                <div className="clearfix">
-                                                    <ul id="masonry" className="ttr-gallery-listing magnific-image row">
-                                                        {teacher.courses.map((course: Course) => (
-                                                            <div
-                                                                key={course.id}
-                                                                className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish">
-                                                                <div className="cours-bx">
-                                                                    <div className="action-box">
-                                                                        <img
-                                                                            src="/assets/images/courses/pic1.jpg"
-                                                                            alt=""
-                                                                        />
-                                                                        <a href="#" className="btn">
-                                                                            Read More
-                                                                        </a>
-                                                                    </div>
-                                                                    <div className="info-bx text-center">
-                                                                        <h5>
-                                                                            <a href="#">{course.name}</a>
-                                                                        </h5>
-                                                                        <span>{course.category.name}</span>
-                                                                    </div>
-                                                                    <div className="cours-more-info">
-                                                                        <div className="review">
-                                                                            <span>3 Review</span>
-                                                                            <ul className="cours-star">
-                                                                                <li className="active">
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li className="active">
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li className="active">
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                            </ul>
+                                <div className="col-lg-9 col-md-8 col-sm-12 m-b30">
+                                    <div className="profile-content-bx">
+                                        <div className="tab-content">
+                                            <div className="tab-pane active" id="courses">
+                                                <div className="profile-head">
+                                                    <h3>Courses</h3>
+                                                </div>
+                                                <div className="courses-filter">
+                                                    <div className="clearfix">
+                                                        <ul
+                                                            id="masonry"
+                                                            className="ttr-gallery-listing magnific-image row">
+                                                            {teacher.courses.map((course: Course) => (
+                                                                <div
+                                                                    key={course.id}
+                                                                    className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish">
+                                                                    <div className="cours-bx">
+                                                                        <div className="action-box">
+                                                                            <img
+                                                                                src="/assets/images/courses/pic1.jpg"
+                                                                                alt=""
+                                                                            />
+                                                                            <a href="#" className="btn">
+                                                                                Read More
+                                                                            </a>
                                                                         </div>
-                                                                        <div className="price">
-                                                                            <h5>${course.price}</h5>
+                                                                        <div className="info-bx text-center">
+                                                                            <h5>
+                                                                                <a href="#">{course.name}</a>
+                                                                            </h5>
+                                                                            <span>{course.category.name}</span>
+                                                                        </div>
+                                                                        <div className="cours-more-info">
+                                                                            <div className="review">
+                                                                                <span>3 Review</span>
+                                                                                <ul className="cours-star">
+                                                                                    <li className="active">
+                                                                                        <i className="fa fa-star"></i>
+                                                                                    </li>
+                                                                                    <li className="active">
+                                                                                        <i className="fa fa-star"></i>
+                                                                                    </li>
+                                                                                    <li className="active">
+                                                                                        <i className="fa fa-star"></i>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <i className="fa fa-star"></i>
+                                                                                    </li>
+                                                                                    <li>
+                                                                                        <i className="fa fa-star"></i>
+                                                                                    </li>
+                                                                                </ul>
+                                                                            </div>
+                                                                            <div className="price">
+                                                                                <h5>${course.price}</h5>
+                                                                            </div>
                                                                         </div>
                                                                     </div>
                                                                 </div>
-                                                            </div>
-                                                        ))}
-                                                    </ul>
+                                                            ))}
+                                                        </ul>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -283,7 +279,6 @@ export default function TeacherDetails() {
                     </div>
                 </div>
             </div>
-            <Footer />
-        </div>
+        </MainLayout>
     );
 }

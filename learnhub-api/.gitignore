@@ -34,3 +34,4 @@ build/
 
 ### Dev Profile ###
 application-dev.yml
+/uploads/
