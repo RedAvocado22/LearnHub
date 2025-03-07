@@ -17,6 +17,9 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
 export { default as Mailbox } from "./home/teachermanager/Mailbox";
+export { default as CourseQuiz } from "./home/student/CourseQuiz";
+export { default as DoQuiz } from "./home/student/DoQuiz";
+export { default as QuizResult } from "./home/student/QuizResult";
 
 // Error boundary
 export { default as NotFound } from "./error/NotFound";
