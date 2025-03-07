@@ -22,6 +22,9 @@ import {
     UserList,
     UserDetails,
     AddUser
+    CourseQuiz,
+    DoQuiz,
+    QuizResult
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -94,6 +97,11 @@ export default function App() {
                     <Route path="/manager/users" element={<UserList />} />
                     <Route path="/manager/users/:id" element={<UserDetails />} />
                     <Route path="/manager/users/add" element={<AddUser />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
+                    <Route path="/quiz/:qid" element={<CourseQuiz />} />
+                    <Route path="/quiz/:qid/do-quiz" element={<DoQuiz />} />
+                    <Route path="/quiz/result/:id" element={<QuizResult />} />
                 </Route>
 
                 {/* Error Boundary */}
