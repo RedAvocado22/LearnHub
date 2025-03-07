@@ -1,6 +1,6 @@
 import "react-toastify/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Outlet } from "react-router-dom";
 import {
     NotFound,
     Landing,
@@ -15,10 +15,20 @@ import {
     ContactUs,
     Home,
     UserProfile,
-    Mailbox,
     FAQ,
     About,
+<<<<<<< HEAD
     UserCourseList
+=======
+    ContactList,
+    ContactDetails,
+    UserList,
+    UserDetails,
+    AddUser
+    CourseQuiz,
+    DoQuiz,
+    QuizResult
+>>>>>>> 17f332e95605fa7c732c955b5307de309ffd880f
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -26,6 +36,7 @@ import Dummy from "./pages/Dummy";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/User";
 import UserProvider from "./hooks/useUser";
+import ContactsProvider from "./hooks/useContacts";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -57,39 +68,47 @@ export default function App() {
                 <Route path="/contact" element={<ContactUs />} />
                 <Route path="/activate/:token" element={<Login />} />
                 <Route path="/courses" element={<CourseList />} />
-                <Route path="/teacher/:id" element={<TeacherDetails />}></Route>
+                <Route path="/teacher/:id" element={<TeacherDetails />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
 
                 {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
-                </Route>
-                <Route element={<GuestRoute />}>
                     <Route path="/manager/login" element={<ManagerLogin />} />
-                </Route>
-                <Route element={<GuestRoute />}>
                     <Route path="/register" element={<Register />} />
-                </Route>
-                <Route element={<GuestRoute />}>
                     <Route path="/forgot-password" element={<ForgotPassword />} />
-                </Route>
-                <Route element={<GuestRoute />}>
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
                 </Route>
 
                 {/* Routes for authenticated users */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/home" element={<Home />} />
-                </Route>
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/profile" element={<UserProfile />}></Route>
+                    <Route path="/profile" element={<UserProfile />} />
                 </Route>
                 <Route element={<ProtectedRoute />}>
                     <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
-                    <Route path="/manager/mailbox" element={<Mailbox />} />
+                    <Route
+                        element={
+                            <ContactsProvider>
+                                <Outlet />
+                            </ContactsProvider>
+                        }>
+                        <Route path="/manager/contacts" element={<ContactList />} />
+                        <Route path="/manager/contacts/:id" element={<ContactDetails />} />
+                    </Route>
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
+                    <Route path="/manager/users" element={<UserList />} />
+                    <Route path="/manager/users/:id" element={<UserDetails />} />
+                    <Route path="/manager/users/add" element={<AddUser />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
+                    <Route path="/quiz/:qid" element={<CourseQuiz />} />
+                    <Route path="/quiz/:qid/do-quiz" element={<DoQuiz />} />
+                    <Route path="/quiz/result/:id" element={<QuizResult />} />
                 </Route>
 
                 {/* Error Boundary */}

@@ -113,6 +113,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
         } else {
             setReady(true);
         }
+        return () => setReady(false);
     }, []);
 
     return (

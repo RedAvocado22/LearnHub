@@ -7,7 +7,6 @@ import { useParams, useNavigate } from "react-router-dom";
 
 export default function TeacherCourseList() {
     const { user, refresh } = useTeacher();
-    const id = user.id;
 
     const { status = "" } = useParams<{ status: string }>();
     const navigate = useNavigate();
@@ -153,6 +152,9 @@ export default function TeacherCourseList() {
                                                             <div>
                                                                 <h5>
                                                                     <a href="#">{course.name}</a>
+                                                                </h5>
+                                                                <h5>
+                                                                    <span>{course.status}</span>
                                                                 </h5>
                                                                 <span>{course.category.name}</span>
                                                                 <div className="review">

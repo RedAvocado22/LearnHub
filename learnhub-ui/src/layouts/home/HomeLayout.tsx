@@ -44,7 +44,8 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
     ],
     TEACHER_MANAGER: [
         { label: "Dashboard", icon: "ti-home", link: "/home" },
-        { label: "Mailbox", icon: "ti-email", link: "/manager/mailbox" }
+        { label: "Mailbox", icon: "ti-email", link: "/manager/contacts" },
+        { label: "Manage Users", icon: "ti-user", link: "/manager/users" }
     ],
     COURSE_MANAGER: [{ label: "Dashboard", icon: "ti-home", link: "/home" }],
     ADMIN: []
@@ -145,7 +146,12 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                     }}
                                     className="ttr-material-button ttr-submenu-toggle">
                                     <span className="ttr-user-avatar">
-                                        <img alt="" src="/assets/images/testimonials/pic3.jpg" width="32" height="32" />
+                                        <img
+                                            alt=""
+                                            src="/assets/images/testimonials/default.jpg"
+                                            width="32"
+                                            height="32"
+                                        />
                                     </span>
                                 </a>
                                 <div

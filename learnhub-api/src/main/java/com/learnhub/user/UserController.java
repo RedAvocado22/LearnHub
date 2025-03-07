@@ -1,14 +1,24 @@
 package com.learnhub.user;
 
+import java.util.List;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.MediaTypeFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
@@ -18,6 +28,46 @@ public class UserController {
     @Autowired
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping
+    public ResponseEntity<List<UserListResponse>> getAll() {
+        return ResponseEntity.ok(userService.getAllExceptTeacherManager().stream().map(UserListResponse::from).toList());
+    }
+    
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDetailsResponse> getById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(UserDetailsResponse.from(userService.getUserById(id)));
+    }
+
+    @PostMapping
+    public ResponseEntity<Long> addUser(@Valid @RequestBody AddUserRequest req) {
+        return ResponseEntity.ok(userService.addUserWithDefaultPassword(req));
+    }
+
+    @PostMapping(value = "/{id}/documents", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<String> uploadDocument(@PathVariable("id") Long id, @RequestParam MultipartFile[] files) {
+        userService.saveUserDocuments(id, files);
+        return ResponseEntity.ok("Success");
+    }
+
+    @DeleteMapping("/{id}/documents/{fileName:.+}")
+    public ResponseEntity<String> deleteUserDocument(@PathVariable("id") Long id, @PathVariable("fileName") String fileName) {
+        userService.deleteUserDocument(id, fileName);
+        return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/documents/{fileName:.+}")
+    public ResponseEntity<Resource> downloadDocument(@PathVariable("fileName") String fileName) {
+        Resource resource = userService.getUserDocument(fileName);
+        if (resource == null) {
+            return ResponseEntity.notFound().build();
+        }
+        MediaType type = MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM);
+        return ResponseEntity.ok()
+            .contentType(type)
+            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+            .body(resource);
     }
 
     @GetMapping("/me")

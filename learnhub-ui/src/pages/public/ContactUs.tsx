@@ -32,7 +32,7 @@ export default function ContactUs() {
         }
 
         try {
-            const resp = await API.post("/contact", { firstName, lastName, email, phone, subject, message });
+            const resp = await API.post("/public/contacts", { firstName, lastName, email, phone, subject, message });
             if (resp.status === 200) {
                 navigate("/");
                 toast.success("Sent successful!");
@@ -153,10 +153,10 @@ export default function ContactUs() {
                                                         className="form-control form-select"
                                                         value={subject}
                                                         onChange={(e) => setSubject(e.target.value)}>
-                                                        <option value={"want to become a teacher"}>
+                                                        <option value={"Want to become a teacher"}>
                                                             I want to become a teacher
                                                         </option>
-                                                        <option value={"have a problem"}>I have a problem</option>
+                                                        <option value={"Have a problem"}>I have a problem</option>
                                                     </select>
                                                 </div>
                                             </div>
