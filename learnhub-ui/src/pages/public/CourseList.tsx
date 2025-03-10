@@ -13,7 +13,8 @@ interface Course {
 
 export default function CourseList() {
     const [courses, setCourses] = useState<Course[]>([]); // All courses
-    const [filteredCourses, setFilteredCourses] = useState<Course[]>([]); // Filtered courses
+    const [filteredCourses, setFilteredCourses] = useState<Course[]>([]); // Filtered courses based on search term
+    const [paginatedCourses, setPaginatedCourses] = useState<Course[]>([]); // Paginated courses for display
     const [searchTerm, setSearchTerm] = useState<string>(""); // Track search term
     const [currentPage, setCurrentPage] = useState<number>(1); // Track current page
     const coursesPerPage = 6; // Number of courses per page
@@ -24,8 +25,7 @@ export default function CourseList() {
                 const resp = await API.get("/public/courses");
                 setCourses(resp?.data || []); // Store all courses
                 setFilteredCourses(resp?.data || []); // Set initial filtered courses
-
-                const
+                console.log(resp.data);
             } catch (error) {
                 console.error("Failed to fetch courses:", error);
             }
@@ -45,8 +45,8 @@ export default function CourseList() {
         // Paginate filtered courses
         const indexOfLastCourse = currentPage * coursesPerPage;
         const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
-        setFilteredCourses((prevFilteredCourses) => prevFilteredCourses.slice(indexOfFirstCourse, indexOfLastCourse));
-    }, [currentPage, courses, searchTerm]); // Update pagination when courses, page, or search term changes
+        setPaginatedCourses(filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse));
+    }, [currentPage, filteredCourses]); // Update pagination when filtered courses or currentPage change
 
     const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
@@ -122,8 +122,8 @@ export default function CourseList() {
                                 </div>
                                 <div className="col-lg-9 col-md-8 col-sm-12">
                                     <div className="row">
-                                        {filteredCourses.length > 0 ? (
-                                            filteredCourses.map((course) => (
+                                        {paginatedCourses.length > 0 ? (
+                                            paginatedCourses.map((course) => (
                                                 <div key={course.id} className="col-md-6 col-lg-4 col-sm-6 m-b30">
                                                     <div className="cours-bx">
                                                         <div className="action-box" style={{ maxHeight: "160px" }}>
