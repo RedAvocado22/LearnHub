@@ -30,7 +30,7 @@ export default function Login() {
         try {
             await login({ email, password });
             toast.success("Login successfully");
-            navigate("/home"); // NOTE: It navigate to /login first for some reason
+            navigate("/home");
         } catch (err) {
             toast.warning((err as Error).message);
             setEmail("");
