@@ -1,12 +1,21 @@
 import { useState } from "react";
 import { useTeacher } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
-import { Course, CourseStatus } from "../../../types/Course";
+import { Category, CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
 import { useParams, useNavigate } from "react-router-dom";
+interface Course {
+    id: number;
+    name: string;
+    category: Category;
+    price: number;
+    status: CourseStatus;
+    image: string;
+}
 
 export default function TeacherCourseList() {
     const { user, refresh } = useTeacher();
+    refresh();
 
     const { status = "" } = useParams<{ status: string }>();
     const navigate = useNavigate();
@@ -31,8 +40,6 @@ export default function TeacherCourseList() {
                 status: updatedCourse.status
             });
 
-            refresh();
-
             setEditingCourse(null);
         } catch (error) {
             console.error("Error updating course:", error);
@@ -42,6 +49,10 @@ export default function TeacherCourseList() {
     const handleCancel = () => {
         setEditingCourse(null);
     };
+
+    user.details.courses.map((course) => {
+        console.log(course.image);
+    });
 
     const filteredCourses =
         status === "all"
@@ -64,17 +75,22 @@ export default function TeacherCourseList() {
                                                 key={course.id}
                                                 className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish m-b30">
                                                 <div className="cours-bx">
-                                                    <div className="action-box">
-                                                        <img src="/assets/images/courses/pic1.jpg" alt="" />
-                                                        {course.status !== "PENDING" && (
-                                                            <div className="button-container">
-                                                                <button
-                                                                    onClick={() => handleEditClick(course)}
-                                                                    className="btn">
-                                                                    Edit
-                                                                </button>
-                                                            </div>
+                                                    <div className="action-box" style={{ maxHeight: "222px" }}>
+                                                        {course.image ? (
+                                                            <img src={course.image} alt="Course Image" />
+                                                        ) : (
+                                                            <img
+                                                                src="/assets/images/courses/pic1.jpg"
+                                                                alt="Default Course"
+                                                            />
                                                         )}
+                                                        <div className="button-container">
+                                                            <button
+                                                                onClick={() => handleEditClick(course)}
+                                                                className="btn">
+                                                                Edit
+                                                            </button>
+                                                        </div>
                                                     </div>
                                                     <div className="info-bx text-center edit-course-container">
                                                         {editingCourse?.id === course.id ? (
@@ -144,6 +160,22 @@ export default function TeacherCourseList() {
                                                                             onClick={handleCancel}
                                                                             className="btn m-b15">
                                                                             Cancel
+                                                                        </button>
+                                                                    </div>
+                                                                )}
+                                                                {editingCourse.status === "PENDING" && (
+                                                                    <div className="button-container">
+                                                                        <button
+                                                                            onClick={() =>
+                                                                                handleSave(CourseStatus.PRIVATE)
+                                                                            }
+                                                                            className="btn m-b15 m-r15">
+                                                                            Cancel Submission
+                                                                        </button>
+                                                                        <button
+                                                                            onClick={handleCancel}
+                                                                            className="btn m-b15">
+                                                                            Cancels
                                                                         </button>
                                                                     </div>
                                                                 )}

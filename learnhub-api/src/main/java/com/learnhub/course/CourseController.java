@@ -1,5 +1,6 @@
 package com.learnhub.course;
 
+import com.learnhub.aws.AwsS3Service;
 import com.learnhub.user.User;
 import com.learnhub.user.teacher.Teacher;
 import com.learnhub.user.teacher.TeacherRepository;
@@ -7,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,25 +19,18 @@ public class CourseController {
 
     private final CourseService courseService;
     private final TeacherRepository teacherRepository;
+    private final AwsS3Service awsS3Service;
 
     @Autowired
-    public CourseController(CourseService courseService, TeacherRepository teacherRepository) {
+    public CourseController(
+            CourseService courseService,
+            TeacherRepository teacherRepository,
+            AwsS3Service awsS3Service) {
         this.courseService = courseService;
         this.teacherRepository = teacherRepository;
+        this.awsS3Service = awsS3Service;
     }
-
-    @GetMapping("/teacher")
-    public ResponseEntity<List<TeacherCourseListResponse>> getCourseByType(
-            @AuthenticationPrincipal User user) {
-        Long id = user.getId();
-        return ResponseEntity.ok(
-                courseService.getCoursesByTeacher(id)
-                        .stream()
-                        .filter(course -> !course.getStatus().equals(CourseStatus.ARCHIVED))
-                        .map(TeacherCourseListResponse::from).toList()
-        );
-    }
-
+    
     @PutMapping("/teacher")
     public void updateCourse(@AuthenticationPrincipal User user, @RequestBody UpdateCourseRequest req) {
         if (user instanceof Teacher teacher) {
@@ -71,5 +66,30 @@ public class CourseController {
             teacherRepository.save(teacher);
             teacherRepository.flush();
         }
+    }
+
+    @PostMapping("/teacher")
+    public ResponseEntity<String> createCourse(@AuthenticationPrincipal User user,
+                                               @RequestParam("name") String name,
+                                               @RequestParam("category") Category category,
+                                               @RequestParam("price") double price,
+                                               @RequestParam("description") String description,
+                                               @RequestParam("image") MultipartFile image) {
+
+        if (user instanceof Teacher teacher) {
+            String imageUrl = awsS3Service.saveFile(image);
+
+            Course course = new Course(name, category, price, CourseStatus.PRIVATE, description, imageUrl, teacher);
+            course.setCreatedAt(LocalDateTime.now());
+
+            teacher.getCourses().add(course);
+
+            teacherRepository.save(teacher);
+            teacherRepository.flush();
+
+            return ResponseEntity.ok("Success");
+        }
+
+        return ResponseEntity.badRequest().build();
     }
 }
