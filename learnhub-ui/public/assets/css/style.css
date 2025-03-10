@@ -3999,3 +3999,6 @@ button.back-to-top {
         margin-bottom: 5px;
     }
 }
+.small-font {
+    font-size: 0.875em; /* Adjust the size as needed */
+}
