@@ -5,11 +5,7 @@ export { default as CourseList } from "./public/CourseList";
 export { default as ContactUs } from "./public/ContactUs";
 export { default as FAQ } from "./public/FAQ";
 export { default as About } from "./public/About";
-export { default as CourseManagerDashboard } from "./public/CourseManagerDashboard";
-export { default as CourseListManager } from "./public/CourseListManager";
 export { default as BookList } from "./public/BookList";
-export { default as Cart } from "./public/Cart";
-export { default as Order } from "./public/Order";
 
 // Auth pages
 export { default as Register } from "./auth/Register";
@@ -22,7 +18,12 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
 export { default as Mailbox } from "./home/teachermanager/Mailbox";
+export { default as CourseManagerHome } from "./home/coursemanager/CourseManagerHome";
+export { default as CourseListManager } from "./home/coursemanager/CourseListManager";
 
+//Payment
+export { default as Order } from "./home/payment/Order";
+export { default as PaymentCallback } from "./home/payment/PaymentCallback";
 // Error boundary
 export { default as NotFound } from "./error/NotFound";
 export { default as Unauthorized } from "./error/Unauthorized";

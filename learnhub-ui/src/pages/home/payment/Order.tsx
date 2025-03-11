@@ -1,6 +1,30 @@
-import { MainLayout } from "../../layouts";
+import { isAxiosError } from "axios";
+import { API } from "../../../api";
+import { MainLayout } from "../../../layouts";
+import { toast } from "react-toastify";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+
+interface Order {
+    orderInfo: String;
+    totalPrice: number;
+}
 
 export default function Order() {
+    const handleSubmitAccountChange = async () => {
+        try {
+            console.log(1);
+            const resp = await API.post("/students/createPayment", {
+                orderInfo: "Order info",
+                totalPrice: 299999
+            });
+            window.location.href = resp.data.data;
+        } catch (err) {
+            if (isAxiosError(err)) {
+                toast.error(err.response?.data.message);
+            }
+        }
+    };
     return (
         <MainLayout>
             <div className="container">
@@ -33,9 +57,9 @@ export default function Order() {
                                             value="Thanh toan don hang 2923"
                                         />
                                     </div>
-                                    <button type="submit" className="btn btn-primary">
+                                    <a type="submit" className="btn btn-primary" onClick={handleSubmitAccountChange}>
                                         Thanh toán
-                                    </button>
+                                    </a>
                                 </form>
                             </div>
                         </div>

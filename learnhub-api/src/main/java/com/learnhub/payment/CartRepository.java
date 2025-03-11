@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Long> {
     @Query(value = "select c from Cart c where c.user.userId = ?1", nativeQuery = true)
-    Cart findCartByUser(Long userId);
+    Cart findCartByUserId(Long userId);
 
     @Modifying
     @Query(value = "insert into cart (user_id,total,total_price) values (:userId, 0, 0)", nativeQuery = true)

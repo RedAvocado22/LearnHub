@@ -1,11 +1,13 @@
 package com.learnhub.payment;
 
+import com.learnhub.payment.dto.CartDTO;
+import com.learnhub.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 public class CartController {
     @Autowired
@@ -30,5 +32,10 @@ public class CartController {
     ) {
         cartItemService.addCourseToCartById(cartId, bookId);
         return ResponseEntity.ok("Add Book To Cart Successfully");
+    }
+
+    @GetMapping("/student/me/cart")
+    public ResponseEntity<CartDTO> getCart(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(CartDTO.from(cartService.getCartByUser(user)));
     }
 }

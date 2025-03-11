@@ -19,4 +19,9 @@ public class EnrollmentService {
         LocalDateTime now = LocalDateTime.now();
         return enrollmentRepository.getCountOfStudentRegister(now.getMonthValue());
     }
+
+    public void createEnrollment() {
+
+    }
+
 }

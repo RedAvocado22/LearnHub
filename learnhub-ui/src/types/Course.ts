@@ -1,11 +1,11 @@
 import { User } from "./User";
 
 export enum CourseStatus {
-    PUBLIC,
-    PRIVATE,
-    PENDING,
-    CANCELLED,
-    ARCHIVED
+    PUBLIC = "PUBLIC",
+    PRIVATE = "PRIVATE",
+    PENDING = "PENDING",
+    CANCELLED = "CANCELLED",
+    ARCHIVED = "ARCHIVED"
 }
 
 export interface Category {

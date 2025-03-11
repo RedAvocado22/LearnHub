@@ -7,6 +7,8 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Repository
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     @Modifying
@@ -23,4 +25,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, Long> {
     @Query(value = "delete from cart_item where cart_id=:cartId", nativeQuery = true)
     @Transactional
     void deleteAllCartItemByCartId(@Param("cartId") Long cartId);
+
+
+    @Query(value = "select * from cart_item where cart_id=:cartId", nativeQuery = true)
+    List<CartItem> getAllCartItemByCartId(@Param("cartId") Long id);
 }

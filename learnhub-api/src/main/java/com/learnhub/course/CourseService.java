@@ -15,20 +15,28 @@ public class CourseService {
     }
 
     public List<Course> getAllCourses() {
-        return courseRepository.findAll();
+
+        return courseRepository.findAll().stream().filter(
+                        course -> course.getStatus() != CourseStatus.PRIVATE)
+                .toList();
     }
 
     public List<Course> getAllPublicCourses() {
         return courseRepository.findAll().stream().filter(course -> course.getStatus() == CourseStatus.PUBLIC).toList();
     }
 
+    public Course updateCourse(Course course) {
+        return courseRepository.save(course);
+    }
+
+    public List<Course> getAllCourseByStatus(CourseStatus courseStatus) {
+        return courseRepository.findAll().stream().filter(course -> course.getStatus() == courseStatus).toList();
+    }
+
     public Course findCourseById(Long id) {
         return courseRepository.findcoursebyid(id);
     }
 
-    public List<Course> getAllCourseByStatus(CourseStatus status) {
-        return courseRepository.findAll().stream().filter(course -> course.getStatus() == status).toList();
-    }
 
     public List<Course> getCoursesByTeacher(Long id) {
         return courseRepository.findByTeacherID(id);

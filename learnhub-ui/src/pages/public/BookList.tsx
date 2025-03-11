@@ -1,6 +1,22 @@
+import { useEffect, useState } from "react";
 import { MainLayout } from "../../layouts";
+import { API } from "../../api";
 
+interface Course {
+    id: number;
+    name: string;
+    category: { id: number; name: string };
+    price: number;
+    teacher: { id: number; name: string };
+}
 export default function BookList() {
+    const [courses, setCourses] = useState<Course[]>([]);
+    useEffect(() => {
+        API.get("/public/coursesId/{id}").then((resp) => {
+            setCourses(resp?.data || []);
+            console.log(courses);
+        });
+    }, []);
     return (
         <MainLayout>
             <main className="ttr-wrapper">

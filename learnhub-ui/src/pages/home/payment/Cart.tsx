@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
-import { API } from "../../api";
-import { Course } from "../../types/Course";
+import { API } from "../../../api";
 
 interface Cart {
     id: number;
@@ -23,6 +22,12 @@ export default function Cart() {
     const [cart, setCart] = useState<Cart>();
     useEffect(() => {
         API.get("/public/usercart/{id}").then((resp) => {
+            setCart(resp.data);
+            console.log(cart);
+        });
+    });
+    useEffect(() => {
+        API.post("/public/usercart/{id}").then((resp) => {
             setCart(resp.data);
             console.log(cart);
         });

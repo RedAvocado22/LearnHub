@@ -18,11 +18,11 @@ import {
     Mailbox,
     FAQ,
     About,
-    CourseManagerDashboard,
-    CourseListManager,
     BookList,
-    Cart,
-    Order
+    Order,
+    PaymentCallback,
+    CourseListManager,
+    CourseManagerHome
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -64,11 +64,8 @@ export default function App() {
                 <Route path="/teacher/:id" element={<TeacherDetails />}></Route>
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/coursemanager" element={<CourseManagerDashboard />} />
-                <Route path="/courselistmanager" element={<CourseListManager />} />
                 <Route path="/bookList" element={<BookList />} />
-                <Route path="/cart" element={<Cart />} />
-                <Route path="/order" element={<Order />} />
+
                 {/* Routes for unathenticated users */}
                 <Route element={<GuestRoute />}>
                     <Route path="/login" element={<Login />} />
@@ -93,10 +90,17 @@ export default function App() {
                 <Route element={<ProtectedRoute />}>
                     <Route path="/profile" element={<UserProfile />}></Route>
                 </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
+                    <Route path="/order" element={<Order />} />
+                    <Route path="/paymentcallback" element={<PaymentCallback />} />
+                </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route path="/manager/mailbox" element={<Mailbox />} />
                 </Route>
-
+                <Route element={<ProtectedRoute roles={[UserRole.COURSE_MANAGER]} />}>
+                    <Route path="/manager/course" element={<CourseListManager />} />
+                    <Route path="/manager/home" element={<CourseManagerHome />} />
+                </Route>
                 {/* Error Boundary */}
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/*" element={<NotFound />} />
