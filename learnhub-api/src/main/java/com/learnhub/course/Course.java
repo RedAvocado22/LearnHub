@@ -1,6 +1,7 @@
 package com.learnhub.course;
 
 import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -37,6 +38,9 @@ public class Course {
     @Column(name = "description")
     private String description;
 
+    @Column(name = "image")
+    private String image;
+
     @ManyToOne
     @JoinColumn(name = "teacher_id", referencedColumnName = "id")
     private Teacher teacher;
@@ -57,29 +61,25 @@ public class Course {
     }
 
     public Course(String name, Category category, double price,
-                  CourseStatus status, String description, Teacher teacher,
-                  LocalDateTime updatedAt, LocalDateTime createdAt,
-                  LocalDateTime cancelledAt, LocalDateTime archivedAt) {
+                  CourseStatus status,
+                  String description, String image,
+                  Teacher teacher) {
         this.name = name;
         this.category = category;
         this.price = price;
         this.status = status;
         this.description = description;
-        this.teacher = teacher;
-        this.updatedAt = updatedAt;
-        this.createdAt = createdAt;
-        this.cancelledAt = cancelledAt;
-        this.archivedAt = archivedAt;
-    }
-
-    public Course(String name, Category category, double price, CourseStatus status, String description, Teacher teacher) {
-        this.name = name;
-        this.category = category;
-        this.price = price;
-        this.status = status;
-        this.description = description;
+        this.image = image;
         this.teacher = teacher;
         this.createdAt = LocalDateTime.now();
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public Long getId() {

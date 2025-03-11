@@ -17,14 +17,17 @@ import {
     UserProfile,
     FAQ,
     About,
+    UserCourseList,
     ContactList,
     ContactDetails,
     UserList,
     UserDetails,
-    AddUser
+    AddUser,
     CourseQuiz,
     DoQuiz,
-    QuizResult
+    QuizResult,
+    TestVideo,
+    CreateCourse
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -75,12 +78,17 @@ export default function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    <Route path="/test" element={<TestVideo />} />
                 </Route>
 
                 {/* Routes for authenticated users */}
                 <Route element={<ProtectedRoute />}>
                     <Route path="/home" element={<Home />} />
                     <Route path="/profile" element={<UserProfile />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
+                    <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
+                    <Route path="/home/courses/create" element={<CreateCourse />}></Route>
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route

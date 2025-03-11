@@ -4,8 +4,13 @@ import com.learnhub.course.Category;
 import com.learnhub.course.Course;
 import com.learnhub.user.teacher.Teacher;
 
-public record CourseListResponse(Long id, String name, CategoryResponse category, Double price,
-                                 TeacherResponse teacher) {
+public record CourseListResponse(
+        Long id,
+        String name,
+        CategoryResponse category,
+        Double price,
+        String image,
+        TeacherResponse teacher) {
     public record CategoryResponse(Long id, String name) {
         public static CategoryResponse from(Category category) {
             return new CategoryResponse(category.getId(), category.getName());
@@ -24,6 +29,7 @@ public record CourseListResponse(Long id, String name, CategoryResponse category
                 course.getName(),
                 CategoryResponse.from(course.getCategory()),
                 course.getPrice(),
+                course.getImage(),
                 TeacherResponse.from(course.getTeacher()));
     }
 }
