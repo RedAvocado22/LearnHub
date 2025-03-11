@@ -13,7 +13,6 @@ public class ContactService {
     }
 
     public void saveContact(ContactRequest contact) {
-        contactRepository.save(new Contact(contact.firstName(), contact.lastName(),
-                contact.email(), contact.phone(), contact.subject(), contact.message()));
+        contactRepository.save(new Contact(contact.firstName(), contact.lastName(), contact.email(), contact.phone(), contact.subject(), contact.message()));
     }
 }

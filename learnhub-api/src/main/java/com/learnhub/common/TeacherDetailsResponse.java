@@ -13,9 +13,11 @@ public record TeacherDetailsResponse(
         String lastName,
         String major,
         String phone,
+        String website,
         String school,
         String address,
         String city,
+        String about,
         List<CourseListResponse> courses
 ) {
     public record CourseListResponse(Long id, String name, CategoryResponse category, Float price) {
@@ -42,9 +44,11 @@ public record TeacherDetailsResponse(
                 teacher.getLastName(),
                 teacher.getMajor(),
                 teacher.getPhone(),
+                teacher.getWebsite(),
                 teacher.getSchool(),
                 teacher.getAddress(),
                 teacher.getCity(),
-                teacher.getCourses().stream().map(course -> CourseListResponse.from(course)).toList());
+                teacher.getAbout(),
+                teacher.getCourses().stream().map(CourseListResponse::from).toList());
     }
 }

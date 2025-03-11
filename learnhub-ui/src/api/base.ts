@@ -46,6 +46,8 @@ API.interceptors.response.use(
                 count = 0;
                 console.error((err as Error).message);
             }
+        } else if (count >= 1) {
+            count = 0;
         }
         return Promise.reject(error);
     }

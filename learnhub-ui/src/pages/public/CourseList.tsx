@@ -16,7 +16,6 @@ export default function CourseList() {
     useEffect(() => {
         API.get("/public/courses").then((resp) => {
             setCourses(resp?.data || []);
-            console.log(courses);
         });
     }, []);
 

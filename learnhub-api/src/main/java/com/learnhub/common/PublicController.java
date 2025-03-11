@@ -10,7 +10,7 @@ import com.learnhub.payment.VNPayService;
 import com.learnhub.payment.dto.PaymentResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import com.learnhub.contact.ContactRequest;
+import com.learnhub.contact.AddContactRequest;
 import com.learnhub.contact.ContactService;
 import com.learnhub.course.CourseService;
 import com.learnhub.user.teacher.TeacherService;
@@ -43,7 +43,7 @@ public class PublicController {
     @GetMapping("/courses")
     public ResponseEntity<List<CourseListResponse>> getAllPublishedCourses() {
         return ResponseEntity.ok(courseService.getAllPublicCourses().stream()
-                .map(course -> CourseListResponse.from(course)).toList());
+                .map(CourseListResponse::from).toList());
     }
 
     @GetMapping("/coursesId/{id}")
@@ -59,7 +59,7 @@ public class PublicController {
 
 
     @PostMapping("/contacts")
-    public ResponseEntity<String> createContact(@Valid @RequestBody ContactRequest req) {
+    public ResponseEntity<String> createContact(@Valid @RequestBody AddContactRequest req) {
         contactService.saveContact(req);
         return ResponseEntity.ok("Success");
     }

@@ -5,6 +5,8 @@ import java.util.List;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import com.learnhub.course.Course;
@@ -20,13 +22,14 @@ public class Teacher extends User {
     @Column(name = "website")
     private String website;
 
-    @Column(name = "about")
+    @Lob
+    @Column(name = "about", columnDefinition = "LONGTEXT")
     private String about;
 
     @Column(name = "school")
     private String school;
 
-    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Course> courses;
 
     public Teacher() {}
@@ -41,10 +44,12 @@ public class Teacher extends User {
             String address,
             String city,
             String major,
+            String school,
             String website,
             String about) {
         super(email, firstName, lastName, password, UserRole.TEACHER, active, phone, address, city);
         this.major = major;
+        this.school = school;
         this.website = website;
         this.about = about;
         this.courses = new ArrayList<>();
