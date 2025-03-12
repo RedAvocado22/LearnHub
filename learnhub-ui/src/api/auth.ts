@@ -3,11 +3,11 @@ import Swal from "sweetalert2";
 import { StudentType } from "../types/User";
 import API from "./base";
 
-interface RegisterRequest {
+export interface RegisterRequest {
     email: string;
     password: string;
-    firstname: string;
-    lastname: string;
+    firstName: string;
+    lastName: string;
     studentType: StudentType;
 }
 
@@ -27,7 +27,6 @@ export const register = async (req: RegisterRequest): Promise<boolean> => {
                 text: err.response?.data?.message || "An error occurred while signing up."
             });
         }
-        // console.error(err);
         return false;
     }
 };

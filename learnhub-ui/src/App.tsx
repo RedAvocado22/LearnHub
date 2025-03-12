@@ -90,21 +90,21 @@ export default function App() {
                     <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
                     <Route path="/home/courses/create" element={<CreateCourse />}></Route>
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
+                <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
                     <Route
                         element={
                             <ContactsProvider>
                                 <Outlet />
                             </ContactsProvider>
                         }>
-                        <Route path="/manager/contacts" element={<ContactList />} />
-                        <Route path="/manager/contacts/:id" element={<ContactDetails />} />
+                        <Route path="/admin/contacts" element={<ContactList />} />
+                        <Route path="/admin/contacts/:id" element={<ContactDetails />} />
                     </Route>
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
-                    <Route path="/manager/users" element={<UserList />} />
-                    <Route path="/manager/users/:id" element={<UserDetails />} />
-                    <Route path="/manager/users/add" element={<AddUser />} />
+                <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
+                    <Route path="/admin/users" element={<UserList />} />
+                    <Route path="/admin/users/:id" element={<UserDetails />} />
+                    <Route path="/admin/users/add" element={<AddUser />} />
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
                     <Route path="/quiz/:qid" element={<CourseQuiz />} />

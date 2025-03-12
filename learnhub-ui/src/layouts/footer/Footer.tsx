@@ -13,8 +13,8 @@ export default function Footer() {
                         <div className="container">
                             <div className="d-flex align-items-stretch">
                                 <div className="pt-logo mr-auto">
-                                    <a href="index.html">
-                                        <img src="assets/images/logo-white.png" alt="" />
+                                    <a href="/">
+                                        <img src="/assets/images/logo-white.png" alt="" />
                                     </a>
                                 </div>
                                 <div className="pt-social-link">
@@ -42,7 +42,7 @@ export default function Footer() {
                                     </ul>
                                 </div>
                                 <div className="pt-btn-join">
-                                    <a href="#" className="btn ">
+                                    <a href="/register" className="btn ">
                                         Join Now
                                     </a>
                                 </div>
@@ -58,11 +58,7 @@ export default function Footer() {
                                         Weekly Breaking news analysis and cutting edge advices on job searching.
                                     </p>
                                     <div className="subscribe-form m-b20">
-                                        <form
-                                            className="subscription-form"
-                                            action="http://educhamp.themetrades.com/demo/assets/script/mailchamp.php"
-                                            method="post">
-                                            <div className="ajax-message"></div>
+                                        <form className="subscription-form">
                                             <div className="input-group">
                                                 <input
                                                     name="email"
@@ -88,16 +84,13 @@ export default function Footer() {
                                             <h5 className="footer-title">Company</h5>
                                             <ul>
                                                 <li>
-                                                    <a href="index.html">Home</a>
+                                                    <a href="/">Home</a>
                                                 </li>
                                                 <li>
-                                                    <a href="about-1.html">About</a>
+                                                    <a href="/about">About</a>
                                                 </li>
                                                 <li>
-                                                    <a href="faq-1.html">FAQs</a>
-                                                </li>
-                                                <li>
-                                                    <a href="contact-1.html">Contact</a>
+                                                    <a href="/faq">FAQs</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -107,18 +100,7 @@ export default function Footer() {
                                             <h5 className="footer-title">Get In Touch</h5>
                                             <ul>
                                                 <li>
-                                                    <a href="http://educhamp.themetrades.com/admin/index.html">
-                                                        Dashboard
-                                                    </a>
-                                                </li>
-                                                <li>
-                                                    <a href="blog-classic-grid.html">Blog</a>
-                                                </li>
-                                                <li>
-                                                    <a href="portfolio.html">Portfolio</a>
-                                                </li>
-                                                <li>
-                                                    <a href="event.html">Event</a>
+                                                    <a href="/contact">Contact</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -128,16 +110,7 @@ export default function Footer() {
                                             <h5 className="footer-title">Courses</h5>
                                             <ul>
                                                 <li>
-                                                    <a href="courses.html">Courses</a>
-                                                </li>
-                                                <li>
-                                                    <a href="courses-details.html">Details</a>
-                                                </li>
-                                                <li>
-                                                    <a href="membership.html">Membership</a>
-                                                </li>
-                                                <li>
-                                                    <a href="profile.html">Profile</a>
+                                                    <a href="/courses">Courses</a>
                                                 </li>
                                             </ul>
                                         </div>
@@ -149,43 +122,43 @@ export default function Footer() {
                                     <h5 className="footer-title">Our Gallery</h5>
                                     <ul>
                                         <li>
-                                            <a href="assets/images/gallery/pic1.jpg">
-                                                <img src="assets/images/gallery/pic1.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic1.jpg">
+                                                <img src="/assets/images/gallery/pic1.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic2.jpg">
-                                                <img src="assets/images/gallery/pic2.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic2.jpg">
+                                                <img src="/assets/images/gallery/pic2.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic3.jpg">
-                                                <img src="assets/images/gallery/pic3.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic3.jpg">
+                                                <img src="/assets/images/gallery/pic3.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic4.jpg">
-                                                <img src="assets/images/gallery/pic4.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic4.jpg">
+                                                <img src="/assets/images/gallery/pic4.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic5.jpg">
-                                                <img src="assets/images/gallery/pic5.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic5.jpg">
+                                                <img src="/assets/images/gallery/pic5.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic6.jpg">
-                                                <img src="assets/images/gallery/pic6.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic6.jpg">
+                                                <img src="/assets/images/gallery/pic6.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic7.jpg">
-                                                <img src="assets/images/gallery/pic7.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic7.jpg">
+                                                <img src="/assets/images/gallery/pic7.jpg" alt="" />
                                             </a>
                                         </li>
                                         <li>
-                                            <a href="assets/images/gallery/pic8.jpg">
-                                                <img src="assets/images/gallery/pic8.jpg" alt="" />
+                                            <a href="/assets/images/gallery/pic8.jpg">
+                                                <img src="/assets/images/gallery/pic8.jpg" alt="" />
                                             </a>
                                         </li>
                                     </ul>
