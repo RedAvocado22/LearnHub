@@ -1,7 +1,6 @@
 package com.learnhub.security;
 
 import java.util.Arrays;
-
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.jwt.JwtFilter;
 import com.learnhub.user.UserRole;
@@ -65,7 +64,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v*/students/me/**").hasAuthority(UserRole.STUDENT.name())
                         .requestMatchers("/api/v*/teachers/me/**").hasAuthority(UserRole.TEACHER.name())
                         .requestMatchers("/api/v*/courses/teacher/**").hasAuthority(UserRole.TEACHER.name())
-                        .requestMatchers("/api/v*/contacts/**").hasAuthority(UserRole.TEACHER_MANAGER.name())
+                        .requestMatchers("/api/v*/contacts/**").hasAuthority(UserRole.ADMIN.name())
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .httpBasic(Customizer.withDefaults())
