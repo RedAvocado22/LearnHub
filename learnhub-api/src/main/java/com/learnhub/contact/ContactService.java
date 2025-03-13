@@ -1,6 +1,8 @@
 package com.learnhub.contact;
 
 import java.util.List;
+import com.learnhub.common.exception.ResourceNotFoundException;
+import com.learnhub.contact.dto.AddContactRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +15,16 @@ public class ContactService {
         this.contactRepository = contactRepository;
     }
 
-    public void saveContact(AddContactRequest contact) {
-        contactRepository.save(new Contact(
-                    contact.firstName(),
-                    contact.lastName(),
-                    contact.email(),
-                    contact.phone(),
-                    contact.subject(),
-                    contact.message()));
+    public void saveContact(AddContactRequest req) {
+        contactRepository.save(Contact.builder()
+                .firstName(req.firstName())
+                .lastName(req.lastName())
+                .email(req.email())
+                .phone(req.phone())
+                .subject(req.subject())
+                .message(req.message())
+                .resolved(false)
+                .build());
     }
 
     public List<Contact> getAll() {
@@ -28,11 +32,11 @@ public class ContactService {
     }
 
     public Contact getById(Long id) {
-        return contactRepository.findById(id).orElseThrow();
+        return contactRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Contact not found."));
     }
 
     public void resolveContact(Long id) {
-        Contact c = contactRepository.findById(id).orElseThrow();
+        Contact c = contactRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Contact not found."));
         c.setResolved(true);
         contactRepository.save(c);
     }

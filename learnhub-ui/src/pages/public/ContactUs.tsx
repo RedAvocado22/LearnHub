@@ -1,50 +1,62 @@
-import { useState } from "react";
 import { MainLayout } from "../../layouts";
 import { API } from "../../api";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
-import { validateEmail, validatePhone } from "../../utils/Validate";
+import * as yup from "yup";
+import * as validation from "../../utils/validation";
+import { Form, Formik, FormikHelpers } from "formik";
+import FormField from "../../layouts/FormField";
+
+interface FormValues {
+    firstName: string;
+    lastName: string;
+    email: string;
+    phone: string;
+    subject: string;
+    message: string;
+}
+
+const validationSchema = yup.object({
+    firstName: yup.string().required("First name is required"),
+    lastName: yup.string().required("Last name is required"),
+    email: yup.string().email("Email is invalid").required("Email is required"),
+    phone: validation.phone.required("Phone is required"),
+    subject: yup.string().required("Subject is required"),
+    message: yup.string().required("Message is required")
+});
 
 export default function ContactUs() {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [email, setEmail] = useState("");
-    const [phone, setPhone] = useState("");
-    const [subject, setSubject] = useState("");
-    const [message, setMessage] = useState("");
+    const initialValues: FormValues = {
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: ""
+    };
     const navigate = useNavigate();
 
-    const handleSubmit = async () => {
-        if (!firstName || !lastName || !email || !phone || !subject || !message) {
-            toast.error("All field are required!");
-            return;
-        }
-
-        if (!validateEmail(email)) {
-            toast.error("Invalid email. Try again!");
-            return;
-        }
-
-        if (!validatePhone(phone)) {
-            toast.error("Invalid phone. Try again!");
-            return;
-        }
-
+    const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
         try {
-            const resp = await API.post("/public/contacts", { firstName, lastName, email, phone, subject, message });
+            const resp = await API.post("/public/contacts", { ...values });
             if (resp.status === 200) {
                 navigate("/");
                 toast.success("Sent successful!");
             }
-        } catch (error) {
-            if (isAxiosError(error)) {
-                switch (error.status) {
+        } catch (err) {
+            let msg = "Something went wrong";
+            if (isAxiosError(err)) {
+                switch (err.response?.status) {
                     case 400:
-                        toast.error("An error was occurred!");
+                        msg = "Invalid request";
                         break;
                 }
             }
+            toast.error(msg);
+            resetForm();
+        } finally {
+            setSubmitting(false);
         }
     };
 
@@ -54,7 +66,7 @@ export default function ContactUs() {
                 {/* inner page banner */}
                 <div
                     className="page-banner ovbl-dark"
-                    style={{ backgroundImage: "url(assets/images/banner/banner2.jpg)" }}>
+                    style={{ backgroundImage: "url(/assets/images/banner/banner2.jpg)" }}>
                     <div className="container">
                         <div className="page-banner-entry">
                             <h1 className="text-white">Contact Us</h1>
@@ -72,140 +84,77 @@ export default function ContactUs() {
                                     allowFullScreen></iframe>
                             </div>
                             <div className="col-lg-6 col-md-6 section-sp2 p-lr30">
-                                <form
-                                    className="contact-bx ajax-form"
-                                    action="http://educhamp.themetrades.com/demo/assets/script/contact.php">
-                                    <div className="ajax-message"></div>
-                                    <div className="heading-bx left p-r15">
-                                        <h2 className="title-head">
-                                            Get In <span>Touch</span>
-                                        </h2>
-                                        <p>
-                                            It is a long established fact that a reader will be distracted by the
-                                            readable content of a page
-                                        </p>
-                                    </div>
-                                    <div className="row placeani">
-                                        <div className="col-lg-6 ">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <input
-                                                        value={firstName}
-                                                        onChange={(e) => setFirstName(e.target.value)}
-                                                        name="name"
-                                                        type="text"
-                                                        placeholder="Your First Name"
-                                                        required
-                                                        className="form-control valid-character"
-                                                    />
+                                <Formik
+                                    initialValues={initialValues}
+                                    validationSchema={validationSchema}
+                                    onSubmit={handleSubmit}>
+                                    {({ isSubmitting }) => (
+                                        <Form className="contact-bx">
+                                            <div className="heading-bx left p-r15">
+                                                <h2 className="title-head">
+                                                    Get In <span>Touch</span>
+                                                </h2>
+                                                <p>Let we hear your hope and dream!</p>
+                                            </div>
+                                            <div className="row placeani">
+                                                <div className="col-lg-6 ">
+                                                    <div className="form-group">
+                                                        <FormField name="firstName" placeholder="Your first name" />
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-6 ">
+                                                    <div className="form-group">
+                                                        <FormField name="lastName" placeholder="Your last name" />
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-6">
+                                                    <div className="form-group">
+                                                        <FormField
+                                                            name="email"
+                                                            type="email"
+                                                            placeholder="Email address"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-6">
+                                                    <div className="form-group">
+                                                        <FormField name="phone" placeholder="Phone number" />
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-6">
+                                                    <div className="form-group">
+                                                        <FormField name="subject" as="select" className="form-select">
+                                                            <option value="Want to become a teacher">
+                                                                I want to become a teacher
+                                                            </option>
+                                                            <option value="Want to become a course manager">
+                                                                I want to become a manager
+                                                            </option>
+                                                            <option value="Have a problem">I have a problem</option>
+                                                        </FormField>
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-12">
+                                                    <div className="form-group">
+                                                        <FormField
+                                                            name="message"
+                                                            as="textarea"
+                                                            placeholder="Your message"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="col-lg-12">
+                                                    <button
+                                                        type="submit"
+                                                        className="btn button-md"
+                                                        disabled={isSubmitting}>
+                                                        {isSubmitting ? "Sending..." : "Send Message"}
+                                                    </button>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="col-lg-6 ">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <input
-                                                        value={lastName}
-                                                        onChange={(e) => setLastName(e.target.value)}
-                                                        name="name"
-                                                        type="text"
-                                                        placeholder="Your Last Name"
-                                                        required
-                                                        className="form-control valid-character"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-6">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <input
-                                                        value={email}
-                                                        onChange={(e) => setEmail(e.target.value)}
-                                                        name="email"
-                                                        type="email"
-                                                        placeholder="Email address"
-                                                        className="form-control"
-                                                        required
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-6">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <input
-                                                        value={phone}
-                                                        onChange={(e) => setPhone(e.target.value)}
-                                                        name="phone"
-                                                        type="text"
-                                                        placeholder="Phone"
-                                                        required
-                                                        className="form-control int-value"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-6">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <select
-                                                        className="form-control form-select"
-                                                        value={subject}
-                                                        onChange={(e) => setSubject(e.target.value)}>
-                                                        <option value={"Want to become a teacher"}>
-                                                            I want to become a teacher
-                                                        </option>
-                                                        <option value={"Have a problem"}>I have a problem</option>
-                                                    </select>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-12">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <textarea
-                                                        value={message}
-                                                        onChange={(e) => setMessage(e.target.value)}
-                                                        name="message"
-                                                        rows={4}
-                                                        placeholder="Your message"
-                                                        className="form-control"
-                                                        required></textarea>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-12">
-                                            <div className="form-group">
-                                                <div className="input-group">
-                                                    <div
-                                                        className="g-recaptcha"
-                                                        data-sitekey="6Lf2gYwUAAAAAJLxwnZTvpJqbYFWqVyzE-8BWhVe"
-                                                        data-callback="verifyRecaptchaCallback"
-                                                        data-expired-callback="expiredRecaptchaCallback"></div>
-                                                    <input
-                                                        className="form-control d-none"
-                                                        style={{ display: "none" }}
-                                                        data-recaptcha="true"
-                                                        required
-                                                        data-error="Please complete the Captcha"
-                                                    />
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-lg-12">
-                                            <button
-                                                onClick={handleSubmit}
-                                                name="submit"
-                                                type="button"
-                                                value="Submit"
-                                                className="btn button-md">
-                                                {" "}
-                                                Send Message
-                                            </button>
-                                        </div>
-                                    </div>
-                                </form>
+                                        </Form>
+                                    )}
+                                </Formik>
                             </div>
                         </div>
                     </div>

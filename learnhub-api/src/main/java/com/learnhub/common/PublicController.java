@@ -2,10 +2,13 @@ package com.learnhub.common;
 
 import java.util.List;
 import jakarta.validation.Valid;
-import com.learnhub.contact.AddContactRequest;
+import com.learnhub.common.dto.PublicCourseResponse;
+import com.learnhub.common.dto.PublicTeacherResponse;
 import com.learnhub.contact.ContactService;
+import com.learnhub.contact.dto.AddContactRequest;
 import com.learnhub.course.CourseService;
-import com.learnhub.user.teacher.TeacherService;
+import com.learnhub.user.UserService;
+import com.learnhub.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,29 +21,31 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping(path = "/api/v1/public")
 public class PublicController {
+    private final ObjectMapper objectMapper;
     private final CourseService courseService;
-    private final TeacherService teacherService;
+    private final UserService userService;
     private final ContactService contactService;
 
     @Autowired
     public PublicController(
+            ObjectMapper objectMapper,
             CourseService courseService,
-            TeacherService teacherService,
+            UserService userService,
             ContactService contactService) {
+        this.objectMapper = objectMapper;
         this.courseService = courseService;
-        this.teacherService = teacherService;
+        this.userService = userService;
         this.contactService = contactService;
     }
 
     @GetMapping("/courses")
-    public ResponseEntity<List<CourseListResponse>> getAllPublishedCourses() {
-        return ResponseEntity.ok(courseService.getAllPublicCourses().stream()
-                .map(CourseListResponse::from).toList());
+    public ResponseEntity<List<PublicCourseResponse>> getAllPublishedCourses() {
+        return ResponseEntity.ok(courseService.getAllPublicCourses().stream().map(PublicCourseResponse::from).toList());
     }
 
     @GetMapping("/teachers/{id}")
-    public ResponseEntity<TeacherDetailsResponse> getTeacher(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(TeacherDetailsResponse.from(teacherService.getTeacherById(id)));
+    public ResponseEntity<PublicTeacherResponse> getTeacher(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(objectMapper.toPublicTeacherResponse(userService.getTeacherById(id)));
     }
 
     @PostMapping("/contacts")

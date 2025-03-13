@@ -1,24 +1,35 @@
-import { useState } from "react";
 import { toast } from "react-toastify";
-import { useUser } from "../../hooks/useUser";
+import { LoginRequest, useUser } from "../../hooks/useUser";
 import { useNavigate } from "react-router-dom";
+import * as yup from "yup";
+import FormField from "../../layouts/FormField";
+import { Form, Formik, FormikHelpers } from "formik";
+
+interface FormValues {
+    email: string;
+    password: string;
+}
+
+const validationSchema = yup.object({
+    email: yup.string().required("Email is required"),
+    password: yup.string().required("Password is required")
+});
 
 export default function ManagerLogin() {
+    const initialValues: FormValues = { email: "", password: "" };
     const { login } = useUser();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
-        try {
-            await login({ email, password });
+    const handleLogin = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+        const payload: LoginRequest = { email: values.email, password: values.password };
+        const result = await login(payload);
+        if (result) {
             toast.success("Login successfully");
             navigate("/home");
-        } catch (err) {
-            toast.warning((err as Error).message);
-            setEmail("");
-            setPassword("");
+        } else {
+            resetForm();
         }
+        setSubmitting(false);
     };
 
     return (
@@ -30,43 +41,29 @@ export default function ManagerLogin() {
                             Manager <span>Login</span>
                         </h2>
                     </div>
-                    <form className="contact-bx">
-                        <div className="row">
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            placeholder="Username"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className="form-control"
-                                            required
-                                        />
+                    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleLogin}>
+                        {({ isSubmitting }) => (
+                            <Form noValidate className="contact-bx">
+                                <div className="row">
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField name="email" placeholder="Username" />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField name="password" type="password" placeholder="Password" />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12 m-b30">
+                                        <button type="submit" className="btn button-md" disabled={isSubmitting}>
+                                            {isSubmitting ? "Logging in..." : "Login"}
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            type="password"
-                                            placeholder="Password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className="form-control"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-12 m-b30">
-                                <button type="button" onClick={handleLogin} className="btn button-md">
-                                    Login
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                            </Form>
+                        )}
+                    </Formik>
                 </div>
             </div>
         </div>

@@ -18,16 +18,17 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
 export { default as UserCourseList } from "./home/UserCourseList";
-export { default as ContactList } from "./home/teachermanager/ContactList";
-export { default as ContactDetails } from "./home/teachermanager/ContactDetails";
-export { default as UserList } from "./home/teachermanager/UserList";
-export { default as UserDetails } from "./home/teachermanager/UserDetails";
-export { default as AddUser } from "./home/teachermanager/AddUser";
-export { default as Mailbox } from "./home/teachermanager/MailboxLayout";
+export { default as CreateCourse } from "./home/teacher/CreateCourse";
+
 export { default as CourseQuiz } from "./home/student/CourseQuiz";
 export { default as DoQuiz } from "./home/student/DoQuiz";
 export { default as QuizResult } from "./home/student/QuizResult";
-export { default as CreateCourse } from "./home/teacher/CreateCourse";
+
+export { default as ContactList } from "./home/admin/ContactList";
+export { default as ContactDetails } from "./home/admin/ContactDetails";
+export { default as UserList } from "./home/admin/UserList";
+export { default as UserDetails } from "./home/admin/UserDetails";
+export { default as AddUser } from "./home/admin/AddUser";
 
 // Error boundary
 export { default as NotFound } from "./error/NotFound";

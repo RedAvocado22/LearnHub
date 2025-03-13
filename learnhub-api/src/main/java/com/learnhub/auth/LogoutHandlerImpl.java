@@ -1,6 +1,5 @@
 package com.learnhub.auth;
 
-import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.jwt.JwtService;
@@ -43,17 +42,18 @@ public class LogoutHandlerImpl implements LogoutHandler {
                 userRepository.findByEmail(email).ifPresent(user -> {
                     String ipAddress = request.getRemoteAddr();
                     String deviceInfo = request.getHeader(HttpHeaders.USER_AGENT);
-                    revokedTokenRepository.saveAll(List.of(
-                        RevokedToken.from(user, accessToken)
+                    revokedTokenRepository.save(RevokedToken.builder()
+                            .user(user)
+                            .token(accessToken)
                             .ipAddress(ipAddress)
                             .deviceInfo(deviceInfo)
-                            .build(),
-                        RevokedToken.from(user, refreshToken)
+                            .build());
+                    revokedTokenRepository.save(RevokedToken.builder()
+                            .user(user)
+                            .token(refreshToken)
                             .ipAddress(ipAddress)
                             .deviceInfo(deviceInfo)
-                            .build()
-                        )
-                    );
+                            .build());
                 });
             }
         }
