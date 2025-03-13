@@ -189,11 +189,17 @@ const CreateCourse: React.FC = () => {
                                                                 className="text-danger small-font"
                                                             />
                                                             {imagePreview && (
-                                                                <div className="mt-2">
+                                                                <div className="mt-2" style={{ position: "relative" }}>
                                                                     <img
                                                                         src={imagePreview}
                                                                         alt="Image Preview"
-                                                                        style={{ width: "265px", height: "175px" }}
+                                                                        style={{
+                                                                            width: "100%",
+                                                                            maxWidth: "265px",
+                                                                            height: "auto",
+                                                                            borderRadius: "6px",
+                                                                            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)"
+                                                                        }}
                                                                     />
                                                                 </div>
                                                             )}

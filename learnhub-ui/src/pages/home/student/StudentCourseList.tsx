@@ -5,7 +5,6 @@ import { Footer, Header } from "../../../layouts";
 import NotFound from "../../error/NotFound";
 import { Course } from "../../../types/Course";
 import { API } from "../../../api";
-import "../../../../public/assets/css/shortcodes/model.css";
 
 interface Teacher {
     id: number;

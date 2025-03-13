@@ -23,7 +23,6 @@ export { default as ContactDetails } from "./home/teachermanager/ContactDetails"
 export { default as UserList } from "./home/teachermanager/UserList";
 export { default as UserDetails } from "./home/teachermanager/UserDetails";
 export { default as AddUser } from "./home/teachermanager/AddUser";
-export { default as Mailbox } from "./home/teachermanager/MailboxLayout";
 export { default as CourseQuiz } from "./home/student/CourseQuiz";
 export { default as DoQuiz } from "./home/student/DoQuiz";
 export { default as QuizResult } from "./home/student/QuizResult";
