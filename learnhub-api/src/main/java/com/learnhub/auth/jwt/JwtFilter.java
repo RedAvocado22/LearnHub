@@ -8,6 +8,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.RevokedTokenRepository;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
+import com.learnhub.user.UserStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,17 +18,17 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private final RevokedTokenRepository revokedTokenRepository;
     private final UserRepository userRepository;
+    private final RevokedTokenRepository revokedTokenRepository;
     private final JwtService jwtService;
 
     @Autowired
     public JwtFilter(
-            RevokedTokenRepository revokedTokenRepository,
             UserRepository userRepository,
+            RevokedTokenRepository revokedTokenRepository,
             JwtService jwtService) {
-        this.revokedTokenRepository = revokedTokenRepository;
         this.userRepository = userRepository;
+        this.revokedTokenRepository = revokedTokenRepository;
         this.jwtService = jwtService;
     }
 
@@ -55,6 +56,7 @@ public class JwtFilter extends OncePerRequestFilter {
             }
             User user = userRepository.findByEmail(username).orElse(null);
             if (user == null ||
+                user.getStatus() == UserStatus.UNACTIVE || user.getStatus() == UserStatus.SUSPENDED ||
                 !jwtService.isTokenValid(accessToken, user) ||
                 revokedTokenRepository.findByToken(accessToken).isPresent()) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");

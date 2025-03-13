@@ -4,7 +4,9 @@ import java.util.HashMap;
 import java.util.Map;
 import com.learnhub.auth.exception.InactiveAccountException;
 import com.learnhub.auth.exception.InvalidTokenException;
+import com.learnhub.auth.exception.SuspendedAccountException;
 import com.learnhub.auth.exception.UserExistsException;
+import com.learnhub.common.dto.ErrorResponse;
 import com.learnhub.user.exception.OldPasswordNotMatchedException;
 import com.learnhub.user.exception.UserNotFoundException;
 import org.springframework.http.HttpHeaders;
@@ -32,37 +34,50 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
         });
-        ErrorResponse err = new ErrorResponse(HttpStatus.BAD_REQUEST, errors);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body(ErrorResponse.builder().error(errors).build());
     }
 
     @ExceptionHandler(InactiveAccountException.class)
     public ResponseEntity<ErrorResponse> handleInactiveAccount(InactiveAccountException e) {
-        ErrorResponse err = new ErrorResponse(HttpStatus.ACCEPTED, e.getMessage());
-        return ResponseEntity.status(HttpStatus.ACCEPTED).body(err);
+        return ResponseEntity
+            .status(HttpStatus.ACCEPTED)
+            .body(ErrorResponse.builder().error(e.getMessage()).build());
+    }
+
+    @ExceptionHandler(SuspendedAccountException.class)
+    public ResponseEntity<ErrorResponse> handleSuspendedAccount(SuspendedAccountException e) {
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(UserExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserExists(UserExistsException e) {
-        ErrorResponse err = new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
-        ErrorResponse err = new ErrorResponse(HttpStatus.NOT_FOUND, e.getMessage());
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+        return ResponseEntity
+            .status(HttpStatus.NOT_FOUND)
+            .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException e) {
-        ErrorResponse err = new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(OldPasswordNotMatchedException.class)
     public ResponseEntity<ErrorResponse> handleOldPasswordNotMatched(OldPasswordNotMatchedException e) {
-        ErrorResponse err = new ErrorResponse(HttpStatus.UNAUTHORIZED, e.getMessage());
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(err);
+        return ResponseEntity
+            .status(HttpStatus.UNAUTHORIZED)
+            .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 }

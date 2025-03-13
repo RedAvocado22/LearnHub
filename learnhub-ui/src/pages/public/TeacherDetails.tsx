@@ -4,6 +4,7 @@ import { API } from "../../api";
 import { useParams } from "react-router-dom";
 import NotFound from "../error/NotFound";
 import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
 
 interface Course {
     id: number;
@@ -19,32 +20,17 @@ interface Teacher {
     lastName: string;
     major: string;
     phone: string;
-    website: string;
-    school: string;
-    address: string;
+    workAddress: string;
     city: string;
-    about: string;
+    website: string;
+    biography: string;
     courses: Course[];
+    joinedAt: Date;
 }
 
 export default function TeacherDetails() {
     const { id } = useParams();
-
-    const [notFound, setNotFound] = useState(false);
-    const [teacher, setTeacher] = useState<Teacher>({
-        id: parseInt(id || "0"),
-        email: "",
-        firstName: "",
-        lastName: "",
-        major: "",
-        phone: "",
-        website: "",
-        school: "",
-        address: "",
-        city: "",
-        about: "",
-        courses: []
-    });
+    const [teacher, setTeacher] = useState<Teacher | null>(null);
 
     const [activeTab, setActiveTab] = useState<string>("courses"); // Track the active tab
 
@@ -53,18 +39,23 @@ export default function TeacherDetails() {
             try {
                 const response = await API.get(`public/teachers/${id}`);
                 setTeacher(response?.data);
-                console.log(response);
-            } catch (error) {
-                if (isAxiosError(error) && error.response?.status === 404) {
-                    setNotFound(true);
+            } catch (err) {
+                let msg = "Something went wrong";
+                if (isAxiosError(err)) {
+                    switch (err.response?.status) {
+                        case 404:
+                            msg = "Teacher not found";
+                            break;
+                    }
                 }
+                toast.error(msg);
             }
         };
 
         fetchTeacherData();
     }, [id]);
 
-    if (!id || isNaN(parseInt(id)) || notFound) {
+    if (!id || isNaN(parseInt(id)) || !teacher) {
         return <NotFound />;
     }
 
@@ -145,7 +136,9 @@ export default function TeacherDetails() {
                                                                         </div>
                                                                         <div className="info-bx text-center">
                                                                             <h5>
-                                                                                <a href="#">{course.name}</a>
+                                                                                <a href={`/courses/${course.id}`}>
+                                                                                    {course.name}
+                                                                                </a>
                                                                             </h5>
                                                                             <span>{course.category.name}</span>
                                                                         </div>
@@ -171,7 +164,11 @@ export default function TeacherDetails() {
                                                                                 </ul>
                                                                             </div>
                                                                             <div className="price">
-                                                                                <h5>${course.price}</h5>
+                                                                                <h5>
+                                                                                    {course.price > 0
+                                                                                        ? `$${course.price}`
+                                                                                        : "FREE"}
+                                                                                </h5>
                                                                             </div>
                                                                         </div>
                                                                     </div>

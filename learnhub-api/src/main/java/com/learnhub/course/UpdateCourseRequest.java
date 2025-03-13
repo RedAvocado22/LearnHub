@@ -1,8 +1,11 @@
 package com.learnhub.course;
 
-public record UpdateCourseRequest(Long id,
-                                  String name,
-                                  Category category,
-                                  Double price,
-                                  CourseStatus status) {
-}
+import java.math.BigDecimal;
+
+public record UpdateCourseRequest(
+        Long id,
+        String name,
+        Category category,
+        BigDecimal price,
+        CourseStatus status
+) {}

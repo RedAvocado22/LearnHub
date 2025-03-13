@@ -1,41 +1,47 @@
-import { useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import { isAxiosError } from "axios";
-import { validateEmail } from "../../utils/Validate";
+import * as yup from "yup";
+import { Form, Formik, FormikHelpers } from "formik";
+import FormField from "../../layouts/FormField";
+
+interface FormValues {
+    email: string;
+}
+
+const validationSchema = yup.object({
+    email: yup.string().email("Email is invalid").required("Email is required")
+});
 
 export default function ForgotPassword() {
     const navigate = useNavigate();
-    const [email, setEmail] = useState("");
-
-    async function handleSubmit() {
-        if (!validateEmail(email)) {
-            toast.error("Please enter a valid email address.");
-            return;
-        }
-
+    const initialPayload: FormValues = { email: "" };
+    const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
         try {
-            const resp = await API.post("/auth/forgot-password", { email });
-
+            const resp = await API.post("/auth/forgot-password", { email: values.email });
             if (resp.status === 200) {
-                toast.success("Sent to your email.");
+                toast.success("A reset link has been sent to your email.");
                 navigate("/");
             }
-        } catch (error) {
-            if (isAxiosError(error)) {
-                switch (error.status) {
+        } catch (err) {
+            let msg = "Something went wrong.";
+            if (isAxiosError(err)) {
+                switch (err.response?.status) {
                     case 404:
-                        toast.error("The email is not exist!");
+                        msg = "The email is not exist!";
                         break;
                     case 400:
-                        toast.error("Invalid email!");
+                        msg = "Invalid email!";
                         break;
                 }
             }
+            toast.error(msg);
+            resetForm();
+        } finally {
+            setSubmitting(false);
         }
-    }
-
+    };
     return (
         <div className="account-form">
             <div
@@ -57,30 +63,24 @@ export default function ForgotPassword() {
                             Login Your Account <a href="/login">Click here</a>
                         </p>
                     </div>
-                    <form className="contact-bx">
-                        <div className="row placeani">
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            name="email"
-                                            type="email"
-                                            required
-                                            className="form-control"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            placeholder="Enter your email"
-                                        />
+                    <Formik initialValues={initialPayload} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                        {({ isSubmitting }) => (
+                            <Form noValidate className="contact-bx">
+                                <div className="row placeani">
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField name="email" type="email" placeholder="Enter your email" />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12 m-b30">
+                                        <button type="submit" className="btn button-md" disabled={isSubmitting}>
+                                            {isSubmitting ? "Submitting..." : "Submit"}
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-lg-12 m-b30">
-                                <button type="button" className="btn button-md" onClick={handleSubmit}>
-                                    Submit
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                            </Form>
+                        )}
+                    </Formik>
                 </div>
             </div>
         </div>

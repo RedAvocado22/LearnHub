@@ -28,15 +28,7 @@ public class JwtService {
     private long refreshExpiration;
 
     public JwtService() {
-        //try {
-        //    KeyGenerator generator = KeyGenerator.getInstance("HmacSHA256");
-        //    SecretKey sk = generator.generateKey();
-        //    secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-        //} catch (NoSuchAlgorithmException e) {
-        //    throw new RuntimeException(e);
-        //}
-        // NOTE: Khi nào deploy lên prod chạy 24/7 thì mình dùng cái bên trên
-        secretKey = "SuperSecretREFRESHKey1234567890abcdefghijklmnopqrstuvwxyz/+"; // fix cứng cho tiện dev, khi khởi động lại server đống token vẫn parse được
+        secretKey = "SuperSecretREFRESHKey1234567890abcdefghijklmnopqrstuvwxyz/+";
     }
 
     public String generateToken(UserDetails userDetails, long expiresMillis) {
@@ -55,8 +47,7 @@ public class JwtService {
         return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
 
-    // NOTE: Server với Client chạy port khác nhau nên muốn gửi cookie phải set Secure=true và SameSite=None
-    // https://stackoverflow.com/questions/46288437/set-cookies-for-cross-origin-requests
+    // NOTE: https://stackoverflow.com/questions/46288437/set-cookies-for-cross-origin-requests
     public ResponseCookie generateRefreshTokenCookie(String token) {
         return ResponseCookie.from("refresh_token", token)
             .path("/")

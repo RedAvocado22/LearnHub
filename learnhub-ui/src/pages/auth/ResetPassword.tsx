@@ -1,62 +1,69 @@
-import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { useNavigate, useParams } from "react-router-dom";
 import { API } from "../../api";
 import { isAxiosError } from "axios";
-import { validatePassword } from "../../utils/Validate";
+import * as yup from "yup";
+import * as validation from "../../utils/validation";
+import { Form, Formik, FormikHelpers } from "formik";
+import NotFound from "../error/NotFound";
+import FormField from "../../layouts/FormField";
+
+interface FormValues {
+    password: string;
+    confirmPassword: string;
+}
+
+interface ResetPasswordRequest {
+    password: string;
+    token: string;
+}
+
+const validationSchema = yup.object({
+    password: validation.password.required("Password is required"),
+    confirmPassword: yup
+        .string()
+        .oneOf([yup.ref("password")], "Password must match")
+        .required("Confirm password is required")
+});
 
 export default function ResetPassword() {
     const { token } = useParams();
-    const [password, setPassword] = useState("");
-    const [confPassword, setConfPassword] = useState("");
-    const [error, setError] = useState("");
-
+    if (!token) {
+        return <NotFound />;
+    }
+    const initialValues: FormValues = { password: "", confirmPassword: "" };
     const navigate = useNavigate();
 
-    async function handleSubmit() {
+    const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
         try {
-            const resp = await API.post("/auth/reset-password", { password, token });
-
+            const payload: ResetPasswordRequest = { password: values.password, token: token };
+            const resp = await API.post("/auth/reset-password", payload);
             if (resp.status === 200) {
                 toast.success("Reset your password successful.");
                 navigate("/login");
             }
-        } catch (error) {
-            if (isAxiosError(error)) {
-                if (error.status === 400) {
-                    toast.error(
-                        "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
-                    );
-                } else {
-                    toast.error("An error was occurred!");
+        } catch (err) {
+            let msg = "Something went wrong";
+            if (isAxiosError(err)) {
+                switch (err.response?.status) {
+                    case 404:
+                        msg = "The account is not exist!";
+                        break;
+                    case 400:
+                        msg = "Invalid request!";
+                        break;
                 }
             }
+            toast.error(msg);
+            resetForm();
+        } finally {
+            setSubmitting(false);
         }
-    }
-
-    useEffect(() => {
-        if (password.length != 0 && confPassword.length != 0) {
-            if (password === confPassword) {
-                if (!validatePassword(password) && !validatePassword(confPassword)) {
-                    setError(
-                        "Password must be at least 6 characters long, with at least one uppercase letter, one special character, and at least one number."
-                    );
-                } else {
-                    setError("");
-                }
-            }
-        } else {
-            setError("Confirm password must match with password");
-        }
-    }, [password, confPassword]);
+    };
 
     return (
         <div className="account-form">
-            <div
-                className="account-head"
-                style={{
-                    backgroundImage: "url(/assets/images/background/bg2.jpg)"
-                }}>
+            <div className="account-head" style={{ backgroundImage: "url(/assets/images/background/bg2.jpg)" }}>
                 <a href="/">
                     <img src="/assets/images/logo-white-2.png" alt="" />
                 </a>
@@ -72,51 +79,37 @@ export default function ResetPassword() {
                             <a href="/login">Click here</a>
                         </p>
                     </div>
-                    <form className="contact-bx">
-                        <div className="row placeani">
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            type="password"
-                                            required
-                                            className="form-control"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Enter your new password"
-                                        />
+                    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                        {({ isSubmitting }) => (
+                            <Form noValidate className="contact-bx">
+                                <div className="row placeani">
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField
+                                                name="password"
+                                                type="password"
+                                                placeholder="Your new password"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField
+                                                name="confirmPassword"
+                                                type="password"
+                                                placeholder="Confirm your password"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12 m-b30">
+                                        <button type="submit" className="btn button-md" disabled={isSubmitting}>
+                                            {isSubmitting ? "Submitting..." : "Submit"}
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            type="password"
-                                            required
-                                            className="form-control"
-                                            value={confPassword}
-                                            onChange={(e) => setConfPassword(e.target.value)}
-                                            placeholder="Enter confirmation password"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Display error message */}
-                            {!error ? (
-                                <div className="col-lg-12 m-b30">
-                                    {/* Only enable the button if there's no error */}
-                                    <button type="button" className="btn button-md" onClick={handleSubmit}>
-                                        Submit
-                                    </button>
-                                </div>
-                            ) : (
-                                <div className="col-lg-12 text-danger">
-                                    <p>{error}</p>
-                                </div>
-                            )}
-                        </div>
-                    </form>
+                            </Form>
+                        )}
+                    </Formik>
                 </div>
             </div>
         </div>
