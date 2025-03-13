@@ -194,7 +194,7 @@ export default function TeacherDetails() {
                                                         <div className="form-group row">
                                                             <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"></label>
                                                             <span className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                                {teacher.about}
+                                                                {teacher.biography}
                                                             </span>
                                                         </div>
                                                         <div className="seperator"></div>
@@ -265,7 +265,7 @@ export default function TeacherDetails() {
                                                         </label>
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.address || ""}
+                                                            value={teacher.workAddress || ""}
                                                             readOnly></input>
                                                     </div>
                                                     <div className="form-group row">
@@ -275,15 +275,6 @@ export default function TeacherDetails() {
                                                         <input
                                                             className="col-12 col-sm-9 col-md-9 col-lg-7"
                                                             value={teacher.city || ""}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            School
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.school || ""}
                                                             readOnly></input>
                                                     </div>
                                                 </form>
