@@ -1,5 +1,3 @@
-use learnhub;
-
 insert into contact(email, first_name, last_name, phone, `subject`, message, resolved, created_at)
 values
 ('baodqhe180053@fpt.edu.vn', 'BaoT3', 'Doan Quoc', '2345678901', 'Want to become a teacher', 'I want to become a teacher!!!', 0, now());
