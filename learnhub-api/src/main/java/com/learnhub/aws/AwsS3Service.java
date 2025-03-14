@@ -68,7 +68,7 @@ public class AwsS3Service {
 
             Files.delete(tempFile);
 
-            return "https://" + bucketName + ".s3.amazonaws.com/" + s3FilePath;
+            return s3FilePath;
         } catch (Exception e) {
             e.printStackTrace();
             return "Error uploading file to S3: " + e.getMessage();
