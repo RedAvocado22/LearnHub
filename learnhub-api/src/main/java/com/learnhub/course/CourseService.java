@@ -3,10 +3,13 @@ package com.learnhub.course;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,11 +21,18 @@ public class CourseService {
     private UserRepository userRepository;
     private AwsS3Service awsS3Service;
 
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Autowired
-    public CourseService(CourseRepository courseRepository, UserRepository userRepository, AwsS3Service awsS3Service) {
+    public CourseService(CourseRepository courseRepository,
+                         UserRepository userRepository,
+                         AwsS3Service awsS3Service,
+                         EntityManager entityManager) {
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
         this.awsS3Service = awsS3Service;
+        this.entityManager = entityManager;
     }
 
     public List<Course> getAllPublicCourses() {
@@ -31,8 +41,9 @@ public class CourseService {
 
     @Transactional
     public void updateCourseOfTeacher(User user, UpdateCourseRequest req) {
-        if (user.getRole() == UserRole.TEACHER && user.getTeacher() != null) {
-            user.getTeacher().getCourses().stream().filter(course -> course.getId() == req.id()).findFirst().ifPresent(course -> {
+        User u = entityManager.merge(user);
+        if (u.getRole() == UserRole.TEACHER && u.getTeacher() != null) {
+            u.getTeacher().getCourses().stream().filter(course -> course.getId() == req.id()).findFirst().ifPresent(course -> {
                 course.setName(req.name());
                 course.setCategory(req.category());
                 course.setPrice(req.price());
@@ -60,7 +71,9 @@ public class CourseService {
                         break;
                 }
             });
-            userRepository.saveAndFlush(user);
+            userRepository.saveAndFlush(u);
+        } else {
+            throw new IllegalStateException();
         }
     }
 
@@ -75,18 +88,18 @@ public class CourseService {
         if (user.getRole() != UserRole.TEACHER || user.getTeacher() == null) {
             throw new IllegalStateException();
         }
-        
+
         String imageUrl = awsS3Service.saveFile(image);
 
         Course course = Course.builder()
-            .name(name)
-            .category(category)
-            .price(price)
-            .status(CourseStatus.PRIVATE)
-            .description(description)
-            .image(imageUrl)
-            .teacher(user.getTeacher())
-            .build();
+                .name(name)
+                .category(category)
+                .price(price)
+                .status(CourseStatus.PRIVATE)
+                .description(description)
+                .image(imageUrl)
+                .teacher(user.getTeacher())
+                .build();
 
         courseRepository.saveAndFlush(course);
     }

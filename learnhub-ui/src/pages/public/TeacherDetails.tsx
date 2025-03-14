@@ -32,6 +32,8 @@ export default function TeacherDetails() {
     const { id } = useParams();
     const [teacher, setTeacher] = useState<Teacher | null>(null);
 
+    const [activeTab, setActiveTab] = useState<string>("courses"); // Track the active tab
+
     useEffect(() => {
         const fetchTeacherData = async () => {
             try {
@@ -57,6 +59,11 @@ export default function TeacherDetails() {
         return <NotFound />;
     }
 
+    // Handle tab change
+    const handleTabChange = (tab: string) => {
+        setActiveTab(tab);
+    };
+
     return (
         <MainLayout>
             <div className="page-content bg-white">
@@ -78,13 +85,21 @@ export default function TeacherDetails() {
                                         <div className="profile-tabnav">
                                             <ul className="nav nav-tabs">
                                                 <li className="nav-item">
-                                                    <a className="nav-link active" data-toggle="tab" href="#courses">
+                                                    <a
+                                                        className={`nav-link ${activeTab === "courses" ? "active" : ""}`}
+                                                        onClick={() => handleTabChange("courses")}
+                                                        data-toggle="tab"
+                                                        href="#courses">
                                                         <i className="ti-book"></i>Courses
                                                     </a>
                                                 </li>
                                                 <li className="nav-item">
-                                                    <a className="nav-link" data-toggle="tab" href="#edit-profile">
-                                                        <i className="ti-pencil-alt"></i>Teacher information
+                                                    <a
+                                                        className={`nav-link ${activeTab === "edit-profile" ? "active" : ""}`}
+                                                        onClick={() => handleTabChange("edit-profile")}
+                                                        data-toggle="tab"
+                                                        href="#edit-profile">
+                                                        <i className="ti-pencil-alt"></i>Teacher Information
                                                     </a>
                                                 </li>
                                             </ul>
@@ -94,7 +109,9 @@ export default function TeacherDetails() {
                                 <div className="col-lg-9 col-md-8 col-sm-12 m-b30">
                                     <div className="profile-content-bx">
                                         <div className="tab-content">
-                                            <div className="tab-pane active" id="courses">
+                                            <div
+                                                className={`tab-pane ${activeTab === "courses" ? "active" : ""}`}
+                                                id="courses">
                                                 <div className="profile-head">
                                                     <h3>Courses</h3>
                                                 </div>
@@ -161,123 +178,116 @@ export default function TeacherDetails() {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div className="tab-pane" id="edit-profile">
-                                            <div className="profile-head">
-                                                <h3>Teacher deatails</h3>
+                                            <div
+                                                className={`tab-pane ${activeTab === "edit-profile" ? "active" : ""}`}
+                                                id="edit-profile">
+                                                <div className="profile-head">
+                                                    <h3>Teacher Details</h3>
+                                                </div>
+                                                <form className="edit-profile">
+                                                    <div className="">
+                                                        <div className="form-group row">
+                                                            <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
+                                                                <h3>1. About</h3>
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"></label>
+                                                            <span className="col-12 col-sm-9 col-md-9 col-lg-7">
+                                                                {teacher.biography}
+                                                            </span>
+                                                        </div>
+                                                        <div className="seperator"></div>
+                                                        <div className="form-group row">
+                                                            <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
+                                                                <h3>2. Personal Details</h3>
+                                                            </div>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                First name
+                                                            </label>
+                                                            <input
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                value={teacher.firstName}
+                                                                readOnly></input>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                Last name
+                                                            </label>
+                                                            <input
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                value={teacher.lastName}
+                                                                readOnly></input>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                Email
+                                                            </label>
+                                                            <input
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                value={teacher.email}
+                                                                readOnly></input>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                Phone
+                                                            </label>
+                                                            <input
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                value={teacher.phone || ""}
+                                                                readOnly></input>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                Major
+                                                            </label>
+                                                            <input
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                value={teacher.major || ""}
+                                                                readOnly></input>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                Website
+                                                            </label>
+                                                            <a
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                style={{ cursor: "pointer" }}
+                                                                href={teacher.website}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer">
+                                                                {teacher.website}
+                                                            </a>
+                                                        </div>
+                                                        <div className="seperator"></div>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
+                                                            <h3>3. Address</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                            Address
+                                                        </label>
+                                                        <input
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            value={teacher.workAddress || ""}
+                                                            readOnly></input>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                            City
+                                                        </label>
+                                                        <input
+                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                            value={teacher.city || ""}
+                                                            readOnly></input>
+                                                    </div>
+                                                </form>
                                             </div>
-                                            <form className="edit-profile">
-                                                <div className="">
-                                                    <div className="form-group row">
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                            <h3>1. About</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"></label>
-                                                        <span className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {teacher.biography}
-                                                        </span>
-                                                    </div>
-                                                    <div className="seperator"></div>
-                                                    <div className="form-group row">
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                            <h3>2. Personal Details</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            First name
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.firstName}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Last name
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.lastName}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Email
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.email}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Phone
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.phone}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Website
-                                                        </label>
-                                                        <a
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            style={{ cursor: "pointer" }}
-                                                            href={teacher.website}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer">
-                                                            {teacher.website}
-                                                        </a>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Major
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.major}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Joined At
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={new Date(teacher.joinedAt).toDateString()}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="seperator"></div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                        <h3>3. Address</h3>
-                                                    </div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        Work At
-                                                    </label>
-                                                    <input
-                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.workAddress}
-                                                        readOnly></input>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        City
-                                                    </label>
-                                                    <input
-                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.city}
-                                                        readOnly></input>
-                                                </div>
-                                            </form>
                                         </div>
                                     </div>
                                 </div>

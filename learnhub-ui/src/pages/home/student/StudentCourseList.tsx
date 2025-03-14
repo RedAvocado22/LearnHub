@@ -1,11 +1,10 @@
 import { useEffect, useState } from "react";
 import { isAxiosError } from "axios";
-import { useTeacher } from "../../../hooks/useUser";
+import { useTeacher, useUser } from "../../../hooks/useUser";
 import { Footer, Header } from "../../../layouts";
 import NotFound from "../../error/NotFound";
 import { Course } from "../../../types/Course";
 import { API } from "../../../api";
-import "../../../../public/assets/css/shortcodes/model.css";
 
 interface Teacher {
     id: number;
@@ -23,8 +22,8 @@ interface Teacher {
 }
 
 export default function StudentCourseList() {
-    const { user, setUser } = useTeacher();
-    const id = user.id;
+    const { user } = useUser();
+    const id = user?.id;
 
     const [notFound, setNotFound] = useState(false);
     const [teacher, setTeacher] = useState<Teacher>({

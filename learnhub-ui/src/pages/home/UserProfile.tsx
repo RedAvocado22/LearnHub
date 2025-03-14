@@ -262,7 +262,7 @@ export default function UserProfile() {
                                                                     Biography
                                                                 </label>
                                                                 <div className="col-sm-7">
-                                                                    <FormField name="teacher.phone" as="textarea" />
+                                                                    <FormField name="teacher.biography" as="textarea" />
                                                                 </div>
                                                             </div>
                                                         </>

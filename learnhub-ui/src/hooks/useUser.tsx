@@ -16,6 +16,7 @@ export interface Course {
     category: Category;
     price: number;
     status: CourseStatus;
+    image: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;

@@ -19,19 +19,21 @@ interface Course {
     teacher: { id: number; name: string };
 }
 
-const itemsPerPage = 6; // Number of courses per page
+const itemsPerPage = 6;
 
 export default function CourseList() {
     const { user } = useUser();
-    const [params, _] = useSearchParams();
+    const [params] = useSearchParams();
     const chosenCategory = params.get("category") || "All Courses";
     const [search, setSearch] = useState("");
     const [categories, setCategories] = useState<Category[]>([]);
     const [courses, setCourses] = useState<Course[]>([]);
-    const [currentPage, setCurrentPage] = useState<number>(1); // Track current page
+    const [currentPage, setCurrentPage] = useState<number>(1);
 
     const handlePageChange = (page: number) => {
-        setCurrentPage(page);
+        if (page >= 1 && page <= totalPages) {
+            setCurrentPage(page);
+        }
     };
 
     useEffect(() => {
@@ -44,17 +46,16 @@ export default function CourseList() {
     }, []);
 
     useEffect(() => {
-        setCurrentPage(1); // Reset to page 1 when search term changes
-    }, [search, courses]); // Trigger filtering on search term or courses change
+        setCurrentPage(1);
+    }, [search, chosenCategory]);
 
-    const startIdx = currentPage * itemsPerPage;
-    const list = courses
+    const filteredCourses = courses
         .filter((course) => course.name.toLowerCase().includes(search.toLowerCase()))
-        .filter((course) => chosenCategory === "All Courses" || course.category.name === chosenCategory)
-        .slice(startIdx, startIdx + itemsPerPage);
+        .filter((course) => chosenCategory === "All Courses" || course.category.name === chosenCategory);
 
-    // Calculate the total number of pages
-    const totalPages = Math.ceil(list.length / itemsPerPage);
+    const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const list = filteredCourses.slice(startIdx, startIdx + itemsPerPage);
 
     return (
         <MainLayout>
@@ -94,7 +95,9 @@ export default function CourseList() {
                                                 <Link to="/courses">All</Link>
                                             </li>
                                             {categories.map((category) => (
-                                                <li className={chosenCategory === category.name ? "active" : ""}>
+                                                <li
+                                                    key={category.id}
+                                                    className={chosenCategory === category.name ? "active" : ""}>
                                                     <Link to={`/courses?category=${category.name}`}>
                                                         {category.name}
                                                     </Link>

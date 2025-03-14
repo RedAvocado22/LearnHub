@@ -1,6 +1,9 @@
 package com.learnhub.common;
 
 import java.util.List;
+
+import com.learnhub.course.Category;
+import com.learnhub.course.CategoryRepository;
 import jakarta.validation.Valid;
 import com.learnhub.common.dto.PublicCourseResponse;
 import com.learnhub.common.dto.PublicTeacherResponse;
@@ -25,22 +28,31 @@ public class PublicController {
     private final CourseService courseService;
     private final UserService userService;
     private final ContactService contactService;
+    private final CategoryRepository categoryRepository;
+
 
     @Autowired
     public PublicController(
             ObjectMapper objectMapper,
             CourseService courseService,
             UserService userService,
-            ContactService contactService) {
+            ContactService contactService,
+            CategoryRepository categoryRepository) {
         this.objectMapper = objectMapper;
         this.courseService = courseService;
         this.userService = userService;
         this.contactService = contactService;
+        this.categoryRepository = categoryRepository;
+
     }
 
     @GetMapping("/courses")
     public ResponseEntity<List<PublicCourseResponse>> getAllPublishedCourses() {
-        return ResponseEntity.ok(courseService.getAllPublicCourses().stream().map(PublicCourseResponse::from).toList());
+        return ResponseEntity.ok(
+                courseService.getAllPublicCourses()
+                        .stream()
+                        .map(objectMapper::toPublicCourseResponse)
+                        .toList());
     }
 
     @GetMapping("/teachers/{id}")
@@ -52,5 +64,10 @@ public class PublicController {
     public ResponseEntity<String> createContact(@Valid @RequestBody AddContactRequest req) {
         contactService.saveContact(req);
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/categories")
+    public List<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 }
