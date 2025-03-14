@@ -241,6 +241,15 @@ export default function TeacherDetails() {
                                                         </div>
                                                         <div className="form-group row">
                                                             <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
+                                                                Major
+                                                            </label>
+                                                            <input
+                                                                className="col-12 col-sm-9 col-md-9 col-lg-7"
+                                                                value={teacher.major || ""}
+                                                                readOnly></input>
+                                                        </div>
+                                                        <div className="form-group row">
+                                                            <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
                                                                 Website
                                                             </label>
                                                             <a
