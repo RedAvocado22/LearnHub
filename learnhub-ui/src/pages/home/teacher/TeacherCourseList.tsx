@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useTeacher } from "../../../hooks/useUser";
+import { useUser } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
-import { Category, CourseStatus } from "../../../types/Course";
+import { CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
 import { useParams, useNavigate } from "react-router-dom";
 interface Course {
@@ -13,9 +13,13 @@ interface Course {
     image: string;
 }
 
+interface Category {
+    id: number;
+    name: string;
+}
+
 export default function TeacherCourseList() {
-    const { user, refresh } = useTeacher();
-    refresh();
+    const { user, refreshUser } = useUser();
 
     const { status = "" } = useParams<{ status: string }>();
     const navigate = useNavigate();
@@ -40,6 +44,8 @@ export default function TeacherCourseList() {
                 status: updatedCourse.status
             });
 
+            refreshUser();
+
             setEditingCourse(null);
         } catch (error) {
             console.error("Error updating course:", error);
@@ -50,14 +56,10 @@ export default function TeacherCourseList() {
         setEditingCourse(null);
     };
 
-    user.details.courses.map((course) => {
-        console.log(course.image);
-    });
-
     const filteredCourses =
         status === "all"
-            ? user.details.courses
-            : user.details.courses.filter((course) => {
+            ? user?.teacher?.courses
+            : user?.teacher?.courses.filter((course) => {
                   return course.status.toString().toLowerCase() === status!.toLowerCase();
               });
 
