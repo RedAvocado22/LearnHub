@@ -15,6 +15,9 @@ public record UserResponse(
         String email,
         String firstName,
         String lastName,
+        String phone,
+        String address,
+        String city,
         UserRole role,
         UserDetailsResponse details
 ) {
@@ -33,6 +36,8 @@ public record UserResponse(
             String school,
             String address,
             String city,
+            String website,
+            String about,
             List<CourseResponse> courses
     ) implements UserDetailsResponse {
         public record CourseResponse(
@@ -42,6 +47,7 @@ public record UserResponse(
                 Float price,
                 CourseStatus status,
                 String description,
+                String image,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt,
                 LocalDateTime cancelledAt,
@@ -55,6 +61,7 @@ public record UserResponse(
                         course.getPrice(),
                         course.getStatus(),
                         course.getDescription(),
+                        course.getImage(),
                         course.getCreatedAt(),
                         course.getUpdatedAt(),
                         course.getCancelledAt(),
@@ -69,7 +76,9 @@ public record UserResponse(
                     teacher.getSchool(),
                     teacher.getAddress(),
                     teacher.getCity(),
-                    teacher.getCourses().stream().map(course -> CourseResponse.from(course)).toList());
+                    teacher.getWebsite(),
+                    teacher.getAbout(),
+                    teacher.getCourses().stream().map(CourseResponse::from).toList());
         }
     }
 
@@ -81,6 +90,11 @@ public record UserResponse(
         if (user.getRole() == UserRole.TEACHER && user instanceof Teacher teacher) {
             details = TeacherResponse.from(teacher);
         }
-        return new UserResponse(user.getId(), user.getEmail(), user.getFirstName(), user.getLastName(), user.getRole(), details);
+        return new UserResponse(
+                user.getId(), user.getEmail(),
+                user.getFirstName(), user.getLastName(),
+                user.getPhone(), user.getAddress(),
+                user.getCity(), user.getRole(), details
+        );
     }
 }

@@ -7,17 +7,57 @@ interface Course {
     name: string;
     category: { id: number; name: string };
     price: number;
+    image: string;
     teacher: { id: number; name: string };
 }
 
 export default function CourseList() {
-    const [courses, setCourses] = useState<Course[]>([]);
+    const [courses, setCourses] = useState<Course[]>([]); // All courses
+    const [filteredCourses, setFilteredCourses] = useState<Course[]>([]); // Filtered courses based on search term
+    const [paginatedCourses, setPaginatedCourses] = useState<Course[]>([]); // Paginated courses for display
+    const [searchTerm, setSearchTerm] = useState<string>(""); // Track search term
+    const [currentPage, setCurrentPage] = useState<number>(1); // Track current page
+    const coursesPerPage = 6; // Number of courses per page
 
     useEffect(() => {
-        API.get("/public/courses").then((resp) => {
-            setCourses(resp?.data || []);
-        });
-    }, []);
+        const fetchCourses = async () => {
+            try {
+                const resp = await API.get("/public/courses");
+                setCourses(resp?.data || []); // Store all courses
+                setFilteredCourses(resp?.data || []); // Set initial filtered courses
+                console.log(resp.data);
+            } catch (error) {
+                console.error("Failed to fetch courses:", error);
+            }
+        };
+
+        fetchCourses();
+    }, []); // Fetch courses on initial load
+
+    useEffect(() => {
+        // Filter courses based on the search term
+        const filtered = courses.filter((course) => course.name.toLowerCase().includes(searchTerm.toLowerCase()));
+        setFilteredCourses(filtered);
+        setCurrentPage(1); // Reset to page 1 when search term changes
+    }, [searchTerm, courses]); // Trigger filtering on search term or courses change
+
+    useEffect(() => {
+        // Paginate filtered courses
+        const indexOfLastCourse = currentPage * coursesPerPage;
+        const indexOfFirstCourse = indexOfLastCourse - coursesPerPage;
+        setPaginatedCourses(filteredCourses.slice(indexOfFirstCourse, indexOfLastCourse));
+    }, [currentPage, filteredCourses]); // Update pagination when filtered courses or currentPage change
+
+    const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
+    // Calculate the total number of pages
+    const totalPages = Math.ceil(filteredCourses.length / coursesPerPage);
 
     return (
         <MainLayout>
@@ -39,8 +79,15 @@ export default function CourseList() {
                                     <div className="widget courses-search-bx placeani">
                                         <div className="form-group">
                                             <div className="input-group">
-                                                <label>Search Courses</label>
-                                                <input name="dzName" type="text" required className="form-control" />
+                                                <input
+                                                    name="dzName"
+                                                    type="text"
+                                                    value={searchTerm}
+                                                    onChange={handleSearchChange}
+                                                    required
+                                                    className="form-control"
+                                                    placeholder="Search course"
+                                                />
                                             </div>
                                         </div>
                                     </div>
@@ -71,78 +118,30 @@ export default function CourseList() {
                                     </div>
                                     <div className="widget recent-posts-entry widget-courses">
                                         <h5 className="widget-title style-1">Recent Courses</h5>
-                                        <div className="widget-post-bx">
-                                            {/*
-                                            <div className="widget-post clearfix">
-                                                <div className="ttr-post-media">
-                                                    {" "}
-                                                    <img
-                                                        src="assets/images/blog/recent-blog/pic1.jpg"
-                                                        width="200"
-                                                        height="143"
-                                                        alt=""
-                                                    />{" "}
-                                                </div>
-                                                <div className="ttr-post-info">
-                                                    <div className="ttr-post-header">
-                                                        <h6 className="post-title">
-                                                            <a href="#">Introduction EduChamp</a>
-                                                        </h6>
-                                                    </div>
-                                                    <div className="ttr-post-meta">
-                                                        <ul>
-                                                            <li className="price">
-                                                                <del>$190</del>
-                                                                <h5>$120</h5>
-                                                            </li>
-                                                            <li className="review">03 Review</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className="widget-post clearfix">
-                                                <div className="ttr-post-media">
-                                                    {" "}
-                                                    <img
-                                                        src="assets/images/blog/recent-blog/pic3.jpg"
-                                                        width="200"
-                                                        height="160"
-                                                        alt=""
-                                                    />{" "}
-                                                </div>
-                                                <div className="ttr-post-info">
-                                                    <div className="ttr-post-header">
-                                                        <h6 className="post-title">
-                                                            <a href="#">English For Tommorow</a>
-                                                        </h6>
-                                                    </div>
-                                                    <div className="ttr-post-meta">
-                                                        <ul>
-                                                            <li className="price">
-                                                                <h5 className="free">Free</h5>
-                                                            </li>
-                                                            <li className="review">07 Review</li>
-                                                        </ul>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            */}
-                                        </div>
                                     </div>
                                 </div>
                                 <div className="col-lg-9 col-md-8 col-sm-12">
                                     <div className="row">
-                                        {courses && courses.length > 0 ? (
-                                            courses.map((course) => (
+                                        {paginatedCourses.length > 0 ? (
+                                            paginatedCourses.map((course) => (
                                                 <div key={course.id} className="col-md-6 col-lg-4 col-sm-6 m-b30">
                                                     <div className="cours-bx">
-                                                        <div className="action-box">
-                                                            <img src="assets/images/courses/pic1.jpg" alt="Course" />
+                                                        <div className="action-box" style={{ maxHeight: "160px" }}>
+                                                            {course.image ? (
+                                                                <img src={course.image} alt="Course Image" />
+                                                            ) : (
+                                                                <img
+                                                                    src="/assets/images/courses/pic1.jpg"
+                                                                    alt="Default Course"
+                                                                />
+                                                            )}
                                                             <a href="#" className="btn">
                                                                 Read More
                                                             </a>
                                                         </div>
-                                                        <div className="info-bx text-center">
+                                                        <div
+                                                            className="info-bx text-center"
+                                                            style={{ minHeight: "135px" }}>
                                                             <h5>
                                                                 <a href="#">{course.name}</a>
                                                             </h5>
@@ -185,26 +184,27 @@ export default function CourseList() {
                                         ) : (
                                             <p>Loading courses...</p>
                                         )}
-
+                                        {/* Pagination */}
                                         <div className="col-lg-12 m-b20">
                                             <div className="pagination-bx rounded-sm gray clearfix">
                                                 <ul className="pagination">
-                                                    <li className="previous">
-                                                        <a href="#">
+                                                    <li className={`previous ${currentPage === 1 ? "disabled" : ""}`}>
+                                                        <a href="#" onClick={() => handlePageChange(currentPage - 1)}>
                                                             <i className="ti-arrow-left"></i> Prev
                                                         </a>
                                                     </li>
-                                                    <li className="active">
-                                                        <a href="#">1</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">2</a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#">3</a>
-                                                    </li>
-                                                    <li className="next">
-                                                        <a href="#">
+                                                    {[...Array(totalPages)].map((_, index) => (
+                                                        <li
+                                                            key={index}
+                                                            className={currentPage === index + 1 ? "active" : ""}>
+                                                            <a href="#" onClick={() => handlePageChange(index + 1)}>
+                                                                {index + 1}
+                                                            </a>
+                                                        </li>
+                                                    ))}
+                                                    <li
+                                                        className={`next ${currentPage === totalPages ? "disabled" : ""}`}>
+                                                        <a href="#" onClick={() => handlePageChange(currentPage + 1)}>
                                                             Next <i className="ti-arrow-right"></i>
                                                         </a>
                                                     </li>

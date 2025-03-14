@@ -12,6 +12,7 @@ public record UpdateTeacherRequest(
         @NotEmpty
         String about,
 
+        @NotEmpty
         String school
 ) {
 }

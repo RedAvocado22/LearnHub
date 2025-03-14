@@ -20,10 +20,10 @@ export interface Student {
 }
 
 export interface Teacher {
-    major: string;
     website: string;
     about: string;
     school: string;
+    major: string;
     courses: Course[];
 }
 

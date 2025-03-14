@@ -12,6 +12,11 @@ interface SidebarItem {
     submenu?: { label: string; link: string }[];
 }
 
+interface HeaderItem {
+    label: string;
+    icon: string;
+    link?: string;
+}
 interface HomeLayoutProps {
     children: React.ReactNode;
 }
@@ -34,10 +39,11 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
             label: "My Courses",
             icon: "ti-book",
             submenu: [
-                { label: "Created", link: "/courses/created" },
-                { label: "Published", link: "/courses/published" },
-                { label: "Submitted", link: "/courses/submitted" },
-                { label: "Cancelled", link: "/courses/cancelled" }
+                { label: "All", link: "/home/courses/all" },
+                { label: "Public", link: "/home/courses/public" },
+                { label: "Private", link: "/home/courses/private" },
+                { label: "Pending", link: "/home/courses/pending" },
+                { label: "Canceled", link: "/home/courses/cancelled" }
             ]
         }
     ],
@@ -50,6 +56,21 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
     ADMIN: []
 };
 
+const userHeader: Record<UserRole, HeaderItem[]> = {
+    STUDENT: [
+        { label: "Home", icon: "ti-home", link: "/home" },
+        { label: "My Courses", icon: "ti-book", link: "/courses" }
+    ],
+    TEACHER: [
+        { label: "Dashboard", icon: "ti-home", link: "/home" },
+        { label: "Courses", icon: "ti-book", link: "/home/courses/all" },
+        { label: "Create Course", icon: "ti-book", link: "/home/courses/create" }
+    ],
+    TEACHER_MANAGER: [],
+    COURSE_MANAGER: [],
+    ADMIN: []
+};
+
 export default function HomeLayout({ children }: HomeLayoutProps) {
     const [displaySidebar, setDisplaySidebar] = useState(false);
     const [displayNotifList, setDisplayNotifList] = useState(false);
@@ -59,6 +80,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const navigate = useNavigate();
 
     const menu: SidebarItem[] = userMenus[user?.role as UserRole] ?? [];
+    const header: HeaderItem[] = userHeader[user?.role as UserRole] ?? [];
 
     const handleToggleSidebarItem = (index: number) => {
         setOpenSidebarItem(openSidebarItem === index ? null : index);
@@ -104,16 +126,13 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                     </div>
                     <div className="ttr-header-menu">
                         <ul className="ttr-header-navigation">
-                            <li>
-                                <Link to="/home" className="ttr-material-button ttr-submenu-toggle">
-                                    HOME
-                                </Link>
-                            </li>
-                            <li>
-                                <Link to="/courses" className="ttr-material-button ttr-submenu-toggle">
-                                    COURSES
-                                </Link>
-                            </li>
+                            {header.map((item, index) => (
+                                <li key={index}>
+                                    <Link to={item.link || "/home"} className="ttr-material-button">
+                                        {item.label}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div className="ttr-header-right ttr-with-seperator">

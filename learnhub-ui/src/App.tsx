@@ -17,22 +17,17 @@ import {
     UserProfile,
     FAQ,
     About,
-<<<<<<< HEAD
-    BookList,
-    Order,
-    PaymentCallback,
-    CourseListManager,
-    CourseManagerHome
-=======
+    UserCourseList,
     ContactList,
     ContactDetails,
     UserList,
     UserDetails,
-    AddUser
+    AddUser,
     CourseQuiz,
     DoQuiz,
-    QuizResult
->>>>>>> 17f332e95605fa7c732c955b5307de309ffd880f
+    QuizResult,
+    TestVideo,
+    CreateCourse
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -75,7 +70,6 @@ export default function App() {
                 <Route path="/teacher/:id" element={<TeacherDetails />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
-                <Route path="/bookList" element={<BookList />} />
 
                 {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>
@@ -84,6 +78,7 @@ export default function App() {
                     <Route path="/register" element={<Register />} />
                     <Route path="/forgot-password" element={<ForgotPassword />} />
                     <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    <Route path="/test" element={<TestVideo />} />
                 </Route>
 
                 {/* Routes for authenticated users */}
@@ -91,9 +86,9 @@ export default function App() {
                     <Route path="/home" element={<Home />} />
                     <Route path="/profile" element={<UserProfile />} />
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
-                    <Route path="/order" element={<Order />} />
-                    <Route path="/paymentcallback" element={<PaymentCallback />} />
+                <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
+                    <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
+                    <Route path="/home/courses/create" element={<CreateCourse />}></Route>
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
                     <Route
@@ -116,10 +111,7 @@ export default function App() {
                     <Route path="/quiz/:qid/do-quiz" element={<DoQuiz />} />
                     <Route path="/quiz/result/:id" element={<QuizResult />} />
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.COURSE_MANAGER]} />}>
-                    <Route path="/manager/course" element={<CourseListManager />} />
-                    <Route path="/manager/home" element={<CourseManagerHome />} />
-                </Route>
+
                 {/* Error Boundary */}
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/*" element={<NotFound />} />

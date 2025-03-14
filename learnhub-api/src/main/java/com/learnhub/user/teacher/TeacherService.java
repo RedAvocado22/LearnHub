@@ -5,6 +5,7 @@ import com.learnhub.util.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TeacherService {
@@ -27,21 +28,22 @@ public class TeacherService {
                 .orElseThrow(() -> new UserNotFoundException(String.format("Teacher with id %d not found.", id)));
     }
 
+    @Transactional
     public Long addTeacherWithDefaultPassword(AddTeacherRequest req) {
         String defaultPw = "ABC@123";
         Teacher teacher = teacherRepository.save(new Teacher(
-                    req.email(),
-                    req.firstName(),
-                    req.lastName(),
-                    passwordEncoder.encode(defaultPw),
-                    true,
-                    req.phone(),
-                    null,
-                    null,
-                    req.major(),
-                    null,
-                    null,
-                    null));
+                req.email(),
+                req.firstName(),
+                req.lastName(),
+                passwordEncoder.encode(defaultPw),
+                true,
+                req.phone(),
+                null,
+                null,
+                req.major(),
+                null,
+                null,
+                null));
         emailService.sendAccountCreatedEmail(teacher.getEmail(), defaultPw);
         return teacher.getId();
     }

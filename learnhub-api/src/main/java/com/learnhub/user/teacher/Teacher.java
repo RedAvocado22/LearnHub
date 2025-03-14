@@ -2,6 +2,7 @@ package com.learnhub.user.teacher;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -29,10 +30,11 @@ public class Teacher extends User {
     @Column(name = "school")
     private String school;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     private List<Course> courses;
 
-    public Teacher() {}
+    public Teacher() {
+    }
 
     public Teacher(
             String email,

@@ -1,6 +1,8 @@
 package com.learnhub.course;
 
-import jakarta.validation.constraints.NotEmpty;
-
-public record UpdateCourseRequest(Long id, CourseStatus status) {
+public record UpdateCourseRequest(Long id,
+                                  String name,
+                                  Category category,
+                                  Double price,
+                                  CourseStatus status) {
 }
