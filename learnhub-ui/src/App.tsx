@@ -86,9 +86,11 @@ export default function App() {
                     <Route path="/home" element={<Home />} />
                     <Route path="/profile" element={<UserProfile />} />
                 </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT, UserRole.TEACHER]} />}>
+                    <Route path="/home/courses" element={<UserCourseList />} />
+                </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
-                    <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
-                    <Route path="/home/courses/create" element={<CreateCourse />}></Route>
+                    <Route path="/home/courses/create" element={<CreateCourse />} />
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
                     <Route
