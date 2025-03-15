@@ -6,7 +6,7 @@ interface ProtectedRouteProps {
     roles?: UserRole[];
 }
 
-const ProtectedRoute = ({ roles }: ProtectedRouteProps) => {
+export default function ProtectedRoute({ roles }: ProtectedRouteProps) {
     const { user } = useUser();
     if (!user) {
         return <Navigate to="/login" replace />;
@@ -15,6 +15,4 @@ const ProtectedRoute = ({ roles }: ProtectedRouteProps) => {
         return <Navigate to="/unauthorized" replace />;
     }
     return <Outlet />;
-};
-
-export default ProtectedRoute;
+}
