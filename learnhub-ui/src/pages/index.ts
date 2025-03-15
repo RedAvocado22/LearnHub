@@ -19,6 +19,7 @@ export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
 export { default as UserCourseList } from "./home/UserCourseList";
 export { default as CreateCourse } from "./home/teacher/CreateCourse";
+export { default as TeacherCourseDetails } from "./home/teacher/CourseDetails";
 
 export { default as CourseQuiz } from "./home/student/CourseQuiz";
 export { default as DoQuiz } from "./home/student/DoQuiz";
