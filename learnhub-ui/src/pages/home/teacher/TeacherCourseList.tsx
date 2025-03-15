@@ -81,14 +81,10 @@ export default function TeacherCourseList() {
                                                     className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish m-b30">
                                                     <div className="cours-bx">
                                                         <div className="action-box" style={{ maxHeight: "222px" }}>
-                                                            {course.image ? (
-                                                                <img src={course.image} alt="Course Image" />
-                                                            ) : (
-                                                                <img
-                                                                    src="/assets/images/courses/pic1.jpg"
-                                                                    alt="Default Course"
-                                                                />
-                                                            )}
+                                                            <img
+                                                                src={course.image || "/assets/images/courses/pic1.jpg"}
+                                                                alt="Course Image"
+                                                            />
                                                             <div className="button-container">
                                                                 <button
                                                                     onClick={() => handleEditClick(course)}

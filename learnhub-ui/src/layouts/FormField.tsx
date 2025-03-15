@@ -1,4 +1,5 @@
 import { ErrorMessage, Field, FieldAttributes, FormikValues, useFormikContext } from "formik";
+import { get } from "lodash";
 
 interface FormFieldProps extends FieldAttributes<any> {
     className?: string;
@@ -7,13 +8,15 @@ interface FormFieldProps extends FieldAttributes<any> {
 
 export default function FormField({ name, as, type = "text", className, children, ...props }: FormFieldProps) {
     const { touched, errors } = useFormikContext<FormikValues>();
+    const isError = get(errors, name);
+    const isTouched = get(touched, name);
     return (
         <div className="input-group">
             <Field
                 as={as}
                 type={as ? undefined : type}
                 name={name}
-                className={`form-control ${className || ""} ${touched?.[name] && errors?.[name] ? "is-invalid" : ""}`}
+                className={`form-control ${className || ""} ${isTouched && isError ? "is-invalid" : ""}`}
                 {...props}>
                 {children}
             </Field>
