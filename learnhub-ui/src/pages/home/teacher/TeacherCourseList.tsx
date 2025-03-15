@@ -3,7 +3,7 @@ import { useUser } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
 import { CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 interface Course {
     id: number;
     name: string;
@@ -20,8 +20,8 @@ interface Category {
 
 export default function TeacherCourseList() {
     const { user, refreshUser } = useUser();
-
-    const { status = "" } = useParams<{ status: string }>();
+    const [params, _] = useSearchParams();
+    const status = params.get("status") || "all";
     const navigate = useNavigate();
 
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -190,7 +190,9 @@ export default function TeacherCourseList() {
                                                             ) : (
                                                                 <div>
                                                                     <h5>
-                                                                        <a href="#">{course.name}</a>
+                                                                        <Link to={`/home/courses/${course.id}`}>
+                                                                            {course.name}
+                                                                        </Link>
                                                                     </h5>
                                                                     <h5>
                                                                         <span>{course.status}</span>
