@@ -43,11 +43,11 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
             label: "My Courses",
             icon: "ti-book",
             submenu: [
-                { label: "All", link: "/home/courses/all" },
-                { label: "Public", link: "/home/courses/public" },
-                { label: "Private", link: "/home/courses/private" },
-                { label: "Pending", link: "/home/courses/pending" },
-                { label: "Canceled", link: "/home/courses/cancelled" }
+                { label: "All", link: "/home/courses" },
+                { label: "Public", link: "/home/courses?status=public" },
+                { label: "Private", link: "/home/courses?status=private" },
+                { label: "Pending", link: "/home/courses?status=pending" },
+                { label: "Canceled", link: "/home/courses?status=cancelled" }
             ]
         }
     ],
@@ -61,10 +61,9 @@ const userHeader: Record<UserRole, HeaderItem[]> = {
     ],
     TEACHER: [
         { label: "Dashboard", icon: "ti-home", link: "/home" },
-        { label: "Courses", icon: "ti-book", link: "/home/courses/all" },
+        { label: "Courses", icon: "ti-book", link: "/home/courses" },
         { label: "Create Course", icon: "ti-book", link: "/home/courses/create" }
     ],
-    TEACHER_MANAGER: [],
     COURSE_MANAGER: [],
     ADMIN: []
 };

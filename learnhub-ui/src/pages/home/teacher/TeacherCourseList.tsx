@@ -3,7 +3,7 @@ import { useUser } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
 import { CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 interface Course {
     id: number;
     name: string;
@@ -20,8 +20,8 @@ interface Category {
 
 export default function TeacherCourseList() {
     const { user, refreshUser } = useUser();
-
-    const { status = "" } = useParams<{ status: string }>();
+    const [params, _] = useSearchParams();
+    const status = params.get("status") || "all";
     const navigate = useNavigate();
 
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
@@ -81,14 +81,10 @@ export default function TeacherCourseList() {
                                                     className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish m-b30">
                                                     <div className="cours-bx">
                                                         <div className="action-box" style={{ maxHeight: "222px" }}>
-                                                            {course.image ? (
-                                                                <img src={course.image} alt="Course Image" />
-                                                            ) : (
-                                                                <img
-                                                                    src="/assets/images/courses/pic1.jpg"
-                                                                    alt="Default Course"
-                                                                />
-                                                            )}
+                                                            <img
+                                                                src={course.image || "/assets/images/courses/pic1.jpg"}
+                                                                alt="Course Image"
+                                                            />
                                                             <div className="button-container">
                                                                 <button
                                                                     onClick={() => handleEditClick(course)}
@@ -190,7 +186,9 @@ export default function TeacherCourseList() {
                                                             ) : (
                                                                 <div>
                                                                     <h5>
-                                                                        <a href="#">{course.name}</a>
+                                                                        <Link to={`/home/courses/${course.id}`}>
+                                                                            {course.name}
+                                                                        </Link>
                                                                     </h5>
                                                                     <h5>
                                                                         <span>{course.status}</span>
