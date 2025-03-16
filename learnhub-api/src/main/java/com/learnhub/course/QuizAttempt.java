@@ -3,11 +3,19 @@ package com.learnhub.course;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
+
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "quiz_attempt")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class QuizAttempt {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,47 +32,8 @@ public class QuizAttempt {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "quizAttempt")
     private List<AnsweredQuestion> questions;
 
-    public QuizAttempt() {}
-
     public QuizAttempt(Quiz quiz, Double grade) {
         this.quiz = quiz;
         this.grade = grade;
-        this.questions = new ArrayList<>();
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Quiz getQuiz() {
-        return quiz;
-    }
-
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
-    }
-
-    public Double getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Double grade) {
-        this.grade = grade;
-    }
-
-    public LocalDateTime getSubmittedAt() {
-        return submittedAt;
-    }
-
-    public List<AnsweredQuestion> getQuestions() {
-        return questions;
-    }
-
-    public void setQuestions(List<AnsweredQuestion> questions) {
-        this.questions = questions;
     }
 }

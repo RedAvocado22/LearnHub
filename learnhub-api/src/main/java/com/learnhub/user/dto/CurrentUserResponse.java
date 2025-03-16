@@ -3,6 +3,7 @@ package com.learnhub.user.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
 import com.learnhub.course.Category;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
@@ -29,6 +30,7 @@ public record CurrentUserResponse(
             return new CurrentStudentResponse(student.getType(), student.getSchool());
         }
     }
+
     public static record CurrentTeacherResponse(
             String major,
             String phone,
@@ -45,6 +47,7 @@ public record CurrentUserResponse(
                 BigDecimal price,
                 CourseStatus status,
                 String description,
+                String image,
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt,
                 LocalDateTime cancelledAt,
@@ -58,6 +61,7 @@ public record CurrentUserResponse(
                         course.getPrice(),
                         course.getStatus(),
                         course.getDescription(),
+                        course.getImage(),
                         course.getCreatedAt(),
                         course.getUpdatedAt(),
                         course.getCancelledAt(),
