@@ -8,9 +8,17 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "user_document")
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDocument {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,52 +37,10 @@ public class UserDocument {
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private User user;
 
-    public UserDocument() {}
-
     public UserDocument(String fileName, Long fileSize, String downloadLink, User user) {
         this.fileName = fileName;
         this.fileSize = fileSize;
         this.downloadLink = downloadLink;
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public Long getFileSize() {
-        return fileSize;
-    }
-
-    public void setFileSize(Long fileSize) {
-        this.fileSize = fileSize;
-    }
-
-    public String getDownloadLink() {
-        return downloadLink;
-    }
-
-    public void setDownloadLink(String downloadLink) {
-        this.downloadLink = downloadLink;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
         this.user = user;
     }
 }

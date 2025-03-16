@@ -1,26 +1,13 @@
 import { useState } from "react";
-import { useUser } from "../../../hooks/useUser";
+import { Course, useUser } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
 import { CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
 import { useNavigate, Link, useSearchParams } from "react-router-dom";
-interface Course {
-    id: number;
-    name: string;
-    category: Category;
-    price: number;
-    status: CourseStatus;
-    image: string;
-}
-
-interface Category {
-    id: number;
-    name: string;
-}
 
 export default function TeacherCourseList() {
     const { user, refreshUser } = useUser();
-    const [params, _] = useSearchParams();
+    const [params] = useSearchParams();
     const status = params.get("status") || "all";
     const navigate = useNavigate();
 
@@ -29,6 +16,8 @@ export default function TeacherCourseList() {
     const handleEditClick = (course: Course) => {
         setEditingCourse(course);
     };
+
+    refreshUser();
 
     const handleSave = async (newStatus: CourseStatus) => {
         try {
@@ -56,6 +45,10 @@ export default function TeacherCourseList() {
         setEditingCourse(null);
     };
 
+    user?.teacher?.courses.map((course) => {
+        console.log(course);
+    });
+
     const filteredCourses =
         status === "all"
             ? user?.teacher?.courses
@@ -82,7 +75,11 @@ export default function TeacherCourseList() {
                                                     <div className="cours-bx">
                                                         <div className="action-box" style={{ maxHeight: "222px" }}>
                                                             <img
-                                                                src={course.image || "/assets/images/courses/pic1.jpg"}
+                                                                src={
+                                                                    course.image
+                                                                        ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                                        : "/assets/images/courses/pic1.jpg"
+                                                                }
                                                                 alt="Course Image"
                                                             />
                                                             <div className="button-container">
@@ -102,7 +99,7 @@ export default function TeacherCourseList() {
                                                                                 <button
                                                                                     onClick={() =>
                                                                                         navigate(
-                                                                                            `/add-material/${course.id}`
+                                                                                            `/home/courses/${course.id}`
                                                                                         )
                                                                                     }
                                                                                     className="btn m-b15">

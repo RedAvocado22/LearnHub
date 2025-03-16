@@ -19,7 +19,7 @@ const CreateCourse: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        API.get<Category[]>("/categories").then((res) => {
+        API.get<Category[]>("/public/categories").then((res) => {
             setCategories(res?.data);
         });
     }, []);
@@ -40,7 +40,7 @@ const CreateCourse: React.FC = () => {
             });
             if (res.status === 200) {
                 toast.success("Course created successfully");
-                navigate("/home/courses/private");
+                navigate("/home/courses?status=private");
             }
         } catch (error) {
             if (isAxiosError(error)) {
@@ -92,10 +92,10 @@ const CreateCourse: React.FC = () => {
                                             image: null
                                         }}
                                         validationSchema={validationSchema}
-                                        onSubmit={(values) => {
-                                            handleSave(values);
+                                        onSubmit={(values, { setSubmitting }) => {
+                                            handleSave(values).finally(() => setSubmitting(false));
                                         }}>
-                                        {({ setFieldValue }) => (
+                                        {({ setFieldValue, isSubmitting }) => (
                                             <Form className="edit-profile m-b30">
                                                 <div className="">
                                                     <div className="form-group row">
@@ -209,10 +209,16 @@ const CreateCourse: React.FC = () => {
                                                 <div className="row">
                                                     <div className="col-sm-2"></div>
                                                     <div className="col-sm-7">
-                                                        <button type="submit" className="btn mr-2">
-                                                            Create Course
+                                                        <button
+                                                            type="submit"
+                                                            className="btn mr-2"
+                                                            disabled={isSubmitting}>
+                                                            {isSubmitting ? "Creating..." : "Create Course"}
                                                         </button>
-                                                        <button type="reset" className="btn-secondry">
+                                                        <button
+                                                            type="reset"
+                                                            className="btn-secondry"
+                                                            disabled={isSubmitting}>
                                                             Cancel
                                                         </button>
                                                     </div>

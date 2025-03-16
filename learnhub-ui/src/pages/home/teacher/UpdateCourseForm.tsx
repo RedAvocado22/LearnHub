@@ -91,7 +91,7 @@ export default function UpdateCourseForm({ course, setPreviewImage }: UpdateCour
                 .required("Category is required."),
             description: yup.string().required("Description is required")
         }),
-        image: yup.mixed()
+        image: yup.mixed().nullable()
     });
 
     const initialValues: FormValues = {

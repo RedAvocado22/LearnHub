@@ -13,7 +13,9 @@ export default function CourseDetails() {
     const courses = user?.teacher?.courses || [];
     const { id } = useParams();
     const course = courses.find((course) => course.id.toString() === id);
-    const [currImage, setCurrImage] = useState<string>(course?.image || defaultThumbnail);
+    const [currImage, setCurrImage] = useState<string>(
+        course?.image ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}` : defaultThumbnail
+    );
 
     if (!course) {
         return <NotFound />;
