@@ -39,7 +39,7 @@ public class AwsS3Service {
             };
         }
 
-        return "uploads/public/" + UUID.randomUUID() + "." + fileExtension;
+        return "uploads/" + UUID.randomUUID() + "." + fileExtension;
     }
 
     public String saveFile(MultipartFile file) {
