@@ -6,7 +6,7 @@ export { default as ContactUs } from "./public/ContactUs";
 export { default as FAQ } from "./public/FAQ";
 export { default as About } from "./public/About";
 export { default as TestVideo } from "./public/TestVideo";
-
+export { default as CourseDetail } from "./public/CourseDetail";
 // Auth pages
 export { default as Register } from "./auth/Register";
 export { default as Login } from "./auth/Login";
