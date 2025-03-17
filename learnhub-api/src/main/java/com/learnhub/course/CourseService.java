@@ -4,11 +4,20 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.learnhub.course.category.Category;
+import com.learnhub.course.chapter.*;
+import com.learnhub.course.chapter.lesson.LessonMaterial;
+import com.learnhub.course.chapter.lesson.Lesson;
+import com.learnhub.course.chapter.quiz.Option;
+import com.learnhub.course.chapter.quiz.Question;
+import com.learnhub.course.chapter.quiz.Quiz;
+import com.learnhub.course.dto.UpdateCourseRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.common.exception.ResourceNotFoundException;
-import com.learnhub.course.dto.AddChapterMaterialRequest;
+import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
@@ -115,25 +124,25 @@ public class CourseService {
 
     public Long addMaterialToChapter(Long chapterId, AddChapterMaterialRequest req) {
         Chapter chapter = chapterRepository.findById(chapterId)
-            .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
         ChapterMaterial material = ChapterMaterial.builder()
-            .chapter(chapter)
-            .name(req.name())
-            .type(req.type())
-            .description(req.description())
-            .build();
+                .chapter(chapter)
+                .name(req.name())
+                .type(req.type())
+                .description(req.description())
+                .build();
         if (material.getType() == MaterialType.QUIZ && req.quiz() != null) {
             Quiz quiz = Quiz.builder()
-                .chapterMaterial(material)
-                .passGrade(req.quiz().passGrade())
-                .build();
+                    .chapterMaterial(material)
+                    .passGrade(req.quiz().passGrade())
+                    .build();
             List<Question> questions = new ArrayList<>();
             req.quiz().questions().forEach(q -> {
                 Question question = Question.builder()
-                    .quiz(quiz)
-                    .text(q.text())
-                    .explanation(q.explanation())
-                    .build();
+                        .quiz(quiz)
+                        .text(q.text())
+                        .explanation(q.explanation())
+                        .build();
                 List<Option> options = new ArrayList<>();
                 q.options().forEach(o -> {
                     options.add(Option.builder()
@@ -155,15 +164,15 @@ public class CourseService {
     @Transactional
     public void addLessonFiles(Long lessonId, MultipartFile video, List<String> materialNames, List<MultipartFile> materialFiles) {
         ChapterMaterial material = chapterMaterialRepository.findById(lessonId)
-            .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
         if (material.getType() != MaterialType.LESSON) {
             throw new ResourceNotFoundException("Lesson not found");
         }
         String videoUrl = awsS3Service.saveFile(video);
         Lesson lesson = Lesson.builder()
-            .chapterMaterial(material)
-            .videoUrl(videoUrl)
-            .build();
+                .chapterMaterial(material)
+                .videoUrl(videoUrl)
+                .build();
         List<LessonMaterial> materials = new ArrayList<>();
         for (int i = 0; i < materialNames.size(); i++) {
             String materialUrl = awsS3Service.saveFile(materialFiles.get(i));

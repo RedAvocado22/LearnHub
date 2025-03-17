@@ -2,8 +2,8 @@ package com.learnhub.common;
 
 import java.util.List;
 
-import com.learnhub.course.Category;
-import com.learnhub.course.CategoryRepository;
+import com.learnhub.course.category.Category;
+import com.learnhub.course.category.CategoryRepository;
 import jakarta.validation.Valid;
 import com.learnhub.common.dto.PublicCourseResponse;
 import com.learnhub.common.dto.PublicTeacherResponse;

@@ -1,5 +1,6 @@
 package com.learnhub.auth;
 
+import com.learnhub.auth.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import com.learnhub.auth.exception.InactiveAccountException;
@@ -47,7 +48,7 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest req, HttpServletRequest httpReq, HttpServletResponse httpResp) {
         User user = userRepository.findByEmail(req.email())
-            .orElseThrow(() -> new UserNotFoundException(
+                .orElseThrow(() -> new UserNotFoundException(
                         String.format("User with email %s does not exists. Register new account.", req.email())));
 
         if (user.getStatus() == UserStatus.SUSPENDED) {
@@ -84,7 +85,7 @@ public class AuthService {
                         .type(req.studentType())
                         .build())
                 .build());
-        
+
         String token = jwtService.generateToken(user, 30 * 60 * 1000);
         emailService.sendAccountActivationEmail(user.getEmail(), token);
         return new AuthResponse(token);
@@ -97,7 +98,7 @@ public class AuthService {
         }
 
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists.", email)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists.", email)));
 
         if (user.getStatus() == UserStatus.SUSPENDED) {
             throw new SuspendedAccountException("User account is suspended.");
@@ -128,15 +129,15 @@ public class AuthService {
         }
 
         if (!user.getRevokedTokens().add(RevokedToken.builder()
-                    .user(user)
-                    .token(oldRT)
-                    .ipAddress(req.getRemoteAddr())
-                    .deviceInfo(req.getHeader(HttpHeaders.USER_AGENT))
-                    .build())) {
+                .user(user)
+                .token(oldRT)
+                .ipAddress(req.getRemoteAddr())
+                .deviceInfo(req.getHeader(HttpHeaders.USER_AGENT))
+                .build())) {
             throw new InvalidTokenException("Invalid refresh token.");
         }
 
-        String accessToken = jwtService.generateAccessToken(user); 
+        String accessToken = jwtService.generateAccessToken(user);
         String refreshToken = jwtService.generateRefreshToken(user);
         ResponseCookie refreshTokenCookie = jwtService.generateRefreshTokenCookie(refreshToken);
         resp.addHeader(HttpHeaders.SET_COOKIE, refreshTokenCookie.toString());
@@ -155,7 +156,7 @@ public class AuthService {
         User user = userRepository.findByEmail(email).orElseThrow(
                 () -> new UserNotFoundException(String.format("User with email %s not found.", email)));
 
-        if(jwtService.isTokenExpired(resp.token())) {
+        if (jwtService.isTokenExpired(resp.token())) {
             emailService.sendAccountResetPasswordEmail(user.getEmail(), jwtService.generateToken(user, 30 * 60 * 1000));
             throw new InvalidTokenException("Link is expired.");
         }
