@@ -2,12 +2,53 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { API } from "../api";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
-import { CourseStatus } from "../types/Course";
+import { CourseStatus, MaterialType } from "../types/Course";
 import { StudentType, UserRole, UserStatus } from "../types/User";
 
 export interface Category {
     id: number;
     name: string;
+}
+
+export interface LessonMaterial {
+    name: string;
+    fileUrl: string;
+}
+
+export interface Lesson {
+    videoUrl: string;
+    materials: LessonMaterial[];
+}
+
+export interface Option {
+    text: string;
+    correct: boolean;
+}
+
+export interface Question {
+    text: string;
+    explanation: string;
+    options: Option[];
+}
+
+export interface Quiz {
+    passGrade: number;
+    questions: Question[];
+}
+
+export interface ChapterMaterial {
+    id: number;
+    name: string;
+    type: MaterialType;
+    description: string;
+    lesson: Lesson | null;
+    quiz: Quiz | null;
+}
+
+export interface CourseChapter {
+    id: number;
+    name: string;
+    materials: ChapterMaterial[];
 }
 
 export interface Course {
@@ -18,6 +59,7 @@ export interface Course {
     status: CourseStatus;
     image: string;
     description: string;
+    chapters: CourseChapter[];
     createdAt: Date;
     updatedAt: Date;
     cancelledAt: Date;

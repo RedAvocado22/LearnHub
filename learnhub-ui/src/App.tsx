@@ -28,7 +28,10 @@ import {
     QuizResult,
     TestVideo,
     CreateCourse,
-    TeacherCourseDetails
+    TeacherCourseDetails,
+    AddLesson,
+    MaterialDetails,
+    AddQuiz
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -91,6 +94,9 @@ export default function App() {
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
                     <Route path="/home/courses/create" element={<CreateCourse />} />
                     <Route path="/home/courses/:id" element={<TeacherCourseDetails />} />
+                    <Route path="/home/courses/:cid/chapters/:chid/lessons/add" element={<AddLesson />} />
+                    <Route path="/home/courses/:cid/chapters/:chid/quizes/add" element={<AddQuiz />} />
+                    <Route path="/home/courses/materials/:mid" element={<MaterialDetails />} />
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
                     <Route element={<ContactsProviderRoute />}>

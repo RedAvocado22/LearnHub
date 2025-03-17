@@ -3,9 +3,19 @@ package com.learnhub.course;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.learnhub.course.chapter.Chapter;
-import jakarta.persistence.*;
+import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import com.learnhub.user.teacher.TeacherProfile;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -47,6 +57,9 @@ public class Course {
     @JoinColumn(name = "teacher_id", nullable = false)
     private TeacherProfile teacher;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Chapter> chapters;
+
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
 
@@ -58,7 +71,4 @@ public class Course {
 
     @Column(name = "archived_at")
     private LocalDateTime archivedAt;
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Chapter> chapters;
 }

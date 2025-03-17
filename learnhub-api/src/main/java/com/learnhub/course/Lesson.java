@@ -16,12 +16,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "quiz")
+@Table(name = "lesson")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Quiz {
+public class Lesson {
     @Id
     private Long id;
 
@@ -29,10 +29,10 @@ public class Quiz {
     @MapsId
     @JoinColumn(name = "material_id")
     private ChapterMaterial chapterMaterial;
+    
+    @Column(name = "video_url")
+    private String videoUrl;
 
-    @Column(name = "pass_grade")
-    private Integer passGrade;
-
-    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Question> questions;
+    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<LessonMaterial> materials;
 }

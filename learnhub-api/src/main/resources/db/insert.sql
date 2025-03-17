@@ -31,3 +31,42 @@ values
 (4, 3, 'Rhetorical questions', 30.0, 'PUBLIC', 'Explain what is rhetorical questions and how to use it.', now()),
 (4, 4, 'Introduction to Andersen', 90.0, 'PUBLIC', 'Introduction to some of the piece of Andersen.', now()),
 (4, 4, 'Vietnam\'s Literature vs Foreign Literature', 100.0, 'PUBLIC', 'Compare literature in vietnam to that in other countries.', now());
+
+insert into course_chapter(course_id, `name`)
+values
+(2, 'Introduction to basic arithmetic'),
+(2, 'Practice arithmetic'),
+(2, 'Further knowledge');
+
+insert into chapter_material(chapter_id, `name`, `type`, `description`)
+values
+(1, 'How to do addition', 'LESSON', 'This lesson teach you how to do addition between difference type of number.'),
+(1, 'Small test for addition', 'QUIZ', 'Pass this test or else');
+
+insert into lesson(material_id, video_url)
+values
+(1, 'uploads/public/315bc0a9-4122-4954-b71d-7b3846a159ec.mp4');
+
+insert into lesson_material(lesson_id, `name`, file_url)
+values
+(1, 'Material 1', 'uploads/public/e8348ad0-4496-4765-b970-941f483f3de0.pdf');
+
+insert into quiz(material_id, pass_grade)
+values
+(2, 1);
+
+insert into quiz_question(quiz_id, `text`, explanation)
+values
+(2, '1 + 1 = ?', 'Are you dumb enough to get this wrong?'),
+(2, '1234567890 + 9876543210 = ?', 'Confusing question isn\'t it?');
+
+insert into question_option(question_id, `text`, `correct`)
+values
+(1, '1', 0),
+(1, '2', 1),
+(1, 'Hello World', 0),
+(1, '10 (binary)', 1),
+(2, '10000000000', 0),
+(2, '11111111100', 1),
+(2, 'You are not dumb', 0),
+(2, 'This question is dumb', 0);
