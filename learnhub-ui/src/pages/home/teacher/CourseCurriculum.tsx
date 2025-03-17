@@ -172,7 +172,7 @@ export default function CourseCurriculum({ course }: CourseCurriculumProps) {
                               <div className="card-header">
                                   <div className="ml-auto d-flex justify-content-between align-items-center">
                                       <h5>{c.title}</h5>
-                                      <div>/
+                                      <div>
                                           <button type="button" className="btn" onClick={() => handleAddLesson(c.id)}>
                                               Add Lesson
                                           </button>
