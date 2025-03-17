@@ -72,9 +72,9 @@ public record CurrentUserResponse(
                         QuizResponse quiz
                 ) {
                     static record LessonResponse(String videoUrl, List<MaterialResponse> materials) {
-                        static record MaterialResponse(String name, String fileUrl) {
+                        static record MaterialResponse(Long id, String name, String fileUrl) {
                             public static MaterialResponse from(LessonMaterial material) {
-                                return new MaterialResponse(material.getName(), material.getFileUrl());
+                                return new MaterialResponse(material.getId(), material.getName(), material.getFileUrl());
                             }
                         }
 

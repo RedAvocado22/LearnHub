@@ -9,6 +9,8 @@ import com.learnhub.course.category.Category;
 import com.learnhub.course.chapter.*;
 import com.learnhub.course.chapter.lesson.LessonMaterial;
 import com.learnhub.course.chapter.lesson.Lesson;
+import com.learnhub.course.chapter.lesson.LessonMaterialRepository;
+import com.learnhub.course.chapter.lesson.LessonRepository;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
@@ -36,6 +38,8 @@ public class CourseService {
 
     @PersistenceContext
     private final EntityManager entityManager;
+    private final LessonRepository lessonRepository;
+    private final LessonMaterialRepository lessonMaterialRepository;
 
     @Autowired
     public CourseService(
@@ -44,13 +48,15 @@ public class CourseService {
             ChapterMaterialRepository chapterMaterialRepository,
             UserRepository userRepository,
             AwsS3Service awsS3Service,
-            EntityManager entityManager) {
+            EntityManager entityManager, LessonRepository lessonRepository, LessonMaterialRepository lessonMaterialRepository) {
         this.courseRepository = courseRepository;
         this.chapterRepository = chapterRepository;
         this.chapterMaterialRepository = chapterMaterialRepository;
         this.userRepository = userRepository;
         this.awsS3Service = awsS3Service;
         this.entityManager = entityManager;
+        this.lessonRepository = lessonRepository;
+        this.lessonMaterialRepository = lessonMaterialRepository;
     }
 
     public List<Course> getAllPublicCourses() {
@@ -125,18 +131,22 @@ public class CourseService {
     public Long addMaterialToChapter(Long chapterId, AddChapterMaterialRequest req) {
         Chapter chapter = chapterRepository.findById(chapterId)
                 .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+
         ChapterMaterial material = ChapterMaterial.builder()
                 .chapter(chapter)
                 .name(req.name())
                 .type(req.type())
                 .description(req.description())
                 .build();
+
         if (material.getType() == MaterialType.QUIZ && req.quiz() != null) {
             Quiz quiz = Quiz.builder()
                     .chapterMaterial(material)
                     .passGrade(req.quiz().passGrade())
                     .build();
+
             List<Question> questions = new ArrayList<>();
+
             req.quiz().questions().forEach(q -> {
                 Question question = Question.builder()
                         .quiz(quiz)
@@ -154,10 +164,13 @@ public class CourseService {
                 question.setOptions(options);
                 questions.add(question);
             });
+
             quiz.setQuestions(questions);
             material.setQuiz(quiz);
         }
+
         ChapterMaterial saved = chapterMaterialRepository.save(material);
+
         return saved.getId();
     }
 
@@ -165,25 +178,63 @@ public class CourseService {
     public void addLessonFiles(Long lessonId, MultipartFile video, List<String> materialNames, List<MultipartFile> materialFiles) {
         ChapterMaterial material = chapterMaterialRepository.findById(lessonId)
                 .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+
         if (material.getType() != MaterialType.LESSON) {
             throw new ResourceNotFoundException("Lesson not found");
         }
-        String videoUrl = awsS3Service.saveFile(video);
+
+        String videoUrl = "";
+        if (!video.isEmpty()) {
+            videoUrl = awsS3Service.saveFile(video);
+        }
+
         Lesson lesson = Lesson.builder()
                 .chapterMaterial(material)
                 .videoUrl(videoUrl)
                 .build();
-        List<LessonMaterial> materials = new ArrayList<>();
-        for (int i = 0; i < materialNames.size(); i++) {
-            String materialUrl = awsS3Service.saveFile(materialFiles.get(i));
-            materials.add(LessonMaterial.builder()
-                    .lesson(lesson)
-                    .name(materialNames.get(i))
-                    .fileUrl(materialUrl)
-                    .build());
+
+        if (materialNames != null && !materialNames.isEmpty() && materialFiles != null && !materialFiles.isEmpty()) {
+            List<LessonMaterial> materials = new ArrayList<>();
+            for (int i = 0; i < materialNames.size(); i++) {
+                String materialUrl = awsS3Service.saveFile(materialFiles.get(i));
+                materials.add(LessonMaterial.builder()
+                        .lesson(lesson)
+                        .name(materialNames.get(i))
+                        .fileUrl(materialUrl)
+                        .build());
+            }
+            lesson.setMaterials(materials);
         }
-        lesson.setMaterials(materials);
+
         material.setLesson(lesson);
         chapterMaterialRepository.save(material);
+    }
+
+    public void deleteMaterial(Long id) {
+        ChapterMaterial material = chapterMaterialRepository.findById(id).orElseThrow(
+                () -> new ResourceNotFoundException("Material not found")
+        );
+
+        switch (material.getType()) {
+            case QUIZ:
+                break;
+            case LESSON:
+                Lesson lesson = material.getLesson();
+                if (lesson.getVideoUrl() != null && !lesson.getVideoUrl().isEmpty()) {
+                    awsS3Service.deleteFile(lesson.getVideoUrl());
+                }
+
+                if (lesson.getMaterials() != null && !lesson.getMaterials().isEmpty()) {
+                    for (LessonMaterial lessonMaterial : lesson.getMaterials()) {
+                        awsS3Service.deleteFile(lessonMaterial.getFileUrl());
+                    }
+                }
+        }
+
+        chapterMaterialRepository.delete(material);
+    }
+
+    public void deleteLessonMaterial(Long id) {
+        lessonMaterialRepository.deleteById(id);
     }
 }

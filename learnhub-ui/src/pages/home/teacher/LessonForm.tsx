@@ -1,8 +1,11 @@
 import { ErrorMessage, FieldArray, Form, Formik, FormikHelpers } from "formik";
 import * as yup from "yup";
 import FormField from "../../../layouts/FormField";
+import { API } from "../../../api";
+import { toast } from "react-toastify";
 
 interface LessonMaterial {
+    id: number;
     name: string;
     file: File | null;
 }
@@ -115,7 +118,9 @@ export default function LessonForm({ initialValues, onSubmit }: LessonFormProps)
                                                                     <label className="col-form-label">Remove</label>
                                                                     <div className="form-group">
                                                                         <a
-                                                                            onClick={() => remove(index)}
+                                                                            onClick={async () => {
+                                                                                remove(index);
+                                                                            }}
                                                                             className="delete"
                                                                             href="#">
                                                                             <i className="fa fa-close" />

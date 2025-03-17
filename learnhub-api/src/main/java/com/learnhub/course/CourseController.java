@@ -87,4 +87,16 @@ public class CourseController {
         courseService.addLessonFiles(lessonId, video, materialNames, materialFiles);
         return ResponseEntity.ok("String");
     }
+
+    @DeleteMapping("/chapters/materials/{id}")
+    public ResponseEntity<String> removeMaterialFromChapter(@PathVariable Long id) {
+        courseService.deleteMaterial(id);
+        return ResponseEntity.ok("Success");
+    }
+
+    @DeleteMapping("/chapters/materials/lessons/materials/{id}")
+    public ResponseEntity<String> removeLessonMaterial(@PathVariable Long id) {
+        courseService.deleteLessonMaterial(id);
+        return ResponseEntity.ok("Success");
+    }
 }
