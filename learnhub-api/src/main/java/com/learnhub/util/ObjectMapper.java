@@ -1,7 +1,7 @@
 package com.learnhub.util;
 
 import com.learnhub.course.chapter.Chapter;
-import com.learnhub.course.chapter.ChapterResponse;
+import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import com.learnhub.common.dto.PublicCourseResponse;

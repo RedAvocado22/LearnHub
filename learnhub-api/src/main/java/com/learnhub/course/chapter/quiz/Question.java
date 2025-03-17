@@ -1,8 +1,7 @@
-package com.learnhub.course.chapter;
+package com.learnhub.course.chapter.quiz;
 
 import java.util.List;
 
-import com.learnhub.course.Course;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,23 +19,26 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "course_chapter")
+@Table(name = "quiz_question")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Chapter {
+public class Question {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false)
-    private String title;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "quiz_id")
+    private Quiz quiz;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChapterMaterial> materials;
+    @Column(name = "text", nullable = false)
+    private String text;
+
+    @Column(name = "explanation")
+    private String explanation;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Option> options;
 }

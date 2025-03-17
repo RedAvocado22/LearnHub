@@ -21,7 +21,7 @@ export default function CourseCurriculum({ course }: CourseCurriculumProps) {
         });
         if (value) {
             try {
-                const resp = await API.post(`/chapters/${course.id}`, { title: value });
+                const resp = await API.post(`courses/${course.id}/chapters`, { title: value });
                 if (resp.status === 200) {
                     toast.success("Add chapter successfully");
                     refreshUser();
@@ -41,7 +41,7 @@ export default function CourseCurriculum({ course }: CourseCurriculumProps) {
         });
         if (isConfirmed) {
             try {
-                const resp = await API.delete(`/chapters/${id}`);
+                const resp = await API.delete(`courses/chapters/${id}`);
                 if (resp.status === 200) {
                     toast.success("Remove chapter successfully");
                     refreshUser();
@@ -72,6 +72,7 @@ export default function CourseCurriculum({ course }: CourseCurriculumProps) {
         }
     };
 
+    console.log(course.chapters);
     return (
         <div className="m-b30 mt-4" id="curriculum">
             <div className="ml-auto d-flex justify-content-between align-items-center">

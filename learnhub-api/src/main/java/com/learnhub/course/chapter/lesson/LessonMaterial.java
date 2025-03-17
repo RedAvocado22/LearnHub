@@ -1,9 +1,5 @@
-package com.learnhub.course.chapter;
+package com.learnhub.course.chapter.lesson;
 
-import java.util.List;
-
-import com.learnhub.course.Course;
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -12,7 +8,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,23 +15,23 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "course_chapter")
+@Table(name = "lesson_material")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Chapter {
+public class LessonMaterial {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "title", nullable = false)
-    private String title;
-
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_id")
-    private Course course;
+    @JoinColumn(name = "lesson_id")
+    private Lesson lesson;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ChapterMaterial> materials;
+    @Column(name = "name", nullable = false)
+    private String name;
+
+    @Column(name = "file_url")
+    private String fileUrl;
 }

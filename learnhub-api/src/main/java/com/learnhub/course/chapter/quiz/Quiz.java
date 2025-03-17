@@ -1,4 +1,4 @@
-package com.learnhub.course.chapter.lesson;
+package com.learnhub.course.chapter.quiz;
 
 import java.util.List;
 
@@ -18,12 +18,12 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "lesson")
+@Table(name = "quiz")
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Lesson {
+public class Quiz {
     @Id
     private Long id;
 
@@ -32,9 +32,9 @@ public class Lesson {
     @JoinColumn(name = "material_id")
     private ChapterMaterial chapterMaterial;
 
-    @Column(name = "video_url")
-    private String videoUrl;
+    @Column(name = "pass_grade")
+    private Integer passGrade;
 
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<LessonMaterial> materials;
+    @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Question> questions;
 }

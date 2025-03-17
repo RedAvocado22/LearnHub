@@ -2,7 +2,8 @@ package com.learnhub.common.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import com.learnhub.course.Category;
+
+import com.learnhub.course.category.Category;
 import com.learnhub.course.Course;
 import com.learnhub.user.teacher.TeacherProfile;
 

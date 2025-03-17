@@ -3,6 +3,9 @@ package com.learnhub.course;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import com.learnhub.course.category.Category;
+import com.learnhub.course.chapter.Chapter;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

@@ -3,17 +3,18 @@ package com.learnhub.user.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.learnhub.course.Category;
-import com.learnhub.course.Chapter;
-import com.learnhub.course.ChapterMaterial;
+
+import com.learnhub.course.category.Category;
+import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
-import com.learnhub.course.Lesson;
-import com.learnhub.course.LessonMaterial;
-import com.learnhub.course.MaterialType;
-import com.learnhub.course.Option;
-import com.learnhub.course.Question;
-import com.learnhub.course.Quiz;
+import com.learnhub.course.chapter.ChapterMaterial;
+import com.learnhub.course.chapter.lesson.Lesson;
+import com.learnhub.course.chapter.lesson.LessonMaterial;
+import com.learnhub.course.chapter.MaterialType;
+import com.learnhub.course.chapter.quiz.Option;
+import com.learnhub.course.chapter.quiz.Question;
+import com.learnhub.course.chapter.quiz.Quiz;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import com.learnhub.user.UserStatus;
@@ -76,6 +77,7 @@ public record CurrentUserResponse(
                                 return new MaterialResponse(material.getName(), material.getFileUrl());
                             }
                         }
+
                         public static LessonResponse from(Lesson lesson) {
                             return new LessonResponse(
                                     lesson.getVideoUrl(),
@@ -90,6 +92,7 @@ public record CurrentUserResponse(
                                     return new OptionResponse(option.getText(), option.getCorrect());
                                 }
                             }
+
                             public static QuestionResponse from(Question question) {
                                 return new QuestionResponse(
                                         question.getText(),
@@ -97,12 +100,14 @@ public record CurrentUserResponse(
                                         question.getOptions().stream().map(OptionResponse::from).toList());
                             }
                         }
+
                         public static QuizResponse from(Quiz quiz) {
                             return new QuizResponse(
                                     quiz.getPassGrade(),
                                     quiz.getQuestions().stream().map(QuestionResponse::from).toList());
                         }
                     }
+
                     public static ChapterMaterialResponse from(ChapterMaterial material) {
                         if (material.getType() == MaterialType.LESSON && material.getLesson() != null) {
                             return new ChapterMaterialResponse(
@@ -130,13 +135,15 @@ public record CurrentUserResponse(
                                 null);
                     }
                 }
+
                 public static ChapterResponse from(Chapter chapter) {
                     return new ChapterResponse(
                             chapter.getId(),
-                            chapter.getName(),
+                            chapter.getTitle(),
                             chapter.getMaterials().stream().map(ChapterMaterialResponse::from).toList());
                 }
             }
+
             public static CourseResponse from(Course course) {
                 return new CourseResponse(
                         course.getId(),
@@ -153,6 +160,7 @@ public record CurrentUserResponse(
                         course.getArchivedAt());
             }
         }
+
         public static CurrentTeacherResponse from(TeacherProfile teacher) {
             return new CurrentTeacherResponse(
                     teacher.getMajor(),
@@ -164,6 +172,7 @@ public record CurrentUserResponse(
                     teacher.getCourses().stream().map(CourseResponse::from).toList());
         }
     }
+
     public static CurrentUserResponse from(User user) {
         if (user.getRole() == UserRole.STUDENT && user.getStudent() != null) {
             return new CurrentUserResponse(
