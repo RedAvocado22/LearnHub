@@ -1,9 +1,6 @@
-package com.learnhub.course.chapter.lesson;
+package com.learnhub.course.chapter;
 
 import com.learnhub.course.ChapterService;
-import com.learnhub.course.chapter.AddChapterRequest;
-import com.learnhub.course.chapter.Chapter;
-import com.learnhub.course.chapter.ChapterResponse;
 import com.learnhub.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,30 +21,24 @@ public class ChapterController {
     }
 
     //get voi post deu la id cua course
-    @GetMapping("/{id}")
-    public ResponseEntity<List<ChapterResponse>> getAllChapters(@PathVariable Long id) {
+    @GetMapping("/{courseId}")
+    public ResponseEntity<List<ChapterResponse>> getAllChapters(@PathVariable Long courseId) {
         return ResponseEntity.ok(
-                chapterService.getAllChaptersInCourse(id)
+                chapterService.getAllChaptersInCourse(courseId)
                         .stream()
                         .map(objectMapper::toChapterResponse)
                         .toList());
     }
 
-    @PostMapping("/{id}")
-    public void addChapter(@PathVariable Long id, @RequestBody AddChapterRequest request) {
-        chapterService.addChapter(request, id);
+    @PostMapping("/{courseId}")
+    public ResponseEntity<String> addChapter(@PathVariable Long courseId, @RequestBody AddChapterRequest request) {
+        Long id = chapterService.addChapter(request, courseId);
+        return ResponseEntity.ok("Successfully added chapter: " + id);
     }
 
     //con cai nay la id cua chapter
-    @DeleteMapping("/{id}")
-    public void deleteChapter(@PathVariable Long id) {
-        chapterService.deleteChapter(id);
-    }
-
-    @PostMapping("/lessons/{id}")
-    public void addLesson(@PathVariable Long id, ) {
-        Chapter chapter = chapterService.getChapter(id);
-
-        chapter.getLessons().add(new Lesson());
+    @DeleteMapping("/{chapterId}")
+    public void deleteChapter(@PathVariable Long chapterId) {
+        chapterService.deleteChapter(chapterId);
     }
 }
