@@ -1,6 +1,8 @@
 import { FormikHelpers } from "formik";
 import QuizForm from "./QuizForm";
-import { ChapterMaterial, Course, CourseChapter, Question } from "../../../hooks/useUser";
+import { ChapterMaterial, Course, CourseChapter, Question, useUser } from "../../../hooks/useUser";
+import { toast } from "react-toastify";
+import { API } from "../../../api";
 
 interface FormValues {
     name: string;
@@ -15,12 +17,31 @@ interface QuizDetailsProps {
 }
 
 export default function QuizDetails({ context, editable }: QuizDetailsProps) {
+    const { refreshUser } = useUser();
     if (!context.material.quiz) {
         return null;
     }
 
     const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
-        console.log(values);
+        try {
+            const resp = await API.put(`/courses/chapters/materials/${context.material.id}`, {
+                name: values.name,
+                description: values.description,
+                quiz: {
+                    passGrade: values.passGrade,
+                    questions: values.questions
+                }
+            });
+            if (resp.status === 200) {
+                toast.success("Update quiz successfully");
+                refreshUser();
+            }
+        } catch (err) {
+            toast.error("Update quiz failed");
+            resetForm();
+        } finally {
+            setSubmitting(false);
+        }
     };
 
     const initialValues: FormValues = {

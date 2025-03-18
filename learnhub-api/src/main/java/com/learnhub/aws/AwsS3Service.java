@@ -1,5 +1,10 @@
 package com.learnhub.aws;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -8,12 +13,6 @@ import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
 
 @Service
 public class AwsS3Service {
@@ -71,11 +70,11 @@ public class AwsS3Service {
             return s3FilePath;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error uploading file to S3: " + e.getMessage();
+            return null;
         }
     }
 
-    public String deleteFile(String fileName) {
+    public boolean deleteFile(String fileName) {
         try {
             AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
             S3Client s3Client = S3Client.builder()
@@ -85,10 +84,10 @@ public class AwsS3Service {
 
             s3Client.deleteObject(builder -> builder.bucket(bucketName).key(fileName));
 
-            return "File deleted successfully: " + fileName;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
-            return "Error deleting file from S3: " + e.getMessage();
         }
+        return false;
     }
 }

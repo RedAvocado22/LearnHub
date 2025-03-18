@@ -3,15 +3,14 @@ package com.learnhub.user.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.learnhub.course.category.Category;
-import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
+import com.learnhub.course.category.Category;
+import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.chapter.ChapterMaterial;
+import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.chapter.lesson.Lesson;
 import com.learnhub.course.chapter.lesson.LessonMaterial;
-import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;

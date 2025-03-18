@@ -5,10 +5,11 @@ import { HomeLayout } from "../../../layouts";
 import { CourseStatus, MaterialType } from "../../../types/Course";
 import LessonDetails from "./LessonDetails";
 import QuizDetails from "./QuizDetails";
+import { useEffect, useState } from "react";
 
 const findMaterial = (
     id: number,
-    courses: Course[]
+    courses: Course[] | undefined | null
 ): { course: Course; chapter: CourseChapter; material: ChapterMaterial } | null => {
     if (!courses || courses.length === 0) {
         return null;
@@ -28,28 +29,31 @@ const findMaterial = (
 export default function MaterialDetails() {
     const { user } = useUser();
     const { mid } = useParams();
+    const [context, setContext] = useState<{
+        course: Course;
+        chapter: CourseChapter;
+        material: ChapterMaterial;
+    } | null>(null);
     const id = parseInt(mid || "");
-    if (!user || !user.teacher || isNaN(id)) {
+    useEffect(() => {
+        setContext(findMaterial(id, user?.teacher?.courses));
+    }, [user]);
+    if (!user || !user.teacher || isNaN(id) || !context) {
         return <NotFound />;
     }
-    const result = findMaterial(id, user.teacher.courses);
-    if (!result) {
-        return <NotFound />;
-    }
-    console.log(result);
-    const { course, material } = result;
+    const { course, material } = context;
     let display = null;
     if (material.type === MaterialType.LESSON) {
         if (course.status === CourseStatus.PRIVATE) {
-            display = <LessonDetails context={result} editable={true} />;
+            display = <LessonDetails context={context} editable={true} />;
         } else {
-            display = <LessonDetails context={result} editable={false} />;
+            display = <LessonDetails context={context} editable={false} />;
         }
     } else if (material.type === MaterialType.QUIZ) {
         if (course.status === CourseStatus.PRIVATE) {
-            display = <QuizDetails context={result} editable={true} />;
+            display = <QuizDetails context={context} editable={true} />;
         } else {
-            display = <QuizDetails context={result} editable={false} />;
+            display = <QuizDetails context={context} editable={false} />;
         }
     }
 

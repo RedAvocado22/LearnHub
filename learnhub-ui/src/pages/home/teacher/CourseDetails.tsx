@@ -1,4 +1,4 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useUser } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
 import NotFound from "../../error/NotFound";
@@ -7,15 +7,38 @@ import { CourseStatus } from "../../../types/Course";
 import UpdateCourseForm from "./UpdateCourseForm";
 import defaultThumbnail from "/assets/images/blog/default/thum1.jpg";
 import CourseCurriculum from "./CourseCurriculum";
+import { toast } from "react-toastify";
+import { API } from "../../../api";
 
 export default function CourseDetails() {
-    const { user } = useUser();
+    const { user, refreshUser } = useUser();
     const courses = user?.teacher?.courses || [];
     const { id } = useParams();
     const course = courses.find((course) => course.id.toString() === id);
     const [currImage, setCurrImage] = useState<string>(
         course?.image ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}` : defaultThumbnail
     );
+    const navigate = useNavigate();
+
+    const handleChangeStatus = async (status: CourseStatus) => {
+        if (!course) return;
+        try {
+            const data = new FormData();
+            data.append("metadata", new Blob([JSON.stringify({ status })], { type: "application/json" }));
+
+            const resp = await API.put(`courses/${course.id}/teacher`, data, {
+                headers: { "Content-Type": "multipart/form-data" }
+            });
+
+            if (resp.status === 200) {
+                toast.success("Update course status successfully");
+                refreshUser();
+                navigate("/home/courses");
+            }
+        } catch (err) {
+            toast.error("Update course failed");
+        }
+    };
 
     if (!course) {
         return <NotFound />;
@@ -32,7 +55,15 @@ export default function CourseDetails() {
                                     <div className="col-lg-12 col-md-8 col-sm-12">
                                         <div className="courses-post">
                                             <div className="ttr-post-media media-effect">
-                                                <img src={currImage} alt="Course Thumbnail" />
+                                                <img
+                                                    src={currImage}
+                                                    alt="Course Thumbnail"
+                                                    className="w-100"
+                                                    style={{
+                                                        height: "600px",
+                                                        objectFit: "cover"
+                                                    }}
+                                                />
                                             </div>
                                             <div className="ttr-post-info">
                                                 <div className="ttr-post-title ">
@@ -40,10 +71,20 @@ export default function CourseDetails() {
                                                         <h2 className="post-title">{course.name}</h2>
                                                         {course.status === CourseStatus.PRIVATE && (
                                                             <div>
-                                                                <button type="button" className="btn mr-3">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        handleChangeStatus(CourseStatus.PENDING)
+                                                                    }
+                                                                    className="btn mr-3">
                                                                     Submit course
                                                                 </button>
-                                                                <button type="button" className="btn red">
+                                                                <button
+                                                                    type="button"
+                                                                    onClick={() =>
+                                                                        handleChangeStatus(CourseStatus.CANCELLED)
+                                                                    }
+                                                                    className="btn red">
                                                                     Remove course
                                                                 </button>
                                                             </div>
