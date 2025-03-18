@@ -3,10 +3,14 @@ package com.learnhub.course;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.category.Category;
 import com.learnhub.course.chapter.ChapterService;
 import com.learnhub.course.chapter.lesson.dto.AddChapterRequest;
 import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
+import com.learnhub.course.dto.ManagerCourseResponse;
+import com.learnhub.course.dto.ManagerCourseResquest;
+import com.learnhub.course.dto.ManagerCoursesResponse;
 import com.learnhub.course.dto.UpdateCourseRequest;
 import com.learnhub.util.ObjectMapper;
 import jakarta.validation.Valid;
@@ -47,6 +51,36 @@ public class CourseController {
                                                @RequestParam("image") MultipartFile image) {
         courseService.addCourseForTeacher(user, name, category, price, description, image);
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/manager")
+    public ResponseEntity<List<ManagerCoursesResponse>> getManagerCourses() {
+        return ResponseEntity.ok(
+                courseService.getAllCourses().stream()
+                        .filter(
+                                course -> course.getStatus().equals(CourseStatus.PENDING) ||
+                                        course.getStatus().equals(CourseStatus.CANCELLED) ||
+                                        course.getStatus().equals(CourseStatus.PUBLIC)
+                        )
+                        .map(objectMapper::toManagerCoursesResponse)
+                        .toList()
+        );
+    }
+
+    @PutMapping("/manager")
+    public ResponseEntity<String> changeCourseStatus(@RequestBody ManagerCourseResquest req) {
+        Long id = courseService.changeCourseStatus(req.id(), req.status());
+        return ResponseEntity.ok("Success update course: " + id);
+    }
+
+    @GetMapping("/manager/{id}")
+    public ResponseEntity<ManagerCourseResponse> getManagerCourse(@PathVariable Long id) {
+        return courseService.getAllCourses().stream()
+                .filter(course -> course.getId() == id)
+                .map(objectMapper::toManagerCourseResponse)
+                .findFirst()
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
     //get voi post deu la id cua course

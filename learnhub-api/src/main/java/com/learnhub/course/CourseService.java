@@ -63,6 +63,16 @@ public class CourseService {
         return courseRepository.findAll().stream().filter(course -> course.getStatus() == CourseStatus.PUBLIC).toList();
     }
 
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public Long changeCourseStatus(Long courseId, CourseStatus newStatus) {
+        Course course = courseRepository.getById(courseId);
+        course.setStatus(newStatus);
+        return courseRepository.save(course).getId();
+    }
+
     @Transactional
     public void updateCourseOfTeacher(User user, UpdateCourseRequest req) {
         User u = entityManager.merge(user);

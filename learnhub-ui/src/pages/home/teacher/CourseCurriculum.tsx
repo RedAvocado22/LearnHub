@@ -72,7 +72,6 @@ export default function CourseCurriculum({ course }: CourseCurriculumProps) {
         }
     };
 
-    console.log(course.chapters);
     return (
         <div className="m-b30 mt-4" id="curriculum">
             <div className="ml-auto d-flex justify-content-between align-items-center">

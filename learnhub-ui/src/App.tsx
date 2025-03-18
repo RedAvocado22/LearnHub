@@ -31,7 +31,10 @@ import {
     TeacherCourseDetails,
     AddLesson,
     MaterialDetails,
-    AddQuiz
+    AddQuiz,
+    ManagerCourseList,
+    ManagerCourseDetails,
+    ManagerMaterialDetails
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -108,6 +111,11 @@ export default function App() {
                     <Route path="/admin/users" element={<UserList />} />
                     <Route path="/admin/users/:id" element={<UserDetails />} />
                     <Route path="/admin/users/add" element={<AddUser />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.COURSE_MANAGER]} />}>
+                    <Route path="/manager/courses" element={<ManagerCourseList />} />
+                    <Route path="/manager/courses/:id" element={<ManagerCourseDetails />} />
+                    <Route path="/manager/courses/:cid/materials/:id" element={<ManagerMaterialDetails />} />
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
                     <Route path="/quiz/:qid" element={<CourseQuiz />} />

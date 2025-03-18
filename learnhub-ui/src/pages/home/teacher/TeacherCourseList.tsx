@@ -150,7 +150,7 @@ export default function TeacherCourseList() {
                                                                     {editingCourse.status === "CANCELLED" && (
                                                                         <div className="button-container">
                                                                             <button
-                                                                                onClick={() =>
+                                                                                onClick={() =>  
                                                                                     handleSave(CourseStatus.PRIVATE)
                                                                                 }
                                                                                 className="btn m-b15 m-r15">

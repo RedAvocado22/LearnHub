@@ -2,6 +2,8 @@ package com.learnhub.util;
 
 import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
+import com.learnhub.course.dto.ManagerCourseResponse;
+import com.learnhub.course.dto.ManagerCoursesResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import com.learnhub.common.dto.PublicCourseResponse;
@@ -42,6 +44,14 @@ public class ObjectMapper {
         return PublicCourseResponse.from(course);
     }
 
+    public ManagerCoursesResponse toManagerCoursesResponse(Course course) {
+        return ManagerCoursesResponse.from(course);
+    }
+
+    public ManagerCourseResponse toManagerCourseResponse(Course course) {
+        return ManagerCourseResponse.from(course);
+    }
+    
     public ChapterResponse toChapterResponse(Chapter chapter) {
         return ChapterResponse.from(chapter);
     }
