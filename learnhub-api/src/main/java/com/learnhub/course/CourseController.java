@@ -1,37 +1,40 @@
 package com.learnhub.course;
 
-import com.learnhub.common.ListCourseResponse;
-import com.learnhub.payment.EnrollmentService;
-import com.learnhub.user.teacher.TeacherRepository;
+import java.math.BigDecimal;
+
+import com.learnhub.user.User;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "/api/v1/courses")
 public class CourseController {
-    @Autowired
-    private CourseService courseService;
+    private final CourseService courseService;
 
     @Autowired
-    private EnrollmentService enrollmentService;
-
-    @Autowired
-    private TeacherRepository teacherRepository;
-
-    @GetMapping("/courseListManager")
-    public ResponseEntity<List<ListCourseResponse>> getAllCourse() {
-        return ResponseEntity.ok(courseService.getAllCoursesExceptPrivate().stream()
-                .map(ListCourseResponse::from).toList());
-
+    public CourseController(CourseService courseService) {
+        this.courseService = courseService;
     }
 
-    @GetMapping("courses/countCourseOrder")
-    public ResponseEntity<Integer> getCountOfStudentRegisterInMonth() {
-        return ResponseEntity.ok(enrollmentService.getNumberOffStudentRegisterInMonth().size());
+    @PutMapping("/teacher")
+    public ResponseEntity<String> updateCourse(@AuthenticationPrincipal User user, @RequestBody UpdateCourseRequest req) {
+        courseService.updateCourseOfTeacher(user, req);
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/teacher")
+    public ResponseEntity<String> createCourse(@AuthenticationPrincipal User user,
+                                               @RequestParam("name") String name,
+                                               @RequestParam("category") Category category,
+                                               @RequestParam("price") BigDecimal price,
+                                               @RequestParam("description") String description,
+                                               @RequestParam("image") MultipartFile image) {
+        courseService.addCourseForTeacher(user, name, category, price, description, image);
+        return ResponseEntity.ok("Success");
     }
 
     @GetMapping("courses/coursePending")
@@ -43,6 +46,4 @@ public class CourseController {
     public void updateCourse(@Valid @RequestBody UpdateCourseRequest req) {
         courseService.updateCourseStatus(courseService.getCourseById(req.id()), req.status());
     }
-
 }
-

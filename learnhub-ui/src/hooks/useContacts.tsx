@@ -36,9 +36,11 @@ export default function ContactsProvider({ children }: { children: React.ReactNo
             }
         } catch (err) {
             if (isAxiosError(err)) {
-                toast.error(err.response?.data || "Something went wrong");
+                console.error(err.response?.data);
+            } else {
+                console.error((err as Error).message);
             }
-            console.log((err as Error).message);
+            toast.error("Failed to get contacts.");
         }
     };
 
@@ -50,13 +52,15 @@ export default function ContactsProvider({ children }: { children: React.ReactNo
                 if (resp.status === 200) {
                     toast.success(`Delete contact's id ${id} successfully`);
                     await fetchContacts();
-                    navigate("/manager/contacts");
+                    navigate("/admin/contacts");
                 }
             } catch (err) {
                 if (isAxiosError(err)) {
-                    toast.error(`Delete contact's id ${id} failed`);
+                    console.error(err.response?.data);
+                } else {
+                    console.error((err as Error).message);
                 }
-                console.log((err as Error).message);
+                toast.error(`Delete contact's id ${id} failed`);
             }
         }
     };

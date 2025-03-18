@@ -1,14 +1,26 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { activateAccount } from "../../api/auth";
-import { useUser } from "../../hooks/useUser";
+import { LoginRequest, useUser } from "../../hooks/useUser";
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
+import * as yup from "yup";
+import { Form, Formik, FormikHelpers } from "formik";
+import FormField from "../../layouts/FormField";
+
+interface FormValues {
+    email: string;
+    password: string;
+}
+
+const validationSchema = yup.object({
+    email: yup.string().required("Email is required"),
+    password: yup.string().required("Password is required")
+});
 
 export default function Login() {
     const { token } = useParams();
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
+    const initialValues: FormValues = { email: "", password: "" };
     const { login } = useUser();
     const navigate = useNavigate();
 
@@ -26,16 +38,16 @@ export default function Login() {
         }
     }, [token]);
 
-    const handleLogin = async () => {
-        try {
-            await login({ email, password });
+    const handleLogin = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+        const payload: LoginRequest = { email: values.email, password: values.password };
+        const result = await login(payload);
+        if (result) {
             toast.success("Login successfully");
             navigate("/home");
-        } catch (err) {
-            toast.warning((err as Error).message);
-            setEmail("");
-            setPassword("");
+        } else {
+            resetForm();
         }
+        setSubmitting(false);
     };
     return (
         <div className="account-form">
@@ -54,61 +66,36 @@ export default function Login() {
                             Don't have an account? <a href="/register">Create one here</a>
                         </p>
                     </div>
-                    <form className="contact-bx">
-                        <div className="row">
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            type="email"
-                                            placeholder="Your Email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            className="form-control"
-                                            required
-                                        />
+                    <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleLogin}>
+                        {({ isSubmitting }) => (
+                            <Form noValidate className="contact-bx">
+                                <div className="row">
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField name="email" type="email" placeholder="Your Email" />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12">
+                                        <div className="form-group">
+                                            <FormField name="password" type="password" placeholder="Your Password" />
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12">
+                                        <div className="form-group form-forget">
+                                            <a href="/forgot-password" className="ml-auto">
+                                                Forgot Password?
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div className="col-lg-12 m-b30">
+                                        <button type="submit" className="btn button-md" disabled={isSubmitting}>
+                                            {isSubmitting ? "Logging in..." : "Login"}
+                                        </button>
                                     </div>
                                 </div>
-                            </div>
-                            <div className="col-lg-12">
-                                <div className="form-group">
-                                    <div className="input-group">
-                                        <input
-                                            type="password"
-                                            placeholder="Your Password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            className="form-control"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            <div className="col-lg-12">
-                                <div className="form-group form-forget">
-                                    <a href="/forgot-password" className="ml-auto">
-                                        Forgot Password?
-                                    </a>
-                                </div>
-                            </div>
-                            <div className="col-lg-12 m-b30">
-                                <button type="button" onClick={handleLogin} className="btn button-md">
-                                    Login
-                                </button>
-                            </div>
-                            <div className="col-lg-12">
-                                <h6>Login with Social media</h6>
-                                <div className="d-flex">
-                                    <a className="btn flex-fill m-r5 facebook" href="#">
-                                        <i className="fa fa-facebook"></i>Facebook
-                                    </a>
-                                    <a className="btn flex-fill m-l5 google-plus" href="#">
-                                        <i className="fa fa-google-plus"></i>Google Plus
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
+                            </Form>
+                        )}
+                    </Formik>
                 </div>
             </div>
         </div>

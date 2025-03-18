@@ -1,20 +1,66 @@
 import { createContext, ReactNode, useContext, useEffect, useState } from "react";
-import { Student, Teacher, User, UserRole } from "../types/User";
 import { API } from "../api";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
+import { CourseStatus } from "../types/Course";
+import { StudentType, UserRole, UserStatus } from "../types/User";
 
-interface LoginRequest {
+export interface Category {
+    id: number;
+    name: string;
+}
+
+export interface Course {
+    id: number;
+    name: string;
+    category: Category;
+    price: number;
+    status: CourseStatus;
+    image: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+    cancelledAt: Date;
+    archivedAt: Date;
+}
+
+export interface StudentProfile {
+    type: StudentType;
+    school: string;
+}
+
+export interface TeacherProfile {
+    major: string;
+    phone: string;
+    workAddress: string;
+    city: string;
+    website: string;
+    biography: string;
+    courses: Course[];
+}
+
+export interface User {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    role: UserRole;
+    status: UserStatus;
+    student: StudentProfile | null;
+    teacher: TeacherProfile | null;
+    createdAt: Date;
+}
+
+export interface LoginRequest {
     email: string;
     password: string;
 }
 
 interface UserContextType {
     user: User | null;
-    setUser: React.Dispatch<React.SetStateAction<User | null>>;
-    login: (payload: LoginRequest) => Promise<void>;
+    login: (payload: LoginRequest) => Promise<boolean>;
     logout: () => void;
-    refresh: () => void;
+    refreshUser: () => void;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -27,39 +73,60 @@ const UserProvider = ({ children }: UserProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [ready, setReady] = useState(false);
 
-    const login = async (payload: LoginRequest): Promise<void> => {
+    const fetchCurrentUser = async () => {
+        try {
+            const resp = await API.get("/users/me");
+            if (resp.data) {
+                setUser(resp.data);
+            }
+        } catch (err) {
+            if (isAxiosError(err)) {
+                console.error(err.response?.data);
+            } else {
+                console.error((err as Error).message);
+            }
+            toast.error("Can't get user info");
+        }
+    };
+
+    const login = async (payload: LoginRequest): Promise<boolean> => {
         try {
             const resp = await API.post("/auth/login", payload);
             if (resp.status === 200) {
                 const token = resp.data.access_token;
 
                 if (!token) {
-                    throw new Error("No login return by server");
+                    toast.warn("Login failed.");
+                    console.warn("No login return by server");
+                    return false;
                 }
 
                 localStorage.setItem("access_token", token);
-                try {
-                    const getUserResp = await API.get("/users/me");
-                    setUser(getUserResp.data);
-                } catch (err) {
-                    throw new Error(`Can't get user info: ${err}`);
-                }
+                fetchCurrentUser();
+                return true;
             } else if (resp.status === 202) {
-                throw new Error("Activate your account");
+                toast.warn("Your account is unactivated. Check your email.");
+                console.warn("Your account is unactivated. Check your email.");
+                return false;
             } else {
-                throw new Error("Please check your email and password.");
+                toast.error("Please check your email and password.");
+                console.error("Please check your email and password.");
+                return false;
             }
-        } catch (error) {
-            if (isAxiosError(error)) {
-                switch (error.response?.status) {
+        } catch (err) {
+            let msg = "Please check your email and password.";
+            if (isAxiosError(err)) {
+                console.error(err.response?.data);
+                switch (err.response?.status) {
                     case 404:
-                        throw new Error("Your account not exist");
-                    default:
-                        throw new Error("Please check your email and password.");
+                        msg = "Account doesn't exist.";
                 }
+            } else {
+                console.error((err as Error).message);
             }
-            throw error;
+            toast.error(msg);
         }
+        return false;
     };
 
     const logout = async () => {
@@ -70,46 +137,20 @@ const UserProvider = ({ children }: UserProviderProps) => {
                 setUser(null);
                 toast.success("Logout successful!");
             }
-        } catch (error) {
-            if (!isAxiosError(error)) {
-                throw new Error("Can't logout. An error was occurred!");
+        } catch (err) {
+            if (isAxiosError(err)) {
+                console.error(err.response?.data);
+            } else {
+                console.error((err as Error).message);
             }
-        }
-    };
-
-    const refresh = async () => {
-        try {
-            const resp = await API.get("/users/me");
-            if (resp.status === 200) {
-                setUser(resp.data);
-            }
-        } catch (error) {
-            if (isAxiosError(error)) {
-                switch (error.response?.status) {
-                    case 401:
-                        localStorage.removeItem("access_token");
-                        setUser(null);
-                        break;
-                    default:
-                        throw new Error("Can't refresh user info.");
-                }
-            }
+            toast.error("Can't logout. An error was occurred!");
         }
     };
 
     useEffect(() => {
         const accessToken = localStorage.getItem("access_token");
         if (accessToken) {
-            API.get("/users/me")
-                .then((resp) => {
-                    setUser(resp.data);
-                })
-                .catch((err) => {
-                    console.error("Get user info failed: ", (err as Error).message);
-                })
-                .finally(() => {
-                    setReady(true);
-                });
+            fetchCurrentUser().finally(() => setReady(true));
         } else {
             setReady(true);
         }
@@ -117,7 +158,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
     }, []);
 
     return (
-        <UserContext.Provider value={{ user, setUser, login, logout, refresh }}>
+        <UserContext.Provider value={{ user, login, logout, refreshUser: fetchCurrentUser }}>
             {ready ? children : null}
         </UserContext.Provider>
     );
@@ -129,30 +170,6 @@ export const useUser = () => {
         throw new Error("useUser must be used within an UserProvider");
     }
     return context;
-};
-
-export const useStudent = () => {
-    const context = useContext(UserContext);
-    if (!context) {
-        throw new Error("useStudent must be used within an UserProvider");
-    }
-    const isStudent = (u: User | null): u is User & { details: Student } => u?.role === UserRole.STUDENT;
-    if (!isStudent(context.user)) {
-        throw new Error("useStudent must be used with a user of role STUDENT");
-    }
-    return { ...context, user: context.user };
-};
-
-export const useTeacher = () => {
-    const context = useContext(UserContext);
-    if (!context) {
-        throw new Error("useTeacher must be used within an UserProvider");
-    }
-    const isTeacher = (u: User | null): u is User & { details: Teacher } => u?.role === UserRole.TEACHER;
-    if (!isTeacher(context.user)) {
-        throw new Error("useTeacher must be used with a user of role TEACHER");
-    }
-    return { ...context, user: context.user };
 };
 
 export default UserProvider;

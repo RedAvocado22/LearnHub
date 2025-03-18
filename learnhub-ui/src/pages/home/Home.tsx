@@ -3,7 +3,7 @@ import { useUser } from "../../hooks/useUser";
 import { UserRole } from "../../types/User";
 import StudentHome from "./student/StudentHome";
 import TeacherHome from "./teacher/TeacherHome";
-import TeacherManagerHome from "./teachermanager/TeacherManagerHome";
+import AdminHome from "./admin/AdminHome";
 
 export default function Home() {
     const { user } = useUser();
@@ -12,8 +12,8 @@ export default function Home() {
             return <StudentHome />;
         case UserRole.TEACHER:
             return <TeacherHome />;
-        case UserRole.TEACHER_MANAGER:
-            return <TeacherManagerHome />;
+        case UserRole.ADMIN:
+            return <AdminHome />;
         default:
             return <Navigate to="/login" replace />;
     }

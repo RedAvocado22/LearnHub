@@ -2,7 +2,6 @@ import { useState } from "react";
 import NotificationList from "./NotificationList";
 import { useUser } from "../../hooks/useUser";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
 import { UserRole } from "../../types/User";
 
 interface SidebarItem {
@@ -22,6 +21,11 @@ interface HomeLayoutProps {
 }
 
 const userMenus: Record<UserRole, SidebarItem[]> = {
+    ADMIN: [
+        { label: "Dashboard", icon: "ti-home", link: "/home" },
+        { label: "Mailbox", icon: "ti-email", link: "/admin/contacts" },
+        { label: "Manage Users", icon: "ti-user", link: "/admin/users" }
+    ],
     STUDENT: [
         { label: "Home", icon: "ti-home", link: "/home" },
         {
@@ -47,13 +51,7 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
             ]
         }
     ],
-    TEACHER_MANAGER: [
-        { label: "Dashboard", icon: "ti-home", link: "/home" },
-        { label: "Mailbox", icon: "ti-email", link: "/manager/contacts" },
-        { label: "Manage Users", icon: "ti-user", link: "/manager/users" }
-    ],
-    COURSE_MANAGER: [{ label: "Dashboard", icon: "ti-home", link: "/home" }],
-    ADMIN: []
+    COURSE_MANAGER: [{ label: "Dashboard", icon: "ti-home", link: "/home" }]
 };
 
 const userHeader: Record<UserRole, HeaderItem[]> = {
@@ -86,13 +84,9 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
         setOpenSidebarItem(openSidebarItem === index ? null : index);
     };
 
-    const handleLogout = async () => {
-        try {
-            logout();
-            navigate("/");
-        } catch (err) {
-            toast.warning((err as Error).message);
-        }
+    const handleLogout = () => {
+        logout();
+        navigate("/");
     };
     return (
         <div className={`${displaySidebar ? "ttr-opened-sidebar " : ""}ttr-pinned-sidebar`}>

@@ -28,7 +28,7 @@ public class AuthController {
             HttpServletRequest httpReq,
             HttpServletResponse httpResp) {
         AuthResponse resp = authService.login(authReq, httpReq, httpResp);
-        if (resp.getAccessToken() == null) {
+        if (resp.accessToken() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
         }
         return ResponseEntity.ok().body(resp);

@@ -40,7 +40,6 @@ public class AwsS3Service {
         }
 
         return "uploads/public/" + UUID.randomUUID() + "." + fileExtension;
-
     }
 
     public String saveFile(MultipartFile file) {
@@ -69,10 +68,27 @@ public class AwsS3Service {
 
             Files.delete(tempFile);
 
-            return "https://" + bucketName + ".s3.amazonaws.com/" + s3FilePath;
+            return s3FilePath;
         } catch (Exception e) {
             e.printStackTrace();
             return "Error uploading file to S3: " + e.getMessage();
+        }
+    }
+
+    public String deleteFile(String fileName) {
+        try {
+            AwsBasicCredentials awsCredentials = AwsBasicCredentials.create(accessKey, secretKey);
+            S3Client s3Client = S3Client.builder()
+                    .region(Region.AP_SOUTHEAST_2)
+                    .credentialsProvider(StaticCredentialsProvider.create(awsCredentials))
+                    .build();
+
+            s3Client.deleteObject(builder -> builder.bucket(bucketName).key(fileName));
+
+            return "File deleted successfully: " + fileName;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return "Error deleting file from S3: " + e.getMessage();
         }
     }
 }

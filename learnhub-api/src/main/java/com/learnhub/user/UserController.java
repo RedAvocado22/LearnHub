@@ -1,13 +1,21 @@
 package com.learnhub.user;
 
 import java.util.List;
+
+import com.learnhub.payment.PaymentRequest;
+import com.learnhub.payment.VNPayService;
+import com.learnhub.payment.dto.PaymentResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import com.learnhub.user.dto.AddUserRequest;
+import com.learnhub.user.dto.CurrentUserResponse;
+import com.learnhub.user.dto.ManageUserResponse;
+import com.learnhub.user.dto.UpdatePasswordRequest;
+import com.learnhub.user.dto.UpdateUserRequest;
+import com.learnhub.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,20 +32,24 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping(path = "/api/v1/users")
 public class UserController {
     private final UserService userService;
+    private final ObjectMapper objectMapper;
+    private final VNPayService vnPayService;
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, ObjectMapper objectMapper, VNPayService vnPayService) {
         this.userService = userService;
+        this.objectMapper = objectMapper;
+        this.vnPayService = vnPayService;
     }
 
     @GetMapping
-    public ResponseEntity<List<UserListResponse>> getAll() {
-        return ResponseEntity.ok(userService.getAllExceptTeacherManager().stream().map(UserListResponse::from).toList());
+    public ResponseEntity<List<ManageUserResponse>> getAll() {
+        return ResponseEntity.ok(userService.getAllExceptAdmin().stream().map(objectMapper::toManageUserResponse).toList());
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<UserDetailsResponse> getById(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(UserDetailsResponse.from(userService.getUserById(id)));
+    public ResponseEntity<ManageUserResponse> getById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(objectMapper.toManageUserResponse(userService.getUserById(id)));
     }
 
     @PostMapping
@@ -65,27 +77,46 @@ public class UserController {
         }
         MediaType type = MediaTypeFactory.getMediaType(resource).orElse(MediaType.APPLICATION_OCTET_STREAM);
         return ResponseEntity.ok()
-            .contentType(type)
-            .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
-            .body(resource);
+                .contentType(type)
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+                .body(resource);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(UserResponse.from(user));
+    public ResponseEntity<CurrentUserResponse> getCurrentUser(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(objectMapper.toCurrentUserResponse(user));
     }
 
     @PutMapping("/me")
-    public ResponseEntity<UserResponse> updateCurrentUser(
+    public ResponseEntity<String> updateCurrentUser(
             @AuthenticationPrincipal User user, @Valid @RequestBody UpdateUserRequest req) {
         userService.updateUser(user, req);
-        return ResponseEntity.ok(UserResponse.from(user));
+        return ResponseEntity.ok("Success");
     }
 
     @PutMapping("/me/password")
-    public ResponseEntity<UserResponse> updateCurrentUserPassword(
+    public ResponseEntity<String> updateCurrentUserPassword(
             @AuthenticationPrincipal User user, @Valid @RequestBody UpdatePasswordRequest req) {
         userService.changeUserPassword(user, req);
-        return ResponseEntity.ok(UserResponse.from(user));
+        return ResponseEntity.ok("Success");
+    }
+
+    @PostMapping("/createPayment")
+    public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentRequest paymentRequest,
+                                                         HttpServletRequest request) {
+        try {
+            String paymentUrl = vnPayService.createOrder(paymentRequest, request);
+            return ResponseEntity.ok(com.learnhub.payment.dto.PaymentResponse.builder().
+                    message("Payment generated succesfully").
+                    data(paymentUrl).
+                    status(HttpStatus.OK).
+                    build());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(PaymentResponse.builder().
+                            status(HttpStatus.INTERNAL_SERVER_ERROR).
+                            message("Error generated payment URL: " + e.getMessage()).
+                            build());
+        }
     }
 }
