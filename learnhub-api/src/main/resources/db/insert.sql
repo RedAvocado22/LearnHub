@@ -21,18 +21,18 @@ values
 insert into category(`name`)
 values ('Calculus'), ('Algebra'), ('Vietnam\'s Literature'), ('Foreign Literature');
 
-insert into course(teacher_id, category_id, `name`, price, `status`, `description`, created_at)
+insert into course(teacher_id, category_id, `name`, price, `status`, `description`, `image`, created_at)
 values
-(3, 1, 'Basic Calculus', 200.0, 'PUBLIC', 'Basic calculus for beginners.', now()),
-(3, 2, 'Algebra', 0.0, 'PUBLIC', 'Basic algebra.', now()),
-(3, 1, 'Advanced Calculus', 530.0, 'PUBLIC', 'Advanced calculus for good students.', now()),
-(3, 2, 'Advanced Algebra', 400.0, 'PUBLIC', 'Advanced algebra.', now()),
-(4, 3, 'How to write an essay for Chi Pheo', 120.0, 'PUBLIC', 'Step by step guide to write an essay with Chi Pheo.', now()),
-(4, 3, 'Rhetorical questions', 30.0, 'PUBLIC', 'Explain what is rhetorical questions and how to use it.', now()),
-(4, 4, 'Introduction to Andersen', 90.0, 'PUBLIC', 'Introduction to some of the piece of Andersen.', now()),
-(4, 4, 'Vietnam\'s Literature vs Foreign Literature', 100.0, 'PUBLIC', 'Compare literature in vietnam to that in other countries.', now());
+(3, 1, 'Basic Calculus', 200.0, 'PUBLIC', 'Basic calculus for beginners.', null, now()),
+(3, 2, 'Algebra', 0.0, 'PUBLIC', 'Basic algebra.', 'uploads/5b3a927b-68e2-49b4-8e49-9d87d6a16295.png', now()),
+(3, 1, 'Advanced Calculus', 530.0, 'PUBLIC', 'Advanced calculus for good students.', null, now()),
+(3, 2, 'Advanced Algebra', 400.0, 'PUBLIC', 'Advanced algebra.', null, now()),
+(4, 3, 'How to write an essay for Chi Pheo', 120.0, 'PUBLIC', 'Step by step guide to write an essay with Chi Pheo.', null, now()),
+(4, 3, 'Rhetorical questions', 30.0, 'PUBLIC', 'Explain what is rhetorical questions and how to use it.', null, now()),
+(4, 4, 'Introduction to Andersen', 90.0, 'PUBLIC', 'Introduction to some of the piece of Andersen.', null, now()),
+(4, 4, 'Vietnam\'s Literature vs Foreign Literature', 100.0, 'PUBLIC', 'Compare literature in vietnam to that in other countries.', null, now());
 
-insert into course_chapter(course_id, `name`)
+insert into course_chapter(course_id, `title`)
 values
 (2, 'Introduction to basic arithmetic'),
 (2, 'Practice arithmetic'),
@@ -41,15 +41,18 @@ values
 insert into chapter_material(chapter_id, `name`, `type`, `description`)
 values
 (1, 'How to do addition', 'LESSON', 'This lesson teach you how to do addition between difference type of number.'),
-(1, 'Small test for addition', 'QUIZ', 'Pass this test or else');
+(1, 'Small test for addition', 'QUIZ', 'Pass this test or else'),
+(1, 'Lesson 3', 'LESSON', 'Description of lesson 3');
 
 insert into lesson(material_id, video_url)
 values
-(1, 'uploads/public/315bc0a9-4122-4954-b71d-7b3846a159ec.mp4');
+(1, 'uploads/49452847-d931-4f14-b985-01c1e9037df5.mp4'),
+(3, 'uploads/4d6564c9-affa-40d7-bf2e-2dc6b58386e0.mp4');
 
 insert into lesson_material(lesson_id, `name`, file_url)
 values
-(1, 'Material 1', 'uploads/public/e8348ad0-4496-4765-b970-941f483f3de0.pdf');
+(1, 'Material 1', 'uploads/966f0c6e-1658-4858-9b33-6a2a76b135d4.pdf'),
+(3, 'Material 1', 'uploads/84dc5393-4e41-4bea-a46a-835a0bf4e522.pdf');
 
 insert into quiz(material_id, pass_grade)
 values

@@ -1,15 +1,15 @@
 package com.learnhub.course.dto;
 
-import com.learnhub.course.category.Category;
-import com.learnhub.course.CourseStatus;
-
 import java.math.BigDecimal;
 
+import jakarta.validation.constraints.PositiveOrZero;
+import com.learnhub.course.CourseStatus;
+
 public record UpdateCourseRequest(
-        Long id,
         String name,
-        Category category,
-        BigDecimal price,
-        CourseStatus status
+        Long categoryId,
+        @PositiveOrZero BigDecimal price,
+        CourseStatus status,
+        String description
 ) {
 }

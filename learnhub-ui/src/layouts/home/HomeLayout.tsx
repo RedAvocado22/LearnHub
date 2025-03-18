@@ -36,8 +36,8 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
             label: "My Courses",
             icon: "ti-book",
             submenu: [
-                { label: "In Progress", link: "/courses/progress" },
-                { label: "Finished", link: "/courses/finished" }
+                { label: "In Progress", link: "/home/courses?status=progress" },
+                { label: "Finished", link: "/home/courses?status=finished" }
             ]
         }
     ],

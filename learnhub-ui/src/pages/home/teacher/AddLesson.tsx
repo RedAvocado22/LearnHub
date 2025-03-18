@@ -87,6 +87,14 @@ export default function AddLesson() {
                 <div className="container-fluid">
                     <div className="db-breadcrumb">
                         <h4 className="breadcrumb-title">Add Lesson</h4>
+                        <ul className="db-breadcrumb-list">
+                            <li>
+                                <Link to={`/home/courses/${cid}`}>
+                                    <i className="fa fa-home"></i>Course
+                                </Link>
+                            </li>
+                            <li>Add Lesson</li>
+                        </ul>
                     </div>
                     <div className="row">
                         <div className="col-lg-12 m-b30">

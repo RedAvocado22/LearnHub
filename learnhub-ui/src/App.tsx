@@ -34,7 +34,8 @@ import {
     AddQuiz,
     ManagerCourseList,
     ManagerCourseDetails,
-    ManagerMaterialDetails
+    ManagerMaterialDetails,
+    CourseDetail
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -75,6 +76,7 @@ export default function App() {
                 <Route path="/teacher/:id" element={<TeacherDetails />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/courses/:id" element={<CourseDetail />} />
 
                 {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>

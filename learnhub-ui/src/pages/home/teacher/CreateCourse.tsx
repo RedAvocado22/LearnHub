@@ -13,7 +13,7 @@ interface Category {
 }
 
 const CreateCourse: React.FC = () => {
-    const [imagePreview, setImagePreview] = useState<File | null>(null);
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
 
     const navigate = useNavigate();
@@ -28,7 +28,7 @@ const CreateCourse: React.FC = () => {
         try {
             const formData = new FormData();
             formData.append("name", values.name);
-            formData.append("category", values.category);
+            formData.append("categoryId", values.categoryId);
             formData.append("price", values.price);
             formData.append("description", values.description);
             formData.append("image", values.image);
@@ -66,7 +66,7 @@ const CreateCourse: React.FC = () => {
 
     const validationSchema = Yup.object().shape({
         name: Yup.string().required("Course Name is required"),
-        category: Yup.string().required("Category is required"),
+        categoryId: Yup.number().required("Category is required"),
         price: Yup.number().required("Price is required").positive("Price must be positive"),
         description: Yup.string().max(150, "Description must be 150 words or less").required("Description is required"),
         image: Yup.mixed().required("Image is required")
@@ -86,7 +86,7 @@ const CreateCourse: React.FC = () => {
                                     <Formik
                                         initialValues={{
                                             name: "",
-                                            category: "",
+                                            categoryId: "",
                                             price: "",
                                             description: "",
                                             image: null
@@ -120,9 +120,8 @@ const CreateCourse: React.FC = () => {
                                                             <Field
                                                                 as="select"
                                                                 className="form-control"
-                                                                id="category"
-                                                                name="category">
-                                                                <option value="">Select Category</option>
+                                                                id="categoryId"
+                                                                name="categoryId">
                                                                 {categories &&
                                                                     categories.map((category) => (
                                                                         <option key={category.id} value={category.id}>
@@ -131,7 +130,7 @@ const CreateCourse: React.FC = () => {
                                                                     ))}
                                                             </Field>
                                                             <ErrorMessage
-                                                                name="category"
+                                                                name="categoryId"
                                                                 component="div"
                                                                 className="text-danger small-font"
                                                             />

@@ -56,7 +56,7 @@ export default function UpdateCourseForm({ course, setPreviewImage }: UpdateCour
             if (values.image) {
                 data.append("image", values.image);
             }
-            const resp = await API.put(`/courses/${course.id}`, data, {
+            const resp = await API.put(`/courses/${course.id}/teacher`, data, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
             if (resp.status === 200) {
