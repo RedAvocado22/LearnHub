@@ -32,7 +32,6 @@ export default function Order() {
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-body">
-                                {/* <image source="@{/vnpay-logo.png}" style = {{width : "200px"}}> */}
                                 <h2 className="card-title">Thanh Toán Đơn Hàng</h2>
                                 <form>
                                     <div className="form-group">

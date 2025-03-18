@@ -5,7 +5,7 @@ import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
 import com.learnhub.user.teacher.Teacher;
 
-public record CourseListResponse(Long id, String name, CategoryResponse category, Float price, CourseStatus status,
+public record CourseListResponse(Long id, String name, CategoryResponse category, Double price, CourseStatus status,
                                  TeacherResponse teacher) {
     public record CategoryResponse(Long id, String name) {
         public static CategoryResponse from(Category category) {

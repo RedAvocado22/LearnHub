@@ -22,7 +22,7 @@ public class CourseManagerController {
 
     @GetMapping("/course")
     public ResponseEntity<List<CourseListResponse>> getAllCourse() {
-        return ResponseEntity.ok(courseService.getAllCourses().stream()
+        return ResponseEntity.ok(courseService.getAllCoursesExceptPrivate().stream()
                 .map(CourseListResponse::from).toList());
     }
 

@@ -5,10 +5,12 @@ import com.learnhub.course.Course;
 import com.learnhub.user.student.Student;
 import com.learnhub.user.teacher.Teacher;
 import jakarta.persistence.*;
+import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Builder
 @Entity
 @Table(name = "enrollment")
 public class Enrollment {

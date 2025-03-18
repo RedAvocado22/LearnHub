@@ -2,16 +2,12 @@ package com.learnhub.course;
 
 import com.learnhub.common.ListCourseResponse;
 import com.learnhub.payment.EnrollmentService;
-import com.learnhub.user.User;
-import com.learnhub.user.teacher.Teacher;
 import com.learnhub.user.teacher.TeacherRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -28,14 +24,14 @@ public class CourseController {
 
     @GetMapping("/courseListManager")
     public ResponseEntity<List<ListCourseResponse>> getAllCourse() {
-        return ResponseEntity.ok(courseService.getAllCourses().stream()
+        return ResponseEntity.ok(courseService.getAllCoursesExceptPrivate().stream()
                 .map(ListCourseResponse::from).toList());
 
     }
 
     @GetMapping("courses/countCourseOrder")
     public ResponseEntity<Integer> getCountOfStudentRegisterInMonth() {
-        return ResponseEntity.ok(enrollmentService.getNumbeerOffStudentRegisterInMonth().size());
+        return ResponseEntity.ok(enrollmentService.getNumberOffStudentRegisterInMonth().size());
     }
 
     @GetMapping("courses/coursePending")
@@ -45,7 +41,7 @@ public class CourseController {
 
     @PutMapping("courses/update")
     public void updateCourse(@Valid @RequestBody UpdateCourseRequest req) {
-        courseService.updateCourseStatus(courseService.findCourseById(req.id()), req.status());
+        courseService.updateCourseStatus(courseService.getCourseById(req.id()), req.status());
     }
 
 }

@@ -2,13 +2,7 @@ package com.learnhub.common;
 
 import java.util.List;
 
-import com.learnhub.course.CourseStatus;
-import com.learnhub.course.UpdateCourseRequest;
 import com.learnhub.payment.EnrollmentService;
-import com.learnhub.payment.PaymentRequest;
-import com.learnhub.payment.VNPayService;
-import com.learnhub.payment.dto.PaymentResponse;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import com.learnhub.contact.AddContactRequest;
 import com.learnhub.contact.ContactService;
@@ -48,7 +42,7 @@ public class PublicController {
 
     @GetMapping("/coursesId/{id}")
     public ResponseEntity<CourseListResponse> getCourseByCourseId(@PathVariable("id") Long id) {
-        return ResponseEntity.ok(CourseListResponse.from(courseService.findCourseById(id)));
+        return ResponseEntity.ok(CourseListResponse.from(courseService.getCourseById(id)));
     }
 
 

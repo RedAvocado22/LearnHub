@@ -1,5 +1,7 @@
 package com.learnhub.contact;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -32,7 +34,14 @@ public class Contact {
     @Column(name = "message")
     private String message;
 
-    public Contact() {}
+    @Column(name = "resolved")
+    private boolean resolved = false;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    public Contact() {
+    }
 
     public Contact(String firstName, String lastName, String email, String phone, String subject, String message) {
         this.firstName = firstName;
@@ -98,5 +107,21 @@ public class Contact {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public boolean isResolved() {
+        return resolved;
+    }
+
+    public void setResolved(boolean resolved) {
+        this.resolved = resolved;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

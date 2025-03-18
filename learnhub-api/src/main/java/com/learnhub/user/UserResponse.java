@@ -44,7 +44,7 @@ public record UserResponse(
                 Long id,
                 String name,
                 Category category,
-                Float price,
+                Double price,
                 CourseStatus status,
                 String description,
                 String image,

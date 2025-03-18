@@ -30,4 +30,20 @@ public class CourseService {
     public Course updateCourse(Course course) {
         return courseRepository.save(course);
     }
+
+    public List<Course> getAllCoursesExceptPrivate() {
+
+        return courseRepository.findAll().stream().filter(
+                        course -> course.getStatus() != CourseStatus.PRIVATE)
+                .toList();
+    }
+
+    public List<Course> getAllCourseByStatus(CourseStatus courseStatus) {
+        return courseRepository.findAll().stream().filter(course -> course.getStatus() == courseStatus).toList();
+    }
+
+    public void updateCourseStatus(Course course, CourseStatus status) {
+        course.setStatus(status);
+        courseRepository.save(course);
+    }
 }

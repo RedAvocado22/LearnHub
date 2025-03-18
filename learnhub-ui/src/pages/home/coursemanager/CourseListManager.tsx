@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
 import { CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
-import { MainLayout } from "../../../layouts";
+import { HomeLayout } from "../../../layouts";
 
 interface Course {
     id: number;
@@ -62,7 +62,7 @@ export default function CourseListManagerHomeTest() {
     });
 
     return (
-        <MainLayout>
+        <HomeLayout>
             <div className="container-fluid">
                 <div className="db-breadcrumb">
                     <h4 className="breadcrumb-title">Courses</h4>
@@ -261,6 +261,6 @@ export default function CourseListManagerHomeTest() {
                     </div>
                 </div>
             </div>
-        </MainLayout>
+        </HomeLayout>
     );
 }

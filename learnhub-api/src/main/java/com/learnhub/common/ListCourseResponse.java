@@ -3,7 +3,7 @@ package com.learnhub.common;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
 
-public record ListCourseResponse(Long id, String name, CourseListResponse.CategoryResponse category, Float price,
+public record ListCourseResponse(Long id, String name, CourseListResponse.CategoryResponse category, Double price,
                                  CourseStatus courseStatus, CourseListResponse.TeacherResponse teacher) {
 
 

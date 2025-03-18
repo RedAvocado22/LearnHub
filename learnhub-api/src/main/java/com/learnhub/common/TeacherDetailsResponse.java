@@ -20,7 +20,7 @@ public record TeacherDetailsResponse(
         String about,
         List<CourseListResponse> courses
 ) {
-    public record CourseListResponse(Long id, String name, CategoryResponse category, Float price) {
+    public record CourseListResponse(Long id, String name, CategoryResponse category, double price) {
         public record CategoryResponse(Long id, String name) {
             public static CategoryResponse from(Category category) {
                 return new CategoryResponse(category.getId(), category.getName());

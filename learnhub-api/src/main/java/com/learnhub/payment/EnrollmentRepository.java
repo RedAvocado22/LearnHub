@@ -11,4 +11,5 @@ import java.util.List;
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     @Query(value = "select * from enrollment where MONTH(enrolled_at) = :month", nativeQuery = true)
     List<Enrollment> getCountOfStudentRegister(Integer month);
+
 }
