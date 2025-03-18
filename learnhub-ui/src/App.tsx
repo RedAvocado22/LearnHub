@@ -27,7 +27,8 @@ import {
     DoQuiz,
     QuizResult,
     TestVideo,
-    CreateCourse
+    CreateCourse,
+    CourseDetail
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -70,6 +71,7 @@ export default function App() {
                 <Route path="/teacher/:id" element={<TeacherDetails />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/courses/:id" element={<CourseDetail />} />
 
                 {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>
