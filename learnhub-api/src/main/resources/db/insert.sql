@@ -7,8 +7,8 @@ values
 ('learnhub391@gmail.com', 'Bao', 'Doan Quoc', '$2a$10$NdlRe2ubz18WLfBoxopw1.051vq9Ek2jkGQJ00WjBL2hQv3R3BPDa', 'ADMIN',  'ACTIVE', now()), -- ABC@123
 ('doanquocbaooooooo@gmail.com', 'BaoS', 'Doan Quoc', '$2a$10$BHIFmEpxSFaUGlcsCp5F5usmJirNKINm6eRkhy/rr8YgcO4QcED/m', 'STUDENT',  'ACTIVE', now()), -- ABC@456
 ('doanbao2506@gmail.com', 'BaoT1', 'Doan Quoc', '$2a$10$WG7RjXtZRyBjj6388I8fROrCr5AFWp2wnUXUFLrDYoazEDxZ4kWlC', 'TEACHER',  'ACTIVE', now()), -- ABC@789
-('doanqbao2506@gmail.com', 'BaoT2', 'Doan Quoc', '$2a$10$m7C2R4n7BAxTGlZ1obEM0uH2iCBn.KwpE8s8GEY9QTeKZ62e1eibm', 'TEACHER',  'ACTIVE', now()); -- ABC@012
-
+('doanqbao2506@gmail.com', 'BaoT2', 'Doan Quoc', '$2a$10$m7C2R4n7BAxTGlZ1obEM0uH2iCBn.KwpE8s8GEY9QTeKZ62e1eibm', 'TEACHER',  'ACTIVE', now()), -- ABC@012
+('minhcuong2922004@gmail.com', 'CuongCM', 'Minh Cuong', '$2a$10$m7C2R4n7BAxTGlZ1obEM0uH2iCBn.KwpE8s8GEY9QTeKZ62e1eibm', 'COURSE_MANAGER',  'ACTIVE', now());
 insert into student_profile(account_id, school, `type`)
 values
 (2, 'FPT University', 'GRADE11');
