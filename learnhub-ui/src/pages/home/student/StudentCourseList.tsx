@@ -1,9 +1,6 @@
-import { useEffect, useState } from "react";
-import { isAxiosError } from "axios";
-import { useUser } from "../../../hooks/useUser";
-import { Footer, Header } from "../../../layouts";
-import NotFound from "../../error/NotFound";
-import { API } from "../../../api";
+import { HomeLayout } from "../../../layouts";
+import placeholder from "/assets/images/blog/default/thum1.jpg";
+import avaPlaceholder from "/assets/images/testimonials/default.jpg";
 
 interface Course {
     id: number;
@@ -12,280 +9,117 @@ interface Course {
     price: number;
 }
 
-interface Teacher {
-    id: number;
-    email: string;
-    firstName: string;
-    lastName: string;
-    major: string;
-    phone: string;
-    school: string;
-    address: string;
-    city: string;
-    website: string;
-    about: string;
-    courses: Course[];
-}
-
-export default function StudentCourseList() {
-    const { user } = useUser();
-    const id = user?.id;
-
-    const [notFound, setNotFound] = useState(false);
-    const [teacher, setTeacher] = useState<Teacher>({
-        id: id || 0,
-        email: "",
-        firstName: "",
-        lastName: "",
-        major: "",
-        phone: "",
-        school: "",
-        address: "",
-        city: "",
-        website: "",
-        about: "",
-        courses: []
-    });
-
-    useEffect(() => {
-        const fetchTeacherData = async () => {
-            try {
-                const response = await API.get(`public/teachers/${id}`);
-                setTeacher(response?.data);
-                console.log(response);
-            } catch (error) {
-                if (isAxiosError(error) && error.response?.status === 404) {
-                    setNotFound(true);
-                }
-            }
-        };
-
-        fetchTeacherData();
-    }, [id]);
-
-    if (!id || id == 0 || notFound) {
-        return <NotFound />;
-    }
-
+export default function StudentCourseList({ status }: { status: string }) {
+    console.log(status);
     return (
-        <div className="page-content bg-white">
-            <Header />
-            <div className="page-banner ovbl-dark" style={{ backgroundImage: "url(assets/images/banner/banner1.jpg)" }}>
-                <div className="container">
-                    <div className="page-banner-entry">
-                        <h1 className="text-white">Profile</h1>
-                    </div>
-                </div>
-            </div>
-            <div className="content-block">
-                <div className="section-area section-sp1">
-                    <div className="container">
-                        <div className="row">
-                            <div className="col-lg-3 col-md-4 col-sm-12 m-b30">
-                                <div className="profile-bx text-center">
-                                    <div className="user-profile-thumb">
-                                        <img src="/assets/images/profile/pic1.jpg" alt="" />
-                                    </div>
-                                    <div className="profile-info">
-                                        <h4>
-                                            {teacher.firstName} {teacher.lastName}
-                                        </h4>
-                                        <span>{teacher.email}</span>
-                                    </div>
-                                    <div className="profile-tabnav">
-                                        <ul className="nav nav-tabs">
-                                            <li className="nav-item">
-                                                <a className="nav-link active" data-toggle="tab" href="#courses">
-                                                    <i className="ti-book"></i>Courses
-                                                </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" data-toggle="tab" href="#edit-profile">
-                                                    <i className="ti-pencil-alt"></i>Teacher information
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </div>
+        <HomeLayout>
+            <div
+                className="container-fluid "
+                style={{
+                    marginTop: "80px",
+                    maxHeight: "calc(100vh - 80px)",
+                    padding: "0 100px"
+                }}>
+                <h1>{status}</h1>
+                <ul>
+                    <li
+                        className="row px-0 shadow p-4 mb-4"
+                        style={{
+                            borderRadius: "10px"
+                        }}>
+                        <div className="col-3">
+                            <img
+                                src={placeholder}
+                                loading="lazy"
+                                style={{
+                                    objectFit: "cover",
+                                    width: "100%",
+                                    height: "100%",
+                                    borderRadius: "10px"
+                                }}
+                            />
+                        </div>
+                        <div className="col-9">
+                            <div
+                                className="row d-flex flex-column"
+                                style={{
+                                    gap: "8px"
+                                }}>
+                                <div className="col-12 p-0">
+                                    <h1
+                                        className="m-0"
+                                        style={{
+                                            fontSize: "30px"
+                                        }}>
+                                        A Design Thinking Approach to Putting the Customer First
+                                    </h1>
                                 </div>
-                            </div>
-                            <div className="col-lg-9 col-md-8 col-sm-12 m-b30">
-                                <div className="profile-content-bx">
-                                    <div className="tab-content">
-                                        <div className="tab-pane active" id="courses">
-                                            <div className="profile-head">
-                                                <h3>Courses</h3>
-                                            </div>
-                                            <div className="courses-filter">
-                                                <div className="clearfix">
-                                                    <ul id="masonry" className="ttr-gallery-listing magnific-image row">
-                                                        {teacher.courses.map((course: Course) => (
-                                                            <div
-                                                                key={course.id}
-                                                                className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish">
-                                                                <div className="cours-bx">
-                                                                    <div className="action-box">
-                                                                        <img
-                                                                            src="/assets/images/courses/pic1.jpg"
-                                                                            alt=""
-                                                                        />
-                                                                        <a href="#" className="btn">
-                                                                            Read More
-                                                                        </a>
-                                                                    </div>
-                                                                    <div className="info-bx text-center">
-                                                                        <h5>
-                                                                            <a href="#">{course.name}</a>
-                                                                        </h5>
-                                                                        <span>{course.category.name}</span>
-                                                                    </div>
-                                                                    <div className="cours-more-info">
-                                                                        <div className="review">
-                                                                            <span>3 Review</span>
-                                                                            <ul className="cours-star">
-                                                                                <li className="active">
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li className="active">
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li className="active">
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                                <li>
-                                                                                    <i className="fa fa-star"></i>
-                                                                                </li>
-                                                                            </ul>
-                                                                        </div>
-                                                                        <div className="price">
-                                                                            <h5>${course.price}</h5>
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="tab-pane" id="edit-profile">
-                                            <div className="profile-head">
-                                                <h3>Teacher deatails</h3>
-                                            </div>
-                                            <form className="edit-profile">
-                                                <div className="">
-                                                    <div className="form-group row">
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                            <h3>1. About</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label"></label>
-                                                        <span className="col-12 col-sm-9 col-md-9 col-lg-7">
-                                                            {teacher.about}
-                                                        </span>
-                                                    </div>
-                                                    <div className="seperator"></div>
-                                                    <div className="form-group row">
-                                                        <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                            <h3>2. Personal Details</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            First name
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.firstName}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Last name
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.lastName}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Email
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.email}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Phone
-                                                        </label>
-                                                        <input
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            value={teacher.phone || ""}
-                                                            readOnly></input>
-                                                    </div>
-                                                    <div className="form-group row">
-                                                        <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                            Website
-                                                        </label>
-                                                        <a
-                                                            className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                            style={{ cursor: "pointer" }}
-                                                            href={teacher.website}
-                                                            target="_blank"
-                                                            rel="noopener noreferrer">
-                                                            {teacher.website}
-                                                        </a>
-                                                    </div>
-                                                    <div className="seperator"></div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <div className="col-12 col-sm-9 col-md-9 col-lg-10 ml-auto">
-                                                        <h3>3. Address</h3>
-                                                    </div>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        Address
-                                                    </label>
-                                                    <input
-                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.address || ""}
-                                                        readOnly></input>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        City
-                                                    </label>
-                                                    <input
-                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.city || ""}
-                                                        readOnly></input>
-                                                </div>
-                                                <div className="form-group row">
-                                                    <label className="col-12 col-sm-3 col-md-3 col-lg-2 col-form-label">
-                                                        School
-                                                    </label>
-                                                    <input
-                                                        className="col-12 col-sm-9 col-md-9 col-lg-7"
-                                                        value={teacher.school || ""}
-                                                        readOnly></input>
-                                                </div>
-                                            </form>
-                                        </div>
+                                <ul
+                                    className="col-12 p-0 list-unstyled d-flex "
+                                    style={{
+                                        gap: "100px"
+                                    }}>
+                                    <li
+                                        className="d-flex align-items-center"
+                                        style={{
+                                            gap: "6px"
+                                        }}>
+                                        <img
+                                            src={avaPlaceholder}
+                                            loading="lazy"
+                                            style={{
+                                                width: "30px",
+                                                height: "30px",
+                                                borderRadius: "50%"
+                                            }}
+                                        />
+                                        <span>Quoc bao</span>
+                                    </li>
+                                    <li
+                                        className="d-flex align-items-center"
+                                        style={{
+                                            gap: "6px"
+                                        }}>
+                                        <i className="fa fa-book" aria-hidden="true"></i>
+                                        <span>Lessons 12</span>
+                                    </li>
+                                    <li
+                                        className="d-flex align-items-center"
+                                        style={{
+                                            gap: "6px"
+                                        }}>
+                                        <i className="fa fa-bar-chart" aria-hidden="true"></i>
+                                        <span>Assignment 07</span>
+                                    </li>
+                                    <li
+                                        className="d-flex align-items-center"
+                                        style={{
+                                            gap: "6px"
+                                        }}>
+                                        <i className="fa fa-clock-o" aria-hidden="true"></i>
+                                        <span>3h 10m</span>
+                                    </li>
+                                </ul>
+                                <div className="row col-12 align-items-center ">
+                                    <div className="progress col-9 p-0">
+                                        <div
+                                            className="progress-bar "
+                                            role="progressbar"
+                                            style={{ width: "20%" }}
+                                            aria-valuenow={50}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}
+                                        />
+                                    </div>
+                                    <div className="col-3">
+                                        <button className="btn btn-primary">Continue Course</button>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    </li>
+                </ul>
             </div>
-            <Footer />
-        </div>
+        </HomeLayout>
     );
 }
