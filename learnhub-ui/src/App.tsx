@@ -1,6 +1,6 @@
 import "react-toastify/ReactToastify.css";
 import { useEffect, useState } from "react";
-import { Routes, Route, Outlet } from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
 import {
     NotFound,
     Landing,
@@ -28,15 +28,17 @@ import {
     QuizResult,
     TestVideo,
     CreateCourse,
-    CourseDetail
+    CourseDetail,
+    TeacherCourseDetails,
+    AddLesson,
+    MaterialDetails,
+    AddQuiz
 } from "./pages";
-import GuestRoute from "./routers/GuestRoute";
-import ProtectedRoute from "./routers/ProtectedRoute";
+import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/User";
 import UserProvider from "./hooks/useUser";
-import ContactsProvider from "./hooks/useContacts";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -88,17 +90,18 @@ export default function App() {
                     <Route path="/home" element={<Home />} />
                     <Route path="/profile" element={<UserProfile />} />
                 </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT, UserRole.TEACHER]} />}>
+                    <Route path="/home/courses" element={<UserCourseList />} />
+                </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
-                    <Route path="/home/courses/:status" element={<UserCourseList />}></Route>
-                    <Route path="/home/courses/create" element={<CreateCourse />}></Route>
+                    <Route path="/home/courses/create" element={<CreateCourse />} />
+                    <Route path="/home/courses/:id" element={<TeacherCourseDetails />} />
+                    <Route path="/home/courses/:cid/chapters/:chid/lessons/add" element={<AddLesson />} />
+                    <Route path="/home/courses/:cid/chapters/:chid/quizes/add" element={<AddQuiz />} />
+                    <Route path="/home/courses/materials/:mid" element={<MaterialDetails />} />
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
-                    <Route
-                        element={
-                            <ContactsProvider>
-                                <Outlet />
-                            </ContactsProvider>
-                        }>
+                    <Route element={<ContactsProviderRoute />}>
                         <Route path="/admin/contacts" element={<ContactList />} />
                         <Route path="/admin/contacts/:id" element={<ContactDetails />} />
                     </Route>

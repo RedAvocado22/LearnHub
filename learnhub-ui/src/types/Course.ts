@@ -5,3 +5,8 @@ export enum CourseStatus {
     CANCELLED = "CANCELLED",
     ARCHIVED = "ARCHIVED"
 }
+
+export enum MaterialType {
+    LESSON = "LESSON",
+    QUIZ = "QUIZ"
+}
