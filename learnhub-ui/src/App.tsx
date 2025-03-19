@@ -28,7 +28,8 @@ import {
     AddUser,
     CourseQuiz,
     DoQuiz,
-    QuizResult
+    QuizResult,
+    CourseDetail
 } from "./pages";
 import GuestRoute from "./routers/GuestRoute";
 import ProtectedRoute from "./routers/ProtectedRoute";
@@ -71,6 +72,7 @@ export default function App() {
                 <Route path="/teacher/:id" element={<TeacherDetails />} />
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
+                <Route path="/courses/:id" element={<CourseDetail />} />
 
                 {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>
@@ -111,7 +113,7 @@ export default function App() {
                     <Route path="/quiz/:qid/do-quiz" element={<DoQuiz />} />
                     <Route path="/quiz/result/:id" element={<QuizResult />} />
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.COURSE_MANAGER]} />}>
+                <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
                     <Route path="/manager/course" element={<CourseListManager />} />
                     <Route path="/manager/home" element={<CourseManagerHome />} />
                 </Route>

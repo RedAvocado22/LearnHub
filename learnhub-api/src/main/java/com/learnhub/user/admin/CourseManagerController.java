@@ -1,5 +1,7 @@
 package com.learnhub.user.admin;
 
+import com.learnhub.common.dto.PublicCourseResponse;
+import com.learnhub.common.dto.PublicTeacherResponse;
 import com.learnhub.course.CourseService;
 import com.learnhub.course.CourseStatus;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,15 +23,15 @@ public class CourseManagerController {
     }
 
     @GetMapping("/course")
-    public ResponseEntity<List<CourseListResponse>> getAllCourse() {
+    public ResponseEntity<List<PublicCourseResponse>> getAllCourse() {
         return ResponseEntity.ok(courseService.getAllCoursesExceptPrivate().stream()
-                .map(CourseListResponse::from).toList());
+                .map(PublicCourseResponse::from).toList());
     }
 
     @GetMapping("/courseStatus/{id}")
-    public ResponseEntity<List<CourseListResponse>> getAllCourseByStatus(@PathVariable CourseStatus status) {
+    public ResponseEntity<List<PublicCourseResponse>> getAllCourseByStatus(@PathVariable CourseStatus status) {
         return ResponseEntity.ok(courseService.getAllCourseByStatus(status).stream().map(
-                CourseListResponse::from).toList());
+                PublicCourseResponse::from).toList());
     }
 //    @PostMapping("/courseStatus")
 //    public

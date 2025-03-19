@@ -2,8 +2,11 @@ package com.learnhub.user;
 
 import java.util.List;
 
+import com.learnhub.payment.CoursePurchaseService;
+import com.learnhub.payment.EnrollmentService;
 import com.learnhub.payment.PaymentRequest;
 import com.learnhub.payment.VNPayService;
+import com.learnhub.payment.dto.CoursePurchaseReq;
 import com.learnhub.payment.dto.PaymentResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -34,12 +37,16 @@ public class UserController {
     private final UserService userService;
     private final ObjectMapper objectMapper;
     private final VNPayService vnPayService;
+    private final CoursePurchaseService coursePurchaseService;
+    private final EnrollmentService enrollmentService;
 
     @Autowired
-    public UserController(UserService userService, ObjectMapper objectMapper, VNPayService vnPayService) {
+    public UserController(UserService userService, ObjectMapper objectMapper, VNPayService vnPayService, CoursePurchaseService coursePurchaseService, EnrollmentService enrollmentService) {
         this.userService = userService;
         this.objectMapper = objectMapper;
         this.vnPayService = vnPayService;
+        this.coursePurchaseService = coursePurchaseService;
+        this.enrollmentService = enrollmentService;
     }
 
     @GetMapping
@@ -101,10 +108,20 @@ public class UserController {
         return ResponseEntity.ok("Success");
     }
 
+    @PostMapping("/createCoursePurchase")
+    public ResponseEntity<String> createCoursePurchase(@RequestBody CoursePurchaseReq coursePurchaseReq) {
+        System.out.println(coursePurchaseReq);
+        coursePurchaseService.createCoursePurchase(coursePurchaseReq);
+        if (coursePurchaseReq.getTransactionCode().equals("00"))
+            enrollmentService.createEnrollment();
+        return ResponseEntity.ok("Success");
+    }
+
     @PostMapping("/createPayment")
     public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentRequest paymentRequest,
                                                          HttpServletRequest request) {
         try {
+            System.out.println(paymentRequest);
             String paymentUrl = vnPayService.createOrder(paymentRequest, request);
             return ResponseEntity.ok(com.learnhub.payment.dto.PaymentResponse.builder().
                     message("Payment generated succesfully").
@@ -119,4 +136,6 @@ public class UserController {
                             build());
         }
     }
+
+
 }

@@ -11,10 +11,5 @@ public class EnrollmentController {
     @Autowired
     EnrollmentService enrollmentService;
 
-    @PostMapping("/student/me/{courseId}")
-    public ResponseEntity<String> createEnrollment(@AuthenticationPrincipal User user,
-                                                   @RequestParam("id") Long id) {
-        enrollmentService.createEnrollment(user, id);
-        return ResponseEntity.ok("Success");
-    }
+
 }

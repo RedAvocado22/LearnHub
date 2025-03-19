@@ -3,6 +3,7 @@ package com.learnhub.payment;
 import com.learnhub.course.CourseRepository;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
+import com.learnhub.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +21,19 @@ public class EnrollmentService {
     @Autowired
     private CourseRepository courseRepository;
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     public List<Enrollment> getNumberOffStudentRegisterInMonth() {
         LocalDateTime now = LocalDateTime.now();
         return enrollmentRepository.getCountOfStudentRegister(now.getMonthValue());
     }
 
-    public void createEnrollment(User user, Long id) {
+    public void createEnrollment(Long userId, Long courseId) {
         Enrollment enrollment = Enrollment.builder().
-                course(courseRepository.findcoursebyid(id)).
+                student(userService.getUserById(userId)).
+                status("In process").
+                createdAt(LocalDateTime.now()).
+                course(courseRepository.findcoursebyid(courseId)).
                 build();
     }
 

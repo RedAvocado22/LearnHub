@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { isAxiosError } from "axios";
-import { useTeacher, useUser } from "../../../hooks/useUser";
 import { Footer, Header } from "../../../layouts";
 import NotFound from "../../error/NotFound";
 import { Course } from "../../../types/Course";
 import { API } from "../../../api";
+import { useUser } from "../../../hooks/useUser";
 
 interface Teacher {
     id: number;

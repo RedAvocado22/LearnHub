@@ -25,9 +25,5 @@ public record AddContactRequest(
 
         @NotEmpty
         String message
-<<<<<<< HEAD:learnhub-api/src/main/java/com/learnhub/contact/AddContactRequest.java
 ) {
 }
-=======
-) {}
->>>>>>> 41e861c208d9a1e44e7b8ea77dc5f2637f029a4b:learnhub-api/src/main/java/com/learnhub/contact/dto/AddContactRequest.java

@@ -37,13 +37,13 @@ public class CourseController {
         return ResponseEntity.ok("Success");
     }
 
-    @GetMapping("courses/coursePending")
+    @GetMapping("coursePending")
     public ResponseEntity<Integer> getAllPendingCourse() {
         return ResponseEntity.ok(courseService.getAllCourseByStatus(CourseStatus.PENDING).size());
     }
 
-    @PutMapping("courses/update")
+    @PutMapping("update")
     public void updateCourse(@Valid @RequestBody UpdateCourseRequest req) {
-        courseService.updateCourseStatus(courseService.getCourseById(req.id()), req.status());
+        courseService.updateCourseStatus(courseService.findCourseById(req.id()), req.status());
     }
 }

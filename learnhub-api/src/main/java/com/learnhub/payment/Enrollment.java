@@ -2,8 +2,7 @@ package com.learnhub.payment;
 
 
 import com.learnhub.course.Course;
-import com.learnhub.user.student.Student;
-import com.learnhub.user.teacher.Teacher;
+import com.learnhub.user.User;
 import jakarta.persistence.*;
 import lombok.Builder;
 
@@ -25,7 +24,7 @@ public class Enrollment {
     private String status;
     @ManyToOne
     @JoinColumn(name = "student_id", referencedColumnName = "id")
-    private Student student;
+    private User student;
 
     @ManyToOne
     @JoinColumn(name = "course_id", referencedColumnName = "id")
