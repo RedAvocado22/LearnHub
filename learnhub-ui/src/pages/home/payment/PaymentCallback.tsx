@@ -1,12 +1,48 @@
+import { useEffect, useState } from "react";
 import { useSearchParams } from "react-router-dom";
-
+import { API } from "../../../api";
+import { isAxiosError } from "axios";
+import { toast } from "react-toastify";
+interface CoursePurchaseReq {
+    user_id: String;
+    course_id: String;
+    responseCode: String;
+    price: String;
+    transaction_id: String;
+}
 export default function PaymentCallback() {
     const [params] = useSearchParams();
+
     const price = params.get("vnp_Amount");
     const transactionTime = params.get("vnp_PayDate");
     const transactionNo = params.get("vnp_TransactionNo");
     const vnp_ResponseCode = params.get("vnp_ResponseCode");
-    console.log(vnp_ResponseCode);
+    const orderInfo = params.get("vnp_OrderInfo");
+    const [userId, courseId] = orderInfo.split("&&");
+    const [coursePurchase, setCoursePurchase] = useState<CoursePurchaseReq>({
+        user_id: userId,
+        course_id: courseId,
+        price: price || "",
+        responseCode: "",
+        transaction_id: transactionNo || ""
+    });
+
+    useEffect(() => {
+        try {
+            const resp = API.post("/users/createCoursePurchase", {
+                user_id: userId,
+                course_id: courseId,
+                price: price || "",
+                responseCode: vnp_ResponseCode,
+                transaction_id: transactionNo || ""
+            });
+            console.log(coursePurchase);
+        } catch (err) {
+            if (isAxiosError(err)) {
+                toast.error(err.response?.data.message);
+            }
+        }
+    });
     return (
         <div className="body py-5">
             <div className="container">
