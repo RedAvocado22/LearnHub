@@ -111,7 +111,13 @@ export default function CourseDetail() {
                                     <div className="courses-post">
                                         <div className="ttr-post-media media-effect">
                                             <a href="#">
-                                                <img src="/assets/images/blog/default/thum1.jpg" alt="" />
+                                                <img
+                                                    src={
+                                                        course?.image
+                                                            ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                            : "/assets/images/courses/pic1.jpg"
+                                                    }
+                                                />
                                             </a>
                                         </div>
                                         <div className="ttr-post-info">
