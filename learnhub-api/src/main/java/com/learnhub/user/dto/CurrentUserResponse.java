@@ -3,14 +3,15 @@ package com.learnhub.user.dto;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-import com.learnhub.course.Course;
-import com.learnhub.course.CourseStatus;
+
 import com.learnhub.course.category.Category;
 import com.learnhub.course.chapter.Chapter;
+import com.learnhub.course.Course;
+import com.learnhub.course.CourseStatus;
 import com.learnhub.course.chapter.ChapterMaterial;
-import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.chapter.lesson.Lesson;
 import com.learnhub.course.chapter.lesson.LessonMaterial;
+import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
@@ -71,9 +72,9 @@ public record CurrentUserResponse(
                         QuizResponse quiz
                 ) {
                     static record LessonResponse(String videoUrl, List<MaterialResponse> materials) {
-                        static record MaterialResponse(String name, String fileUrl) {
+                        static record MaterialResponse(Long id, String name, String fileUrl) {
                             public static MaterialResponse from(LessonMaterial material) {
-                                return new MaterialResponse(material.getName(), material.getFileUrl());
+                                return new MaterialResponse(material.getId(), material.getName(), material.getFileUrl());
                             }
                         }
 

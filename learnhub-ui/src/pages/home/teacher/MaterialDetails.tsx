@@ -34,14 +34,19 @@ export default function MaterialDetails() {
         chapter: CourseChapter;
         material: ChapterMaterial;
     } | null>(null);
+
     const id = parseInt(mid || "");
+
     useEffect(() => {
         setContext(findMaterial(id, user?.teacher?.courses));
     }, [user]);
+
     if (!user || !user.teacher || isNaN(id) || !context) {
         return <NotFound />;
     }
+
     const { course, material } = context;
+
     let display = null;
     if (material.type === MaterialType.LESSON) {
         if (course.status === CourseStatus.PRIVATE) {

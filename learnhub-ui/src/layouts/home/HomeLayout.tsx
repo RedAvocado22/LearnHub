@@ -26,6 +26,10 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
         { label: "Mailbox", icon: "ti-email", link: "/admin/contacts" },
         { label: "Manage Users", icon: "ti-user", link: "/admin/users" }
     ],
+    COURSE_MANAGER: [
+        { label: "Dashboard", icon: "ti-home", link: "/home" },
+        { label: "Manage Courses", icon: "ti-book", link: "/manager/courses" }
+    ],
     STUDENT: [
         { label: "Home", icon: "ti-home", link: "/home" },
         {
@@ -50,8 +54,7 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
                 { label: "Canceled", link: "/home/courses?status=cancelled" }
             ]
         }
-    ],
-    COURSE_MANAGER: [{ label: "Dashboard", icon: "ti-home", link: "/home" }]
+    ]
 };
 
 const userHeader: Record<UserRole, HeaderItem[]> = {

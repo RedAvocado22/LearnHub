@@ -4,26 +4,27 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.learnhub.course.category.Category;
+import com.learnhub.course.chapter.lesson.LessonMaterial;
+import com.learnhub.course.chapter.lesson.Lesson;
+import com.learnhub.course.chapter.quiz.Option;
+import com.learnhub.course.chapter.quiz.Question;
+import com.learnhub.course.chapter.quiz.Quiz;
+import com.learnhub.course.dto.UpdateCourseRequest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.common.exception.ResourceNotFoundException;
-import com.learnhub.course.category.Category;
+import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
+import com.learnhub.user.User;
 import com.learnhub.course.category.CategoryRepository;
 import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.chapter.ChapterMaterial;
 import com.learnhub.course.chapter.ChapterMaterialRepository;
 import com.learnhub.course.chapter.ChapterRepository;
 import com.learnhub.course.chapter.MaterialType;
-import com.learnhub.course.chapter.lesson.Lesson;
-import com.learnhub.course.chapter.lesson.LessonMaterial;
-import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
 import com.learnhub.course.chapter.lesson.dto.UpdateChapterMaterialRequest;
-import com.learnhub.course.chapter.quiz.Option;
-import com.learnhub.course.chapter.quiz.Question;
-import com.learnhub.course.chapter.quiz.Quiz;
-import com.learnhub.course.dto.UpdateCourseRequest;
-import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -59,6 +60,16 @@ public class CourseService {
 
     public List<Course> getAllPublicCourses() {
         return courseRepository.findAll().stream().filter(course -> course.getStatus() == CourseStatus.PUBLIC).toList();
+    }
+
+    public List<Course> getAllCourses() {
+        return courseRepository.findAll();
+    }
+
+    public Long changeCourseStatus(Long courseId, CourseStatus newStatus) {
+        Course course = courseRepository.getById(courseId);
+        course.setStatus(newStatus);
+        return courseRepository.save(course).getId();
     }
 
     @Transactional
@@ -146,45 +157,6 @@ public class CourseService {
                 .build());
     }
 
-    public Long addMaterialToChapter(Long chapterId, AddChapterMaterialRequest req) {
-        Chapter chapter = chapterRepository.findById(chapterId)
-                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
-        ChapterMaterial material = ChapterMaterial.builder()
-                .chapter(chapter)
-                .name(req.name())
-                .type(req.type())
-                .description(req.description())
-                .build();
-        if (material.getType() == MaterialType.QUIZ && req.quiz() != null) {
-            Quiz quiz = Quiz.builder()
-                    .chapterMaterial(material)
-                    .passGrade(req.quiz().passGrade())
-                    .build();
-            List<Question> questions = new ArrayList<>();
-            req.quiz().questions().forEach(q -> {
-                Question question = Question.builder()
-                        .quiz(quiz)
-                        .text(q.text())
-                        .explanation(q.explanation())
-                        .build();
-                List<Option> options = new ArrayList<>();
-                q.options().forEach(o -> {
-                    options.add(Option.builder()
-                            .question(question)
-                            .text(o.text())
-                            .correct(o.correct())
-                            .build());
-                });
-                question.setOptions(options);
-                questions.add(question);
-            });
-            quiz.setQuestions(questions);
-            material.setQuiz(quiz);
-        }
-        ChapterMaterial saved = chapterMaterialRepository.save(material);
-        return saved.getId();
-    }
-
     @Transactional
     public void updateChapterMaterial(Long id, UpdateChapterMaterialRequest req) {
         ChapterMaterial material = chapterMaterialRepository.findById(id)
@@ -223,7 +195,7 @@ public class CourseService {
     @Transactional
     public void deleteChapter(Long id) {
         Chapter chapter = chapterRepository.findById(id)
-            .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
         if (chapter.getMaterials() != null) {
             chapter.getMaterials().forEach(m -> deleteChapterMaterial(m.getId()));
         }
@@ -248,32 +220,6 @@ public class CourseService {
             }
         }
         chapterMaterialRepository.delete(material);
-    }
-
-    @Transactional
-    public void addLessonFiles(Long lessonId, MultipartFile video, List<String> materialNames, List<MultipartFile> materialFiles) {
-        ChapterMaterial material = chapterMaterialRepository.findById(lessonId)
-                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
-        if (material.getType() != MaterialType.LESSON) {
-            throw new ResourceNotFoundException("Lesson not found");
-        }
-        String videoUrl = awsS3Service.saveFile(video);
-        Lesson lesson = Lesson.builder()
-                .chapterMaterial(material)
-                .videoUrl(videoUrl)
-                .build();
-        List<LessonMaterial> materials = new ArrayList<>();
-        for (int i = 0; i < materialNames.size(); i++) {
-            String materialUrl = awsS3Service.saveFile(materialFiles.get(i));
-            materials.add(LessonMaterial.builder()
-                    .lesson(lesson)
-                    .name(materialNames.get(i))
-                    .fileUrl(materialUrl)
-                    .build());
-        }
-        lesson.setMaterials(materials);
-        material.setLesson(lesson);
-        chapterMaterialRepository.save(material);
     }
 
     @Transactional
@@ -315,6 +261,88 @@ public class CourseService {
             throw new ResourceNotFoundException("Lesson not found");
         }
         return material.getLesson().getMaterials().removeIf(m -> m.getFileUrl().equals(fileUrl)) &&
-            awsS3Service.deleteFile(fileUrl);
+                awsS3Service.deleteFile(fileUrl);
+    }
+
+    public Long addMaterialToChapter(Long chapterId, AddChapterMaterialRequest req) {
+        Chapter chapter = chapterRepository.findById(chapterId)
+                .orElseThrow(() -> new ResourceNotFoundException("Chapter not found"));
+
+        ChapterMaterial material = ChapterMaterial.builder()
+                .chapter(chapter)
+                .name(req.name())
+                .type(req.type())
+                .description(req.description())
+                .build();
+
+        if (material.getType() == MaterialType.QUIZ && req.quiz() != null) {
+            Quiz quiz = Quiz.builder()
+                    .chapterMaterial(material)
+                    .passGrade(req.quiz().passGrade())
+                    .build();
+
+            List<Question> questions = new ArrayList<>();
+
+            req.quiz().questions().forEach(q -> {
+                Question question = Question.builder()
+                        .quiz(quiz)
+                        .text(q.text())
+                        .explanation(q.explanation())
+                        .build();
+                List<Option> options = new ArrayList<>();
+                q.options().forEach(o -> {
+                    options.add(Option.builder()
+                            .question(question)
+                            .text(o.text())
+                            .correct(o.correct())
+                            .build());
+                });
+                question.setOptions(options);
+                questions.add(question);
+            });
+
+            quiz.setQuestions(questions);
+            material.setQuiz(quiz);
+        }
+
+        ChapterMaterial saved = chapterMaterialRepository.save(material);
+
+        return saved.getId();
+    }
+
+    @Transactional
+    public void addLessonFiles(Long lessonId, MultipartFile video, List<String> materialNames, List<MultipartFile> materialFiles) {
+        ChapterMaterial material = chapterMaterialRepository.findById(lessonId)
+                .orElseThrow(() -> new ResourceNotFoundException("Lesson not found"));
+
+        if (material.getType() != MaterialType.LESSON) {
+            throw new ResourceNotFoundException("Lesson not found");
+        }
+
+        String videoUrl = "";
+        if (!video.isEmpty()) {
+            videoUrl = awsS3Service.saveFile(video);
+        }
+
+        Lesson lesson = Lesson.builder()
+                .chapterMaterial(material)
+                .videoUrl(videoUrl)
+                .build();
+
+        if (materialNames != null && !materialNames.isEmpty() && materialFiles != null && !materialFiles.isEmpty()) {
+            List<LessonMaterial> materials = new ArrayList<>();
+            for (int i = 0; i < materialNames.size(); i++) {
+                String materialUrl = awsS3Service.saveFile(materialFiles.get(i));
+                materials.add(LessonMaterial.builder()
+                        .lesson(lesson)
+                        .name(materialNames.get(i))
+                        .fileUrl(materialUrl)
+                        .build());
+            }
+            lesson.setMaterials(materials);
+        }
+
+        material.setLesson(lesson);
+        chapterMaterialRepository.save(material);
     }
 }

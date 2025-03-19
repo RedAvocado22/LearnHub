@@ -18,6 +18,8 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
 export { default as UserCourseList } from "./home/UserCourseList";
+
+
 export { default as CreateCourse } from "./home/teacher/CreateCourse";
 export { default as TeacherCourseDetails } from "./home/teacher/CourseDetails";
 export { default as MaterialDetails } from "./home/teacher/MaterialDetails";
@@ -33,6 +35,10 @@ export { default as ContactDetails } from "./home/admin/ContactDetails";
 export { default as UserList } from "./home/admin/UserList";
 export { default as UserDetails } from "./home/admin/UserDetails";
 export { default as AddUser } from "./home/admin/AddUser";
+
+export { default as ManagerCourseList } from "./home/manager/CourseLists";
+export { default as ManagerCourseDetails } from "./home/manager/CourseDetails";
+export { default as ManagerMaterialDetails } from "./home/manager/MaterialDetails";
 
 // Error boundary
 export { default as NotFound } from "./error/NotFound";
