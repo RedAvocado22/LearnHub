@@ -2,8 +2,7 @@ import { isAxiosError } from "axios";
 import { API } from "../../../api";
 import { MainLayout } from "../../../layouts";
 import { toast } from "react-toastify";
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 interface Order {
     orderInfo: String;
@@ -11,12 +10,14 @@ interface Order {
 }
 
 export default function Order() {
+    const location = useLocation();
+    const { course, userId } = location.state || {};
     const handleSubmitAccountChange = async () => {
         try {
             console.log(1);
-            const resp = await API.post("/students/createPayment", {
-                orderInfo: "Order info",
-                totalPrice: 299999
+            const resp = await API.post("/users/createPayment", {
+                orderInfo: course.id + "&&" + userId,
+                totalPrice: course.price
             });
             window.location.href = resp.data.data;
         } catch (err) {
@@ -42,7 +43,7 @@ export default function Order() {
                                             id="amount"
                                             name="amount"
                                             required
-                                            value="299999"
+                                            value={course.price}
                                         />
                                     </div>
                                     <div className="form-group">
@@ -53,7 +54,7 @@ export default function Order() {
                                             id="orderInfo"
                                             name="orderInfo"
                                             required
-                                            value="Thanh toan don hang 2923"
+                                            value={`Thanh toan don hang ${course.name}`}
                                         />
                                     </div>
                                     <a type="submit" className="btn btn-primary" onClick={handleSubmitAccountChange}>
