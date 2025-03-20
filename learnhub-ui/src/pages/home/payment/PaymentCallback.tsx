@@ -23,18 +23,18 @@ export default function PaymentCallback() {
         user_id: userId,
         course_id: courseId,
         price: price || "",
-        responseCode: "",
+        responseCode: vnp_ResponseCode || "",
         transaction_id: transactionNo || ""
     });
 
     useEffect(() => {
         try {
-            const resp = API.post("/users/createCoursePurchase", {
+            const resp = API.post("/users/purchase", {
                 user_id: userId,
                 course_id: courseId,
                 price: price || "",
                 responseCode: vnp_ResponseCode,
-                transaction_id: transactionNo || ""
+                transactionCode: transactionNo || ""
             });
             console.log(coursePurchase);
         } catch (err) {
