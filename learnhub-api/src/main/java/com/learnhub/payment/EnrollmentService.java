@@ -1,6 +1,8 @@
 package com.learnhub.payment;
 
 import com.learnhub.course.CourseRepository;
+import com.learnhub.enrollment.Enrollment;
+import com.learnhub.enrollment.EnrollmentStatus;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserService;
@@ -31,8 +33,7 @@ public class EnrollmentService {
     public void createEnrollment(Long userId, Long courseId) {
         Enrollment enrollment = Enrollment.builder().
                 student(userService.getUserById(userId)).
-                status("In process").
-                createdAt(LocalDateTime.now()).
+                status(EnrollmentStatus.IN_PROGRESS).
                 course(courseRepository.findcoursebyid(courseId)).
                 build();
     }

@@ -56,6 +56,7 @@ export default function CourseDetail() {
                                         <div className="course-price">
                                             <h4 className="price">${course?.price}</h4>
                                         </div>
+
                                         <div className="course-buy-now text-center">
                                             <a className="btn radius-xl text-uppercase" onClick={handleBuySubmit}>
                                                 Buy Now This Courses

@@ -1,6 +1,6 @@
 package com.learnhub.payment;
 
-import com.learnhub.course.Course;
+import com.learnhub.enrollment.Enrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

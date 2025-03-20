@@ -120,7 +120,11 @@ export default function CourseList() {
                                                 <div className="cours-bx">
                                                     <div className="action-box" style={{ maxHeight: "160px" }}>
                                                         <img
-                                                            src={course.image || "/assets/images/courses/pic1.jpg"}
+                                                            src={
+                                                                course.image
+                                                                    ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                                    : "/assets/images/courses/pic1.jpg"
+                                                            }
                                                             alt="Course Image"
                                                         />
                                                         <Link to={`/courses/${course.id}`} className="btn">

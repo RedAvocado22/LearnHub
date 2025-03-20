@@ -1,25 +1,23 @@
-import { ErrorMessage, Field, FormikValues, useFormikContext } from "formik";
+import { ErrorMessage, Field, FieldAttributes, FormikValues, useFormikContext } from "formik";
+import { get } from "lodash";
 
-interface FormFieldProps {
-    name: string;
-    as?: string;
-    type?: React.HTMLInputTypeAttribute;
-    placeholder?: string;
+interface FormFieldProps extends FieldAttributes<any> {
     className?: string;
     children?: React.ReactNode;
 }
 
-export default function FormField({ name, as, type = "text", placeholder, className, children }: FormFieldProps) {
+export default function FormField({ name, as, type = "text", className, children, ...props }: FormFieldProps) {
     const { touched, errors } = useFormikContext<FormikValues>();
+    const isError = get(errors, name);
+    const isTouched = get(touched, name);
     return (
         <div className="input-group">
             <Field
                 as={as}
                 type={as ? undefined : type}
-                id={name}
                 name={name}
-                placeholder={placeholder}
-                className={`form-control ${className || ""} ${touched?.[name] && errors?.[name] ? "is-invalid" : ""}`}>
+                className={`form-control ${className || ""} ${isTouched && isError ? "is-invalid" : ""}`}
+                {...props}>
                 {children}
             </Field>
             <ErrorMessage name={name} component="div" className="invalid-feedback" />

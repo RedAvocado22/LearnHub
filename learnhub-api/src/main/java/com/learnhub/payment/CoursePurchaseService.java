@@ -1,6 +1,7 @@
 package com.learnhub.payment;
 
 import com.learnhub.course.CourseService;
+import com.learnhub.enrollment.CoursePurchase;
 import com.learnhub.payment.dto.CoursePurchaseReq;
 import com.learnhub.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,6 @@ public class CoursePurchaseService {
                 student(userService.getUserById(coursePurchaseReq.getUser_id())).
                 transaction_id((coursePurchaseReq.getTransactionCode())).
                 status(responseCodeToStatus(coursePurchaseReq.getResponseCode())).
-                purchasedAt(LocalDateTime.now()).
                 transaction_id(coursePurchaseReq.getTransactionCode()).
                 build();
         coursePurchaseRepository.save(coursePurchase);

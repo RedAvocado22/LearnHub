@@ -1,50 +1,36 @@
 import { useState } from "react";
-import { useUser } from "../../../hooks/useUser";
+import { Course, useUser } from "../../../hooks/useUser";
 import { HomeLayout } from "../../../layouts";
 import { CourseStatus } from "../../../types/Course";
 import { API } from "../../../api";
-import { useParams, useNavigate } from "react-router-dom";
-interface Course {
-    id: number;
-    name: string;
-    category: Category;
-    price: number;
-    status: CourseStatus;
-    image: string;
-}
-
-interface Category {
-    id: number;
-    name: string;
-}
+import { Link, useSearchParams } from "react-router-dom";
 
 export default function TeacherCourseList() {
     const { user, refreshUser } = useUser();
-
-    const { status = "" } = useParams<{ status: string }>();
-    const navigate = useNavigate();
-
+    const [params] = useSearchParams();
+    const status = params.get("status") || "all";
     const [editingCourse, setEditingCourse] = useState<Course | null>(null);
 
     const handleEditClick = (course: Course) => {
         setEditingCourse(course);
     };
 
+    refreshUser();
+
     const handleSave = async (newStatus: CourseStatus) => {
         try {
             if (!editingCourse) return;
 
             const updatedCourse: Course = { ...editingCourse, status: newStatus };
+            const data = new FormData();
+            data.append(
+                "metadata",
+                new Blob([JSON.stringify({ status: updatedCourse.status })], { type: "application/json" })
+            );
 
-            await API.put(`courses/teacher`, {
-                id: updatedCourse.id,
-                name: updatedCourse.name,
-                category: updatedCourse.category,
-                price: updatedCourse.price,
-                status: updatedCourse.status
+            await API.put(`courses/${updatedCourse.id}/teacher`, data, {
+                headers: { "Content-Type": "multipart/form-data" }
             });
-
-            refreshUser();
 
             setEditingCourse(null);
         } catch (error) {
@@ -55,6 +41,10 @@ export default function TeacherCourseList() {
     const handleCancel = () => {
         setEditingCourse(null);
     };
+
+    user?.teacher?.courses.map((course) => {
+        console.log(course);
+    });
 
     const filteredCourses =
         status === "all"
@@ -68,7 +58,7 @@ export default function TeacherCourseList() {
             <main className="ttr-wrapper">
                 <div className="page-content bg-white">
                     <div className="content-block">
-                        <div className="section-area section-sp1">
+                        <div className="section-area section-sp1 p-0">
                             <div className="container">
                                 <div className="row">
                                     <ul
@@ -81,14 +71,15 @@ export default function TeacherCourseList() {
                                                     className="action-card col-xl-4 col-lg-6 col-md-12 col-sm-6 publish m-b30">
                                                     <div className="cours-bx">
                                                         <div className="action-box" style={{ maxHeight: "222px" }}>
-                                                            {course.image ? (
-                                                                <img src={course.image} alt="Course Image" />
-                                                            ) : (
-                                                                <img
-                                                                    src="/assets/images/courses/pic1.jpg"
-                                                                    alt="Default Course"
-                                                                />
-                                                            )}
+                                                            <img
+                                                                src={
+                                                                    course.image
+                                                                        ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                                        : "/assets/images/courses/pic1.jpg"
+                                                                }
+                                                                style={{ height: "222px", objectFit: "cover" }}
+                                                                alt="Course Image"
+                                                            />
                                                             <div className="button-container">
                                                                 <button
                                                                     onClick={() => handleEditClick(course)}
@@ -102,35 +93,11 @@ export default function TeacherCourseList() {
                                                                 <div>
                                                                     {editingCourse.status === "PRIVATE" && (
                                                                         <div className="button-container">
-                                                                            <div>
-                                                                                <button
-                                                                                    onClick={() =>
-                                                                                        navigate(
-                                                                                            `/add-material/${course.id}`
-                                                                                        )
-                                                                                    }
-                                                                                    className="btn m-b15">
-                                                                                    Add Material
-                                                                                </button>
-                                                                            </div>
-                                                                            <div>
-                                                                                <button
-                                                                                    onClick={() =>
-                                                                                        handleSave(CourseStatus.PENDING)
-                                                                                    }
-                                                                                    className="btn m-b15 m-r15">
-                                                                                    Submit Course
-                                                                                </button>
-                                                                                <button
-                                                                                    onClick={() =>
-                                                                                        handleSave(
-                                                                                            CourseStatus.CANCELLED
-                                                                                        )
-                                                                                    }
-                                                                                    className="btn m-b15">
-                                                                                    Cancel Course
-                                                                                </button>
-                                                                            </div>
+                                                                            <Link
+                                                                                to={`/home/courses/${course.id}`}
+                                                                                className="btn m-b15 mr-2">
+                                                                                Add Material
+                                                                            </Link>
                                                                             <button
                                                                                 onClick={handleCancel}
                                                                                 className="btn m-b15">
@@ -189,13 +156,13 @@ export default function TeacherCourseList() {
                                                                 </div>
                                                             ) : (
                                                                 <div>
-                                                                    <h5>
-                                                                        <a href="#">{course.name}</a>
-                                                                    </h5>
-                                                                    <h5>
-                                                                        <span>{course.status}</span>
-                                                                    </h5>
-                                                                    <span>{course.category.name}</span>
+                                                                    <div className="d-flex justify-content-center align-baseline mb-0">
+                                                                        <h5 className="mb-0">{course.name}</h5>
+                                                                        <p className="badge">{course.status}</p>
+                                                                    </div>
+                                                                    <span className="badge">
+                                                                        #{course.category.name}
+                                                                    </span>
                                                                     <div className="review">
                                                                         <span>3 Review</span>
                                                                         <ul className="cours-star">
@@ -217,7 +184,20 @@ export default function TeacherCourseList() {
                                                                         </ul>
                                                                     </div>
                                                                     <div className="price">
-                                                                        <h5>${course.price}</h5>
+                                                                        <h5>
+                                                                            {course.price > 0
+                                                                                ? `$${course.price}`
+                                                                                : "FREE"}
+                                                                        </h5>
+                                                                    </div>
+                                                                    <div>
+                                                                        <Link
+                                                                            id=""
+                                                                            className="btn btn-primary btn-block"
+                                                                            role="button"
+                                                                            to={`/home/courses/${course.id}`}>
+                                                                            View detail
+                                                                        </Link>
                                                                     </div>
                                                                 </div>
                                                             )}

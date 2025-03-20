@@ -113,7 +113,7 @@ public class UserController {
         System.out.println(coursePurchaseReq);
         coursePurchaseService.createCoursePurchase(coursePurchaseReq);
         if (coursePurchaseReq.getTransactionCode().equals("00"))
-            enrollmentService.createEnrollment();
+            enrollmentService.createEnrollment(coursePurchaseReq.getUser_id(), coursePurchaseReq.getCourse_id());
         return ResponseEntity.ok("Success");
     }
 
