@@ -1,35 +1,23 @@
 package com.learnhub.user;
 
-import java.util.List;
-
 import com.learnhub.payment.CoursePurchaseService;
 import com.learnhub.payment.EnrollmentService;
 import com.learnhub.payment.PaymentRequest;
 import com.learnhub.payment.VNPayService;
-import com.learnhub.payment.dto.CoursePurchaseReq;
+import com.learnhub.payment.dto.CoursePurchaseRequest;
 import com.learnhub.payment.dto.PaymentResponse;
+import com.learnhub.user.dto.*;
+import com.learnhub.util.ObjectMapper;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import com.learnhub.user.dto.AddUserRequest;
-import com.learnhub.user.dto.CurrentUserResponse;
-import com.learnhub.user.dto.ManageUserResponse;
-import com.learnhub.user.dto.UpdatePasswordRequest;
-import com.learnhub.user.dto.UpdateUserRequest;
-import com.learnhub.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
@@ -108,34 +96,37 @@ public class UserController {
         return ResponseEntity.ok("Success");
     }
 
-    @PostMapping("/createCoursePurchase")
-    public ResponseEntity<String> createCoursePurchase(@RequestBody CoursePurchaseReq coursePurchaseReq) {
-        System.out.println(coursePurchaseReq);
-        coursePurchaseService.createCoursePurchase(coursePurchaseReq);
-        if (coursePurchaseReq.getTransactionCode().equals("00"))
-            enrollmentService.createEnrollment(coursePurchaseReq.getUser_id(), coursePurchaseReq.getCourse_id());
+    @PostMapping("/purchase")
+    public ResponseEntity<String> createCoursePurchase(@AuthenticationPrincipal User user, @RequestBody CoursePurchaseRequest coursePurchaseRequest) {
+        coursePurchaseService.createCoursePurchase(coursePurchaseRequest, user);
+        System.out.println(coursePurchaseRequest);
+
+        if (coursePurchaseRequest.responseCode().equals("00"))
+            System.out.println("1");
+        enrollmentService.createEnrollment(coursePurchaseRequest.user_id(), coursePurchaseRequest.course_id());
         return ResponseEntity.ok("Success");
     }
 
-    @PostMapping("/createPayment")
+    @PostMapping("/payment")
     public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentRequest paymentRequest,
                                                          HttpServletRequest request) {
         try {
-            System.out.println(paymentRequest);
+//            System.out.println(paymentRequest);
             String paymentUrl = vnPayService.createOrder(paymentRequest, request);
-            return ResponseEntity.ok(com.learnhub.payment.dto.PaymentResponse.builder().
-                    message("Payment generated succesfully").
-                    data(paymentUrl).
-                    status(HttpStatus.OK).
-                    build());
+
+            return ResponseEntity.ok(
+                    new PaymentResponse(
+                            HttpStatus.OK,
+                            "Payment generated successfully!",
+                            paymentUrl
+                    ));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(PaymentResponse.builder().
-                            status(HttpStatus.INTERNAL_SERVER_ERROR).
-                            message("Error generated payment URL: " + e.getMessage()).
-                            build());
+                    .body(new PaymentResponse(
+                            HttpStatus.INTERNAL_SERVER_ERROR,
+                            "Error generated payment URL: " + e.getMessage(),
+                            null
+                    ));
         }
     }
-
-
 }

@@ -20,19 +20,14 @@ export default function CourseDetail() {
     const course = courses.find((course) => course.id.toString() === id);
 
     const handleBuySubmit = () => {
-        if (user?.role === "STUDENT") {
-            console.log(course);
-            console.log(user.id);
-            navigate("/order", {
-                state: {
-                    course: course,
-                    userId: user.id
-                }
-            });
-        } else {
-            toast.error("You need login to buy course");
-            navigate("/login", { replace: true });
-        }
+        console.log(course);
+
+        navigate("/order", {
+            state: {
+                course: course,
+                userId: user?.id
+            }
+        });
     };
 
     return (

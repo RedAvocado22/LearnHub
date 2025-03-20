@@ -35,7 +35,9 @@ import {
     ManagerCourseList,
     ManagerCourseDetails,
     ManagerMaterialDetails,
-    CourseDetail
+    CourseDetail,
+    Order,
+    PaymentCallback
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -96,10 +98,12 @@ export default function App() {
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT, UserRole.TEACHER]} />}>
                     <Route path="/home/courses" element={<UserCourseList />} />
                 </Route>
+
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
                     <Route path="/order" element={<Order />} />
                     <Route path="/paymentcallback" element={<PaymentCallback />} />
                 </Route>
+
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
                     <Route path="/home/courses/create" element={<CreateCourse />} />
                     <Route path="/home/courses/:id" element={<TeacherCourseDetails />} />

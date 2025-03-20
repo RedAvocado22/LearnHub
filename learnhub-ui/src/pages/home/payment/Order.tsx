@@ -15,9 +15,9 @@ export default function Order() {
     const handleSubmitAccountChange = async () => {
         try {
             console.log(1);
-            const resp = await API.post("/users/createPayment", {
+            const resp = await API.post("/users/payment", {
                 orderInfo: course.id + "&&" + userId,
-                totalPrice: course.price
+                totalPrice: 299000
             });
             window.location.href = resp.data.data;
         } catch (err) {

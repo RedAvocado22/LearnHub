@@ -1,10 +1,10 @@
 package com.learnhub.payment;
 
+import com.learnhub.common.exception.ResourceNotFoundException;
+import com.learnhub.course.Course;
 import com.learnhub.course.CourseRepository;
 import com.learnhub.enrollment.Enrollment;
 import com.learnhub.enrollment.EnrollmentStatus;
-import com.learnhub.user.User;
-import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserService;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
@@ -18,12 +18,16 @@ import java.util.List;
 @AllArgsConstructor
 @Service
 public class EnrollmentService {
-    @Autowired
     EnrollmentRepository enrollmentRepository;
-    @Autowired
     private CourseRepository courseRepository;
-    @Autowired
     private UserService userService;
+
+    @Autowired
+    public EnrollmentService(CourseRepository courseRepository, EnrollmentRepository enrollmentRepository, UserService userService) {
+        this.courseRepository = courseRepository;
+        this.enrollmentRepository = enrollmentRepository;
+        this.userService = userService;
+    }
 
     public List<Enrollment> getNumberOffStudentRegisterInMonth() {
         LocalDateTime now = LocalDateTime.now();
@@ -31,11 +35,16 @@ public class EnrollmentService {
     }
 
     public void createEnrollment(Long userId, Long courseId) {
-        Enrollment enrollment = Enrollment.builder().
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Can't find course"));
+        System.out.println(userId + " " + courseId);
+        enrollmentRepository.saveAndFlush(Enrollment.builder().
                 student(userService.getUserById(userId)).
                 status(EnrollmentStatus.IN_PROGRESS).
-                course(courseRepository.findcoursebyid(courseId)).
-                build();
+                course(course).
+                build()
+        );
+
     }
 
 }

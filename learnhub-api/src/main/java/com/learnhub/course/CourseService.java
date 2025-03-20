@@ -347,19 +347,13 @@ public class CourseService {
     }
 
     public List<Course> getAllCoursesExceptPrivate() {
-
-        return courseRepository.findAll().stream().filter(
-                        course -> course.getStatus() != CourseStatus.PRIVATE)
+        return courseRepository.findAll().stream()
+                .filter(course -> course.getStatus() != CourseStatus.PRIVATE)
                 .toList();
     }
 
     public List<Course> getAllCourseByStatus(CourseStatus courseStatus) {
         return courseRepository.findAll().stream().filter(course -> course.getStatus() == courseStatus).toList();
-    }
-
-
-    public Course findCourseById(Long id) {
-        return courseRepository.findcoursebyid(id);
     }
 
     public void updateCourseStatus(Course course, CourseStatus status) {

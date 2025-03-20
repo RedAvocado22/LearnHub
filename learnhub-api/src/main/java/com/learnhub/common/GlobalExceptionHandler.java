@@ -2,6 +2,7 @@ package com.learnhub.common;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import com.learnhub.auth.exception.InactiveAccountException;
 import com.learnhub.auth.exception.InvalidTokenException;
 import com.learnhub.auth.exception.SuspendedAccountException;
@@ -30,54 +31,54 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
             WebRequest request) {
         Map<String, String> errors = new HashMap<>();
         e.getBindingResult().getAllErrors().forEach(error -> {
-            String fieldName = ((FieldError)error).getField();
+            String fieldName = ((FieldError) error).getField();
             String message = error.getDefaultMessage();
             errors.put(fieldName, message);
         });
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(ErrorResponse.builder().error(errors).build());
+                .status(HttpStatus.BAD_REQUEST)
+                .body(ErrorResponse.builder().error(errors).build());
     }
 
     @ExceptionHandler(InactiveAccountException.class)
     public ResponseEntity<ErrorResponse> handleInactiveAccount(InactiveAccountException e) {
         return ResponseEntity
-            .status(HttpStatus.ACCEPTED)
-            .body(ErrorResponse.builder().error(e.getMessage()).build());
+                .status(HttpStatus.ACCEPTED)
+                .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(SuspendedAccountException.class)
     public ResponseEntity<ErrorResponse> handleSuspendedAccount(SuspendedAccountException e) {
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(ErrorResponse.builder().error(e.getMessage()).build());
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(UserExistsException.class)
     public ResponseEntity<ErrorResponse> handleUserExists(UserExistsException e) {
         return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponse.builder().error(e.getMessage()).build());
+                .status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleUserNotFound(UserNotFoundException e) {
         return ResponseEntity
-            .status(HttpStatus.NOT_FOUND)
-            .body(ErrorResponse.builder().error(e.getMessage()).build());
+                .status(HttpStatus.NOT_FOUND)
+                .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<ErrorResponse> handleInvalidToken(InvalidTokenException e) {
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(ErrorResponse.builder().error(e.getMessage()).build());
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 
     @ExceptionHandler(OldPasswordNotMatchedException.class)
     public ResponseEntity<ErrorResponse> handleOldPasswordNotMatched(OldPasswordNotMatchedException e) {
         return ResponseEntity
-            .status(HttpStatus.UNAUTHORIZED)
-            .body(ErrorResponse.builder().error(e.getMessage()).build());
+                .status(HttpStatus.UNAUTHORIZED)
+                .body(ErrorResponse.builder().error(e.getMessage()).build());
     }
 }

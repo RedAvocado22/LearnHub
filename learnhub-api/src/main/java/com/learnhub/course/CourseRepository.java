@@ -7,6 +7,4 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @Query(value = "select * from course where id = :id", nativeQuery = true)
-    Course findcoursebyid(@Param("id") Long id);
 }

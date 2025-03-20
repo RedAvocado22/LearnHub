@@ -1,13 +1,15 @@
 package com.learnhub.payment;
 
+import com.learnhub.common.exception.ResourceNotFoundException;
+import com.learnhub.course.Course;
+import com.learnhub.course.CourseRepository;
 import com.learnhub.course.CourseService;
 import com.learnhub.enrollment.CoursePurchase;
-import com.learnhub.payment.dto.CoursePurchaseReq;
+import com.learnhub.payment.dto.CoursePurchaseRequest;
+import com.learnhub.user.User;
 import com.learnhub.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class CoursePurchaseService {
@@ -17,6 +19,8 @@ public class CoursePurchaseService {
     private UserService userService;
     @Autowired
     private CoursePurchaseRepository coursePurchaseRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
     public String responseCodeToStatus(String responseCode) {
         if (responseCode.equals("00"))
@@ -24,15 +28,20 @@ public class CoursePurchaseService {
         return "FAIL";
     }
 
-    public void createCoursePurchase(CoursePurchaseReq coursePurchaseReq) {
+    public void createCoursePurchase(CoursePurchaseRequest req, User user) {
+        Course course = courseRepository.findById(req.course_id())
+                .orElseThrow(() -> new ResourceNotFoundException("Can't find course"));
+
+
         CoursePurchase coursePurchase = CoursePurchase.builder().
-                course(courseService.findCourseById(coursePurchaseReq.getCourse_id())).
-                purchasePrice(coursePurchaseReq.getPrice()).
-                student(userService.getUserById(coursePurchaseReq.getUser_id())).
-                transaction_id((coursePurchaseReq.getTransactionCode())).
-                status(responseCodeToStatus(coursePurchaseReq.getResponseCode())).
-                transaction_id(coursePurchaseReq.getTransactionCode()).
+                course(course).
+                purchasePrice(req.price()).
+                student(user).
+                transaction_id((req.transactionCode())).
+                status(responseCodeToStatus(req.responseCode())).
+                transaction_id(req.transactionCode()).
                 build();
+        
         coursePurchaseRepository.save(coursePurchase);
     }
 }
