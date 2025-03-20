@@ -17,7 +17,7 @@ export default function Order() {
             console.log(1);
             const resp = await API.post("/users/payment", {
                 orderInfo: course.id + "&&" + userId,
-                totalPrice: 299000
+                totalPrice: course.price
             });
             window.location.href = resp.data.data;
         } catch (err) {
@@ -33,10 +33,10 @@ export default function Order() {
                     <div className="col-md-6">
                         <div className="card">
                             <div className="card-body">
-                                <h2 className="card-title">Thanh Toán Đơn Hàng</h2>
+                                <h2 className="card-title">Order Payment</h2>
                                 <form>
                                     <div className="form-group">
-                                        <label htmlFor="amount">Số tiền:</label>
+                                        <label htmlFor="amount">Price:</label>
                                         <input
                                             type="number"
                                             className="form-control"
@@ -47,18 +47,18 @@ export default function Order() {
                                         />
                                     </div>
                                     <div className="form-group">
-                                        <label htmlFor="orderInfo">Thông tin đơn hàng:</label>
+                                        <label htmlFor="orderInfo">Order information:</label>
                                         <input
                                             type="text"
                                             className="form-control"
                                             id="orderInfo"
                                             name="orderInfo"
                                             required
-                                            value={`Thanh toan don hang ${course.name}`}
+                                            value={`Thanh toan khoa hoc ${course.name}`}
                                         />
                                     </div>
                                     <a type="submit" className="btn btn-primary" onClick={handleSubmitAccountChange}>
-                                        Thanh toán
+                                        Pay
                                     </a>
                                 </form>
                             </div>

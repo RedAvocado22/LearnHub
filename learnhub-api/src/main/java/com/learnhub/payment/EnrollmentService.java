@@ -38,7 +38,7 @@ public class EnrollmentService {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new ResourceNotFoundException("Can't find course"));
         System.out.println(userId + " " + courseId);
-        enrollmentRepository.saveAndFlush(Enrollment.builder().
+        enrollmentRepository.save(Enrollment.builder().
                 student(userService.getUserById(userId)).
                 status(EnrollmentStatus.IN_PROGRESS).
                 course(course).

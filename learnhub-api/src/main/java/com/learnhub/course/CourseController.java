@@ -1,35 +1,22 @@
 package com.learnhub.course;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import com.learnhub.course.chapter.ChapterService;
-import com.learnhub.course.chapter.lesson.dto.AddChapterRequest;
-import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
+import com.learnhub.course.chapter.lesson.dto.*;
 import com.learnhub.course.dto.ManagerCourseResponse;
 import com.learnhub.course.dto.ManagerCourseResquest;
 import com.learnhub.course.dto.ManagerCoursesResponse;
 import com.learnhub.course.dto.UpdateCourseRequest;
+import com.learnhub.user.User;
 import com.learnhub.util.ObjectMapper;
 import jakarta.validation.Valid;
-import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
-import com.learnhub.course.chapter.lesson.dto.DeleteLessonFileRequest;
-import com.learnhub.course.chapter.lesson.dto.UpdateChapterMaterialRequest;
-import com.learnhub.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/courses")
@@ -65,11 +52,6 @@ public class CourseController {
                                                @RequestParam("image") MultipartFile image) {
         courseService.addCourseForTeacher(user, name, categoryId, price, description, image);
         return ResponseEntity.ok("Success");
-    }
-
-    @GetMapping("coursePending")
-    public ResponseEntity<Integer> getAllPendingCourse() {
-        return ResponseEntity.ok(courseService.getAllCourseByStatus(CourseStatus.PENDING).size());
     }
 
 
