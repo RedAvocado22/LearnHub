@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 import com.learnhub.common.exception.ResourceNotFoundException;
+import com.learnhub.course.Course;
+import com.learnhub.course.CourseRepository;
 import com.learnhub.course.chapter.ChapterMaterial;
 import com.learnhub.course.chapter.ChapterMaterialRepository;
 import com.learnhub.course.chapter.MaterialType;
@@ -12,6 +14,9 @@ import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
 import com.learnhub.enrollment.dto.GradeQuizRequest;
+import com.learnhub.user.User;
+import com.learnhub.user.UserRepository;
+import com.learnhub.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,17 +27,45 @@ public class EnrollmentService {
     private final ChapterMaterialRepository chapterMaterialRepository;
     private final FinishedMaterialRepository finishedMaterialRepository;
     private final QuizAttemptRepository quizAttemptRepository;
+    private final CourseRepository courseRepository;
+    private final UserRepository userRepository;
 
     @Autowired
     public EnrollmentService(
             EnrollmentRepository enrollmentRepository,
             ChapterMaterialRepository chapterMaterialRepository,
             FinishedMaterialRepository finishedMaterialRepository,
-            QuizAttemptRepository quizAttemptRepository) {
+            QuizAttemptRepository quizAttemptRepository,
+            CourseRepository courseRepository,
+            UserRepository userRepository) {
         this.enrollmentRepository = enrollmentRepository;
         this.chapterMaterialRepository = chapterMaterialRepository;
         this.finishedMaterialRepository = finishedMaterialRepository;
         this.quizAttemptRepository = quizAttemptRepository;
+        this.courseRepository = courseRepository;
+        this.userRepository = userRepository;
+    }
+
+    public List<Enrollment> getNumberOffStudentRegisterInMonth() {
+        LocalDateTime now = LocalDateTime.now();
+        return enrollmentRepository.getCountOfStudentRegister(now.getMonthValue());
+    }
+
+    public void createEnrollment(Long userId, Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Can't find course"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("Can't find user"));
+        if (user.getRole() != UserRole.STUDENT || user.getStudent() == null) {
+            throw new ResourceNotFoundException("Can't find student");
+        }
+        enrollmentRepository.save(Enrollment.builder().
+                student(user.getStudent()).
+                status(EnrollmentStatus.IN_PROGRESS).
+                course(course).
+                build()
+        );
+
     }
 
     @Transactional

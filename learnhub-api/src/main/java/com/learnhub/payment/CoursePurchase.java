@@ -1,9 +1,8 @@
-package com.learnhub.enrollment;
+package com.learnhub.payment;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

@@ -5,7 +5,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,7 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import com.learnhub.auth.RevokedToken;
-import com.learnhub.enrollment.CoursePurchase;
+import com.learnhub.payment.CoursePurchase;
 import com.learnhub.user.student.StudentProfile;
 import com.learnhub.user.teacher.TeacherProfile;
 import org.springframework.security.core.GrantedAuthority;

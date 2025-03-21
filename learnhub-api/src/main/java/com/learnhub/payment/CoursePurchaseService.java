@@ -4,7 +4,6 @@ import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseRepository;
 import com.learnhub.course.CourseService;
-import com.learnhub.enrollment.CoursePurchase;
 import com.learnhub.payment.dto.CoursePurchaseRequest;
 import com.learnhub.user.User;
 import com.learnhub.user.UserService;
