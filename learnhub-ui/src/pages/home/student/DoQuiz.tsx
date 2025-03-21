@@ -1,102 +1,170 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
-import { useState } from "react";
-import { API } from "../../../api";
 import NotFound from "../../error/NotFound";
-import { isAxiosError } from "axios";
+import { ChapterMaterial, Enrollment, useUser } from "../../../hooks/useUser";
+import { MaterialType } from "../../../types/Course";
+import { Field, Form, Formik, FormikHelpers } from "formik";
+import * as yup from "yup";
+import { API } from "../../../api";
 import { toast } from "react-toastify";
 
 interface Option {
     id: number;
-    text: string;
+    chosen: boolean;
 }
 
 interface Question {
     id: number;
-    text: string;
-    options: Option[];
+    answers: Option[];
 }
 
-export default function DoQuiz() {
-    const location = useLocation();
-    console.log(location.state.questions);
-    const quizId = location.state.id;
-    if (!quizId) {
-        return <NotFound />;
+interface FormValues {
+    questions: Question[];
+}
+
+const findQuiz = (id: number, enrollment: Enrollment | null): ChapterMaterial | null => {
+    if (!enrollment) {
+        return null;
     }
-    const questions: Question[] = location.state.questions || [];
-    const [selectedOptions, setSelectedOptions] = useState<number[]>([]);
-    const navigate = useNavigate();
-    const onChange = (id: number, checked: boolean) => {
-        if (selectedOptions.includes(id) && checked === false) {
-            setSelectedOptions(selectedOptions.filter((optionId) => optionId !== id));
-        } else if (!selectedOptions.includes(id) && checked === true) {
-            setSelectedOptions([...selectedOptions, id]);
+    for (let i = 0; i < enrollment.course.chapters.length; i++) {
+        const chapter = enrollment.course.chapters[i];
+        for (let j = 0; j < chapter.materials.length; j++) {
+            const material = chapter.materials[j];
+            if (material.id === id && material.type === MaterialType.QUIZ && material.quiz) {
+                return material;
+            }
         }
-    };
-    const submit = async () => {
+    }
+    return null;
+};
+
+const validationSchema = yup.object({
+    questions: yup.array().of(
+        yup.object({
+            answers: yup.array().of(
+                yup.object({
+                    chosen: yup.boolean()
+                })
+            )
+        })
+    )
+});
+
+export default function DoQuiz() {
+    const { cid, qid } = useParams();
+    const id = parseInt(qid || "0");
+    const { user, refreshUser } = useUser();
+    const enrollment: Enrollment | null =
+        user?.student?.enrollments.find((e) => e.course.id.toString() === cid) || null;
+    const material = findQuiz(id, enrollment);
+    const navigate = useNavigate();
+
+    const handleSubmit = async (values: FormValues, { setSubmitting, resetForm }: FormikHelpers<FormValues>) => {
+        if (!user || !enrollment || !material) {
+            return;
+        }
         try {
-            const resp = await API.post(`/students/me/quizes/${quizId}/grade`, selectedOptions);
+            const resp = await API.post(
+                `/enrollments/students/${user.id}/courses/${enrollment.course.id}/quizzes/${material.id}/grade`,
+                values
+            );
             if (resp.status === 200) {
-                navigate(`/quiz/result/${resp.data}`);
+                const attemptId = resp.data;
+                refreshUser();
+                navigate(`/home/courses/${enrollment.course.id}/quizzes/${material.id}/result/${attemptId}`);
             }
         } catch (err) {
-            if (isAxiosError(err)) {
-                console.error(err.response?.data);
-            } else {
-                console.error((err as Error).message);
-            }
-            toast.error("Failed to submit quiz");
+            toast.error("Failed to grade quiz");
+            resetForm();
+        } finally {
+            setSubmitting(false);
         }
     };
+
+    if (!user || !user.student || isNaN(id) || !enrollment || !material || !material.quiz) {
+        return <NotFound />;
+    }
+
+    const initialValues: FormValues = {
+        questions: material.quiz.questions.map((question) => ({
+            id: question.id,
+            answers: question.options.map((option) => ({
+                id: option.id,
+                chosen: false
+            }))
+        }))
+    };
+
     return (
         <HomeLayout>
-            <main className="ttr-wrapper">
-                <div className="container-fluid">
-                    <div className="db-breadcrumb">
-                        <h4 className="breadcrumb-title">Do Quiz</h4>
-                    </div>
-                    <div className="row">
-                        <div className="col-lg-12 m-b30">
-                            <div className="widget-box">
-                                <div className="widget-inner">
-                                    <form className="edit-profile m-b30">
-                                        {questions.map((question, index) => (
-                                            <div key={question.id} className="row">
-                                                <div className="col-12">
-                                                    <div className="ml-auto">
-                                                        <h3>
-                                                            {index + 1}. {question.text}
-                                                        </h3>
-                                                    </div>
-                                                </div>
-                                                {question.options.map((option) => (
-                                                    <div key={option.id} className="form-group col-6">
-                                                        <input
-                                                            type="checkbox"
-                                                            id={`option_${option.id}`}
-                                                            checked={selectedOptions.includes(option.id)}
-                                                            onChange={(e) => onChange(option.id, e.target.checked)}
-                                                        />
-                                                        <label htmlFor={`option_${option.id}`}>{option.text}</label>
-                                                    </div>
-                                                ))}
+            <div className="container-fluid" style={{ marginTop: "80px", maxHeight: "calc(100vh - 80px)" }}>
+                <h1 className="text-black my-2 ">{material.name}</h1>
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={handleSubmit}>
+                    {({ values, isSubmitting }) => (
+                        <Form noValidate>
+                            <ul className="m-0">
+                                {material.quiz?.questions.map((question, qid) => (
+                                    <li key={qid} className="row border-bottom border-top mb-4">
+                                        <div className="col-2 border-right py-2 pb-4">
+                                            <p className="my-1" style={{ lineHeight: "1.5" }}>
+                                                Question{" "}
+                                                <span className="font-weight-bold" style={{ fontSize: "20px" }}>
+                                                    {qid + 1}
+                                                </span>
+                                                :
+                                            </p>
+                                            {values.questions[qid].answers.some((ans) => ans.chosen) ? (
+                                                <p className="m-0 text-success" style={{ fontSize: "12px" }}>
+                                                    Answered
+                                                </p>
+                                            ) : (
+                                                <p className="m-0 text-danger" style={{ fontSize: "12px" }}>
+                                                    Not answered
+                                                </p>
+                                            )}
+                                        </div>
+                                        <div className="col-10 p-0">
+                                            <div className="py-2 border-bottom p-2 px-4">
+                                                <h6 className="fw4 m-0">{question.text}</h6>
                                             </div>
-                                        ))}
-                                        <div className="row">
-                                            <div className="col-12">
-                                                <button onClick={submit} type="button" className="btn">
-                                                    Submit
-                                                </button>
+                                            <div className="p-4">
+                                                <h3 className="fw3 m-0" style={{ fontSize: "14px" }}>
+                                                    Select one or more:
+                                                </h3>
+                                                <ul className="list-unstyled">
+                                                    {question.options.map((option, oid) => (
+                                                        <li key={oid} className="d-flex align-items-center">
+                                                            <Field
+                                                                className="mr-2"
+                                                                type="checkbox"
+                                                                id={`questions[${qid}].answers[${oid}].chosen`}
+                                                                name={`questions[${qid}].answers[${oid}].chosen`}
+                                                            />
+                                                            <label
+                                                                htmlFor={`questions[${qid}].answers[${oid}]chosen`}
+                                                                className="my-0">
+                                                                {option.text}
+                                                            </label>
+                                                        </li>
+                                                    ))}
+                                                </ul>
                                             </div>
                                         </div>
-                                    </form>
-                                </div>
+                                    </li>
+                                ))}
+                            </ul>
+
+                            <div
+                                className="d-flex justify-content-end"
+                                style={{ position: "fixed", bottom: "20px", right: "40px" }}>
+                                <button type="submit" className="btn btn-secondary" disabled={isSubmitting}>
+                                    {isSubmitting ? "Submitting..." : "Submit"}
+                                </button>
                             </div>
-                        </div>
-                    </div>
-                </div>
-            </main>
+                        </Form>
+                    )}
+                </Formik>
+            </div>
         </HomeLayout>
     );
 }

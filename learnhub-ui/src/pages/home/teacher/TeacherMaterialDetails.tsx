@@ -26,7 +26,7 @@ const findMaterial = (
     return null;
 };
 
-export default function MaterialDetails() {
+export default function TeacherMaterialDetails() {
     const { user } = useUser();
     const { mid } = useParams();
     const [context, setContext] = useState<{

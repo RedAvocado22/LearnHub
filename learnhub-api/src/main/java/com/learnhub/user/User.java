@@ -19,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import com.learnhub.auth.RevokedToken;
+import com.learnhub.enrollment.CoursePurchase;
 import com.learnhub.user.student.StudentProfile;
 import com.learnhub.user.teacher.TeacherProfile;
 import org.springframework.security.core.GrantedAuthority;
@@ -71,6 +72,9 @@ public class User implements UserDetails {
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private TeacherProfile teacher;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CoursePurchase> purchases;
 
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();

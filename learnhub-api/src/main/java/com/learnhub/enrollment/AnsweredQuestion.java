@@ -1,7 +1,8 @@
 package com.learnhub.enrollment;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,19 +17,23 @@ import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "attempted_question")
 @IdClass(AnsweredQuestionKey.class)
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class AnsweredQuestion {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "attempt_id", nullable = false)
     private QuizAttempt attempt;
 
@@ -49,7 +54,8 @@ public class AnsweredQuestion {
         },
         inverseJoinColumns = @JoinColumn(name = "option_id", referencedColumnName = "id")
     )
-    private Set<Option> chosenOptions;
+    @Default
+    private List<Option> chosenOptions = new ArrayList<>();
 }
 
 @Data

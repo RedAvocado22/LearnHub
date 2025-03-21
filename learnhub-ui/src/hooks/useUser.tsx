@@ -2,7 +2,7 @@ import { createContext, ReactNode, useContext, useEffect, useState } from "react
 import { API } from "../api";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
-import { CourseStatus, MaterialType } from "../types/Course";
+import { CourseStatus, EnrollmentStatus, MaterialType } from "../types/Course";
 import { StudentType, UserRole, UserStatus } from "../types/User";
 
 export interface Category {
@@ -21,11 +21,13 @@ export interface Lesson {
 }
 
 export interface Option {
+    id: number;
     text: string;
     correct: boolean;
 }
 
 export interface Question {
+    id: number;
     text: string;
     explanation: string;
     options: Option[];
@@ -66,9 +68,45 @@ export interface Course {
     archivedAt: Date;
 }
 
+export interface FinishedMaterial {
+    materialId: number;
+    finishedAt: Date;
+}
+
+export interface AnsweredQuestion {
+    questionId: number;
+    correct: boolean;
+    optionIds: number[];
+}
+
+export interface QuizAttempt {
+    id: number;
+    quizId: number;
+    totalCorrect: number;
+    passed: boolean;
+    answers: AnsweredQuestion[];
+    submittedAt: Date;
+}
+
+export interface Enrollment {
+    course: Course & {
+        teacher: {
+            id: number;
+            fullName: string;
+            major: string;
+        };
+    };
+    status: EnrollmentStatus;
+    finishedMaterials: FinishedMaterial[];
+    quizAttempts: QuizAttempt[];
+    enrolledAt: Date;
+    finishedAt: Date;
+}
+
 export interface StudentProfile {
     type: StudentType;
     school: string;
+    enrollments: Enrollment[];
 }
 
 export interface TeacherProfile {

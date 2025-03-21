@@ -3,13 +3,14 @@ import { API } from "../../../api";
 import { toast } from "react-toastify";
 import { Course, useUser } from "../../../hooks/useUser";
 import { Link } from "react-router-dom";
-import { CourseStatus, MaterialType } from "../../../types/Course";
+import { MaterialType } from "../../../types/Course";
 
 interface CourseCurriculumProps {
     course: Course;
+    editable: boolean;
 }
 
-export default function CourseCurriculum({ course }: CourseCurriculumProps) {
+export default function CourseCurriculum({ course, editable }: CourseCurriculumProps) {
     const { refreshUser } = useUser();
 
     const handleAddChapter = async () => {
@@ -76,14 +77,14 @@ export default function CourseCurriculum({ course }: CourseCurriculumProps) {
         <div className="m-b30 mt-4" id="curriculum">
             <div className="ml-auto d-flex justify-content-between align-items-center">
                 <h4>Curriculum</h4>
-                {course.status === CourseStatus.PRIVATE && (
+                {editable && (
                     <button onClick={handleAddChapter} type="button" className="btn">
                         Add chapter
                     </button>
                 )}
             </div>
             <ul className="curriculum-list">
-                {course.status === CourseStatus.PRIVATE
+                {editable
                     ? course.chapters.map((c) => (
                           <li key={c.id} className="card my-3">
                               <div className="card-header">

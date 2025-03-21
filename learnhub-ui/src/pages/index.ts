@@ -18,13 +18,15 @@ export { default as ResetPassword } from "./auth/ResetPassword";
 export { default as Home } from "./home/Home";
 export { default as UserProfile } from "./home/UserProfile";
 export { default as UserCourseList } from "./home/UserCourseList";
+export { default as CourseDetails } from "./home/CourseDetails";
 
 export { default as CreateCourse } from "./home/teacher/CreateCourse";
-export { default as TeacherCourseDetails } from "./home/teacher/CourseDetails";
-export { default as MaterialDetails } from "./home/teacher/MaterialDetails";
+export { default as TeacherMaterialDetails } from "./home/teacher/TeacherMaterialDetails";
 export { default as AddLesson } from "./home/teacher/AddLesson";
 export { default as AddQuiz } from "./home/teacher/AddQuiz";
 
+export { default as StudentMaterialDetails } from "./home/student/StudentMaterialDetails";
+export { default as CourseLesson } from "./home/student/CourseLesson";
 export { default as CourseQuiz } from "./home/student/CourseQuiz";
 export { default as DoQuiz } from "./home/student/DoQuiz";
 export { default as QuizResult } from "./home/student/QuizResult";

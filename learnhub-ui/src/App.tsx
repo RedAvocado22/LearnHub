@@ -23,21 +23,21 @@ import {
     UserList,
     UserDetails,
     AddUser,
-    CourseQuiz,
     DoQuiz,
     QuizResult,
     TestVideo,
     CreateCourse,
-    TeacherCourseDetails,
+    CourseDetail,
+    CourseDetails,
     AddLesson,
-    MaterialDetails,
+    TeacherMaterialDetails,
     AddQuiz,
     ManagerCourseList,
     ManagerCourseDetails,
     ManagerMaterialDetails,
-    CourseDetail,
     Order,
-    PaymentCallback
+    PaymentCallback,
+    StudentMaterialDetails
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -97,6 +97,12 @@ export default function App() {
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT, UserRole.TEACHER]} />}>
                     <Route path="/home/courses" element={<UserCourseList />} />
+                    <Route path="/home/courses/:id" element={<CourseDetails />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
+                    <Route path="/home/courses/:cid/materials/:mid" element={<StudentMaterialDetails />} />
+                    <Route path="/home/courses/:cid/quizzes/:qid/do-quiz" element={<DoQuiz />} />
+                    <Route path="/home/courses/:cid/quizzes/:qid/result/:rid" element={<QuizResult />} />
                 </Route>
 
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
@@ -106,10 +112,9 @@ export default function App() {
 
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
                     <Route path="/home/courses/create" element={<CreateCourse />} />
-                    <Route path="/home/courses/:id" element={<TeacherCourseDetails />} />
                     <Route path="/home/courses/:cid/chapters/:chid/lessons/add" element={<AddLesson />} />
                     <Route path="/home/courses/:cid/chapters/:chid/quizes/add" element={<AddQuiz />} />
-                    <Route path="/home/courses/materials/:mid" element={<MaterialDetails />} />
+                    <Route path="/home/courses/materials/:mid" element={<TeacherMaterialDetails />} />
                 </Route>
                 <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
                     <Route element={<ContactsProviderRoute />}>
@@ -126,11 +131,6 @@ export default function App() {
                     <Route path="/manager/courses" element={<ManagerCourseList />} />
                     <Route path="/manager/courses/:id" element={<ManagerCourseDetails />} />
                     <Route path="/manager/courses/:cid/materials/:id" element={<ManagerMaterialDetails />} />
-                </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
-                    <Route path="/quiz/:qid" element={<CourseQuiz />} />
-                    <Route path="/quiz/:qid/do-quiz" element={<DoQuiz />} />
-                    <Route path="/quiz/result/:id" element={<QuizResult />} />
                 </Route>
 
                 {/* Error Boundary */}
