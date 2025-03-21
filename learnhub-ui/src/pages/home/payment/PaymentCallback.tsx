@@ -18,7 +18,7 @@ export default function PaymentCallback() {
     const transactionNo = params.get("vnp_TransactionNo");
     const vnp_ResponseCode = params.get("vnp_ResponseCode");
     const orderInfo = params.get("vnp_OrderInfo");
-    const [userId, courseId] = orderInfo.split("&&");
+    const [courseId, userId] = orderInfo.split("&&");
     const [coursePurchase, setCoursePurchase] = useState<CoursePurchaseReq>({
         user_id: userId,
         course_id: courseId,
