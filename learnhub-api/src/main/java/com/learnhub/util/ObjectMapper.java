@@ -1,14 +1,14 @@
 package com.learnhub.util;
 
-import com.learnhub.course.chapter.Chapter;
-import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
-import com.learnhub.course.dto.ManagerCourseResponse;
-import com.learnhub.course.dto.ManagerCoursesResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import com.learnhub.common.dto.PublicCourseResponse;
 import com.learnhub.common.dto.PublicTeacherResponse;
 import com.learnhub.course.Course;
+import com.learnhub.course.chapter.Chapter;
+import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
+import com.learnhub.course.dto.ManagerCourseResponse;
+import com.learnhub.course.dto.ManagerCoursesResponse;
 import com.learnhub.user.User;
 import com.learnhub.user.dto.CurrentUserResponse;
 import com.learnhub.user.dto.ManageUserResponse;
@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class ObjectMapper {
     @PersistenceContext
     private final EntityManager entityManager;

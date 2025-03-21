@@ -147,7 +147,10 @@ export default function CourseDetails() {
                                                 </div>
                                             </div>
                                         </div>
-                                        <CourseCurriculum course={course} />
+                                        <CourseCurriculum
+                                            course={course}
+                                            editable={course.status === CourseStatus.PRIVATE}
+                                        />
                                     </div>
                                 </div>
                             </div>

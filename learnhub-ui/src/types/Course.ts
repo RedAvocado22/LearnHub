@@ -10,3 +10,8 @@ export enum MaterialType {
     LESSON = "LESSON",
     QUIZ = "QUIZ"
 }
+
+export enum EnrollmentStatus {
+    IN_PROGRESS = "IN_PROGRESS",
+    FINISHED = "FINISHED"
+}

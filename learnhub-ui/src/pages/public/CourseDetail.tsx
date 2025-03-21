@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
-import { useParams } from "react-router-dom";
-import { Course } from "../../hooks/useUser";
+import { useNavigate, useParams } from "react-router-dom";
+import { Course, useUser } from "../../hooks/useUser";
 import { API } from "../../api";
 import { toast } from "react-toastify";
 
 export default function CourseDetail() {
     const [courses, setCourses] = useState<Course[]>([]);
     const { id } = useParams();
+    const { user } = useUser();
+    const navigate = useNavigate();
 
     useEffect(() => {
         API.get("/public/courses")
@@ -16,6 +18,17 @@ export default function CourseDetail() {
     }, []);
 
     const course = courses.find((course) => course.id.toString() === id);
+
+    const handleBuySubmit = () => {
+        console.log(course);
+
+        navigate("/order", {
+            state: {
+                course: course,
+                userId: user?.id
+            }
+        });
+    };
 
     return (
         <MainLayout>
@@ -38,8 +51,9 @@ export default function CourseDetail() {
                                         <div className="course-price">
                                             <h4 className="price">${course?.price}</h4>
                                         </div>
+
                                         <div className="course-buy-now text-center">
-                                            <a href="#" className="btn radius-xl text-uppercase">
+                                            <a className="btn radius-xl text-uppercase" onClick={handleBuySubmit}>
                                                 Buy Now This Courses
                                             </a>
                                         </div>
@@ -110,15 +124,13 @@ export default function CourseDetail() {
                                 <div className="col-lg-9 col-md-8 col-sm-12">
                                     <div className="courses-post">
                                         <div className="ttr-post-media media-effect">
-                                            <a href="#">
-                                                <img
-                                                    src={
-                                                        course?.image
-                                                            ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
-                                                            : "/assets/images/courses/pic1.jpg"
-                                                    }
-                                                />
-                                            </a>
+                                            <img
+                                                src={
+                                                    course?.image
+                                                        ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                        : "/assets/images/courses/pic1.jpg"
+                                                }
+                                            />
                                         </div>
                                         <div className="ttr-post-info">
                                             <div className="ttr-post-title ">

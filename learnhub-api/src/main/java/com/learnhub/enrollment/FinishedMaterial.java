@@ -15,18 +15,21 @@ import com.learnhub.course.chapter.ChapterMaterial;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "finished_material")
 @IdClass(FinishedMaterialKey.class)
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class FinishedMaterial {
     @Id
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumns({
         @JoinColumn(name = "course_id", referencedColumnName = "course_id", nullable = false),
         @JoinColumn(name = "student_id", referencedColumnName = "student_id", nullable = false)
@@ -44,6 +47,7 @@ public class FinishedMaterial {
 
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 class FinishedMaterialKey implements Serializable {
     private Enrollment enrollment;
     private Long material;

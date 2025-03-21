@@ -73,3 +73,9 @@ values
 (2, '11111111100', 1),
 (2, 'You are not dumb', 0),
 (2, 'This question is dumb', 0);
+
+insert into course_purchase(course_id, student_id, purchase_price, purchased_at)
+values (2, 2, 0, now());
+
+insert into enrollment(course_id, student_id, `status`, enrolled_at)
+values (2, 2, 'IN_PROGRESS', now());
