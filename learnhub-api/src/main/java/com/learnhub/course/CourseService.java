@@ -262,6 +262,7 @@ public class CourseService {
         User manager = userRepository.findById(managerId)
                 .orElseThrow(() -> new ResourceNotFoundException("Manager not found with id: " + managerId));
 
+        course.setAssignAt(LocalDateTime.now());
         course.setManager(manager.getManager());
         courseRepository.save(course);
     }

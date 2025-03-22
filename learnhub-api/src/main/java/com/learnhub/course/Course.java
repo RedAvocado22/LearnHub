@@ -60,6 +60,9 @@ public class Course {
     @Column(name = "archived_at")
     private LocalDateTime archivedAt;
 
+    @Column(name = "assign_at")
+    private LocalDateTime assignAt;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "teacher_id", nullable = false)
     private TeacherProfile teacher;
