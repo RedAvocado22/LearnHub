@@ -176,6 +176,9 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                             <Link to="/profile">My profile</Link>
                                         </li>
                                         <li>
+                                            <Link to="/transactionhistory">My transaction</Link>
+                                        </li>
+                                        <li>
                                             <a href="#" onClick={handleLogout}>
                                                 Logout
                                             </a>

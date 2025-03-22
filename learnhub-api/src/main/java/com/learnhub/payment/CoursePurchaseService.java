@@ -10,6 +10,8 @@ import com.learnhub.user.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CoursePurchaseService {
     @Autowired
@@ -40,7 +42,13 @@ public class CoursePurchaseService {
                 status(responseCodeToStatus(req.responseCode())).
                 transaction_id(req.transactionCode()).
                 build();
-        
+
         coursePurchaseRepository.save(coursePurchase);
+    }
+
+    public List<CoursePurchase> getAllCoursePurchase(User user) {
+        return coursePurchaseRepository.findAll().stream().filter(
+                coursePurchase -> coursePurchase.getStudent().getId() == user.getId()).toList()
+                ;
     }
 }

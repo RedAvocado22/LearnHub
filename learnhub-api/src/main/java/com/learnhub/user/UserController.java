@@ -1,38 +1,24 @@
 package com.learnhub.user;
 
-import java.util.List;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.Valid;
 import com.learnhub.enrollment.EnrollmentService;
 import com.learnhub.payment.CoursePurchaseService;
 import com.learnhub.payment.PaymentRequest;
 import com.learnhub.payment.VNPayService;
 import com.learnhub.payment.dto.CoursePurchaseRequest;
+import com.learnhub.payment.dto.CoursePurchaseResponse;
 import com.learnhub.payment.dto.PaymentResponse;
-import com.learnhub.user.dto.AddUserRequest;
-import com.learnhub.user.dto.CurrentUserResponse;
-import com.learnhub.user.dto.ManageUserResponse;
-import com.learnhub.user.dto.UpdatePasswordRequest;
-import com.learnhub.user.dto.UpdateUserRequest;
+import com.learnhub.user.dto.*;
 import com.learnhub.util.ObjectMapper;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.MediaTypeFactory;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/users")
@@ -120,6 +106,11 @@ public class UserController {
             System.out.println("1");
         enrollmentService.createEnrollment(coursePurchaseRequest.user_id(), coursePurchaseRequest.course_id());
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/me/transactionHistory")
+    public ResponseEntity<List<CoursePurchaseResponse>> getAllAllCoursePurchase(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(coursePurchaseService.getAllCoursePurchase(user).stream().map(objectMapper::toCoursePurchaseResponse).toList());
     }
 
     @PostMapping("/payment")

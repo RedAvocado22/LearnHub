@@ -35,6 +35,7 @@ export { default as ContactDetails } from "./home/admin/ContactDetails";
 export { default as UserList } from "./home/admin/UserList";
 export { default as UserDetails } from "./home/admin/UserDetails";
 export { default as AddUser } from "./home/admin/AddUser";
+export { default as TransactionHistory } from "./home/student/TransactionHistory";
 
 //Payment
 export { default as Order } from "./home/payment/Order";
