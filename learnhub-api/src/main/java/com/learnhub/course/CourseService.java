@@ -40,7 +40,6 @@ public class CourseService {
     private final EntityManager entityManager;
     private final UserRepository userRepository;
 
-
     @Autowired
     public CourseService(
             CategoryRepository categoryRepository,

@@ -40,6 +40,8 @@ export { default as AddUser } from "./home/admin/AddUser";
 export { default as AdminCourseList} from "./home/admin/CourseList";
 export { default as AssignCourseManager } from "./home/admin/AssignCourseManager";
 export { default as TransactionHistory } from "./home/student/TransactionHistory";
+export { default as AdminCourseList} from "./home/admin/CourseList";
+export { default as AssignCourseManager } from "./home/admin/AssignCourseManager";
 
 //Payment
 export { default as Order } from "./home/payment/Order";
