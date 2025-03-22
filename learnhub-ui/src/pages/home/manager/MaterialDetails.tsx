@@ -35,7 +35,7 @@ export default function MaterialDetails() {
     const [course, setCourse] = useState<Course>();
 
     useEffect(() => {
-        API.get(`courses/manager/${courseId}`)
+        API.get(`courses/managers/${courseId}`)
             .then((resp) => setCourse(resp.data))
             .catch((err) => {
                 if (isAxiosError(err)) {
@@ -43,7 +43,7 @@ export default function MaterialDetails() {
                 }
                 console.error((err as Error).message);
             });
-    }, [courseId]); 
+    }, [courseId]);
 
     const material = course?.chapters
         .flatMap((chapter) => chapter.materials)

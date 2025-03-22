@@ -1,35 +1,33 @@
 package com.learnhub.course;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.learnhub.auth.LogoutHandlerImpl;
+import com.learnhub.aws.AwsS3Service;
+import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.category.Category;
-import com.learnhub.course.chapter.lesson.LessonMaterial;
+import com.learnhub.course.category.CategoryRepository;
+import com.learnhub.course.chapter.*;
 import com.learnhub.course.chapter.lesson.Lesson;
+import com.learnhub.course.chapter.lesson.LessonMaterial;
+import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
+import com.learnhub.course.chapter.lesson.dto.UpdateChapterMaterialRequest;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
 import com.learnhub.course.dto.UpdateCourseRequest;
+import com.learnhub.user.User;
+import com.learnhub.user.UserRepository;
+import com.learnhub.user.UserRole;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import com.learnhub.aws.AwsS3Service;
-import com.learnhub.common.exception.ResourceNotFoundException;
-import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
-import com.learnhub.user.User;
-import com.learnhub.course.category.CategoryRepository;
-import com.learnhub.course.chapter.Chapter;
-import com.learnhub.course.chapter.ChapterMaterial;
-import com.learnhub.course.chapter.ChapterMaterialRepository;
-import com.learnhub.course.chapter.ChapterRepository;
-import com.learnhub.course.chapter.MaterialType;
-import com.learnhub.course.chapter.lesson.dto.UpdateChapterMaterialRequest;
-import com.learnhub.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class CourseService {
@@ -41,6 +39,8 @@ public class CourseService {
 
     @PersistenceContext
     private final EntityManager entityManager;
+    private final UserRepository userRepository;
+    private final LogoutHandlerImpl logoutHandlerImpl;
 
     @Autowired
     public CourseService(
@@ -49,13 +49,15 @@ public class CourseService {
             ChapterRepository chapterRepository,
             ChapterMaterialRepository chapterMaterialRepository,
             AwsS3Service awsS3Service,
-            EntityManager entityManager) {
+            EntityManager entityManager, UserRepository userRepository, LogoutHandlerImpl logoutHandlerImpl) {
         this.categoryRepository = categoryRepository;
         this.courseRepository = courseRepository;
         this.chapterRepository = chapterRepository;
         this.chapterMaterialRepository = chapterMaterialRepository;
         this.awsS3Service = awsS3Service;
         this.entityManager = entityManager;
+        this.userRepository = userRepository;
+        this.logoutHandlerImpl = logoutHandlerImpl;
     }
 
     public List<Course> getAllPublicCourses() {
@@ -251,6 +253,17 @@ public class CourseService {
         }
         material.getLesson().getMaterials().addAll(materials);
         chapterMaterialRepository.save(material);
+    }
+
+    public void assignManager(Long courseId, Long managerId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new ResourceNotFoundException("Course not found with id: " + courseId));
+
+        User manager = userRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found with id: " + managerId));
+
+        course.setManager(manager.getManager());
+        courseRepository.save(course);
     }
 
     @Transactional

@@ -17,7 +17,7 @@ export const ManagerCourseDetail: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        API.get(`courses/manager/${id}`)
+        API.get(`courses/managers/${id}`)
             .then((resp) => setCourse(resp?.data))
             .catch((err) => toast.error(err.response?.data || "Something went wrong"));
     }, [id]);

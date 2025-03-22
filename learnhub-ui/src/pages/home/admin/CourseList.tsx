@@ -11,18 +11,22 @@ interface Course {
     name: string;
     status: CourseStatus;
     createdAt: Date;
+    manager?: {
+        id: number;
+        name: string;
+    } | null;
 }
 
 const itemsPerPage = 10;
-export default function ManagerCourseList() {
+export default function AdminCourseList() {
     const [params] = useSearchParams();
     const status = params.get("status") || "pending";
     const [courses, setCourses] = useState<Course[]>([]);
     const [currPage, setCurrPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
 
-    useEffect(() => {
-        API.get("courses/managers")
+    const fetchCourses = () => {
+        API.get("courses/admin")
             .then((resp) => setCourses(resp.data))
             .catch((err) => {
                 if (isAxiosError(err)) {
@@ -30,6 +34,10 @@ export default function ManagerCourseList() {
                 }
                 console.error((err as Error).message);
             });
+    };
+
+    useEffect(() => {
+        fetchCourses();
     }, []);
 
     let list = courses
@@ -64,18 +72,18 @@ export default function ManagerCourseList() {
                                     <div className="email-menu-bar">
                                         <div className="email-menu-bar-inner">
                                             <ul>
-                                                <li className={status === "teachers" ? "active" : ""}>
-                                                    <Link to="/manager/courses?status=pending">
+                                                <li className={status === "pending" ? "active" : ""}>
+                                                    <Link to="/admin/courses?status=pending">
                                                         <i className="fa fa-book"></i>Pending
                                                     </Link>
                                                 </li>
-                                                <li className={status === "coursemanagers" ? "active" : ""}>
-                                                    <Link to="/manager/courses?status=public">
+                                                <li className={status === "public" ? "active" : ""}>
+                                                    <Link to="/admin/courses?status=public">
                                                         <i className="fa fa-user"></i>Public
                                                     </Link>
                                                 </li>
-                                                <li className={status === "students" ? "active" : ""}>
-                                                    <Link to="/manager/courses?status=cancelled">
+                                                <li className={status === "cancelled" ? "active" : ""}>
+                                                    <Link to="/admin/courses?status=cancelled">
                                                         <i className="fa fa-graduation-cap"></i>Cancelled
                                                     </Link>
                                                 </li>
@@ -95,11 +103,12 @@ export default function ManagerCourseList() {
                                             </div>
                                             <div className="next-prev-btn">
                                                 <span className="mr-3">
-                                                    Page {currPage + 1} of {totalPages}
+                                                    Page {currPage + 1} of {totalPages || 1}
                                                 </span>
                                                 <a
                                                     href="#"
-                                                    onClick={() => {
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
                                                         if (currPage > 0) {
                                                             setCurrPage(currPage - 1);
                                                         }
@@ -108,7 +117,8 @@ export default function ManagerCourseList() {
                                                 </a>{" "}
                                                 <a
                                                     href="#"
-                                                    onClick={() => {
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
                                                         if (currPage < totalPages - 1) {
                                                             setCurrPage(currPage + 1);
                                                         }
@@ -131,15 +141,27 @@ export default function ManagerCourseList() {
                                                     <div className="mail-list-title">
                                                         <h6>
                                                             <Link
-                                                                to={`/manager/courses/${course.id}`}
+                                                                to={`/admin/courses/${course.id}`}
                                                                 state={{ status: course.status }}>
                                                                 {course.name}
                                                             </Link>
                                                         </h6>
                                                     </div>
-
                                                     <div className="mail-list-time">
                                                         <span>{new Date(course.createdAt).toDateString()}</span>
+                                                    </div>
+                                                    <div className="mail-list-manager">
+                                                        {course.manager ? (
+                                                            <small className="text-muted">
+                                                                Manager: {course.manager.name}
+                                                            </small>
+                                                        ) : (
+                                                            <Link
+                                                                to={`/admin/courses/${course.id}/assign-manager`}
+                                                                className=" assign-manager">
+                                                                Assign Manager
+                                                            </Link>
+                                                        )}
                                                     </div>
                                                 </div>
                                             ))}

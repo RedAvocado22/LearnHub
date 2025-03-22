@@ -5,11 +5,13 @@ import com.learnhub.common.dto.PublicTeacherResponse;
 import com.learnhub.course.Course;
 import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
+import com.learnhub.course.dto.AdminCourseResponse;
 import com.learnhub.course.dto.ManagerCourseResponse;
 import com.learnhub.course.dto.ManagerCoursesResponse;
 import com.learnhub.user.User;
 import com.learnhub.user.dto.CurrentUserResponse;
 import com.learnhub.user.dto.ManageUserResponse;
+import com.learnhub.user.dto.ManagerResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,14 @@ public class ObjectMapper {
 
     public ManagerCourseResponse toManagerCourseResponse(Course course) {
         return ManagerCourseResponse.from(course);
+    }
+
+    public AdminCourseResponse toAdminCourseResponse(Course course) {
+        return AdminCourseResponse.from(course);
+    }
+
+    public ManagerResponse toManagerResponse(User user) {
+        return ManagerResponse.from(user.getManager());
     }
 
     public ChapterResponse toChapterResponse(Chapter chapter) {

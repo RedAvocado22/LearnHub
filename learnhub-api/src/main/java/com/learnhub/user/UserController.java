@@ -133,4 +133,14 @@ public class UserController {
                     ));
         }
     }
+
+    @GetMapping("/managers")
+    public ResponseEntity<List<ManagerResponse>> getAllManager() {
+        return ResponseEntity.ok(
+                userService.getAllExceptAdmin().stream()
+                        .filter(user -> user.getRole().equals(UserRole.COURSE_MANAGER))
+                        .map(objectMapper::toManagerResponse)
+                        .toList()
+        );
+    }
 }
