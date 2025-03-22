@@ -107,12 +107,8 @@ export default function TransactionHistory() {
                                                 fontWeight: "bold",
                                                 textTransform: "uppercase",
                                                 backgroundColor:
-                                                    course.status.toLowerCase() === "success"
-                                                        ? "#28a745"
-                                                        : course.status.toLowerCase() === "pending"
-                                                          ? "#ffc107"
-                                                          : "#dc3545",
-                                                color: course.status.toLowerCase() === "pending" ? "black" : "white"
+                                                    course.status.toLowerCase() === "success" ? "#28a745" : "#dc3545",
+                                                color: "white"
                                             }}>
                                             {course.status}
                                         </span>
