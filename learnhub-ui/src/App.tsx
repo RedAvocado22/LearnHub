@@ -37,7 +37,8 @@ import {
     ManagerMaterialDetails,
     Order,
     PaymentCallback,
-    StudentMaterialDetails
+    StudentMaterialDetails,
+    TransactionHistory
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -108,6 +109,7 @@ export default function App() {
                 <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
                     <Route path="/order" element={<Order />} />
                     <Route path="/paymentcallback" element={<PaymentCallback />} />
+                    <Route path="/transactionhistory" element={<TransactionHistory />} />
                 </Route>
 
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
