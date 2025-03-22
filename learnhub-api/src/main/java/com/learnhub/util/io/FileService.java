@@ -1,13 +1,5 @@
 package com.learnhub.util.io;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
-import java.util.UUID;
 import com.learnhub.user.User;
 import com.learnhub.user.UserDocument;
 import org.slf4j.Logger;
@@ -17,11 +9,22 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
+
 @Service
 public class FileService {
     private static final Logger log = LoggerFactory.getLogger(FileService.class);
+    
     @Value("${application.uploads.path}")
     private String uploadsBasePath;
+
     @Value("${application.uploads.path}/users/documents")
     private String documentDir;
 
