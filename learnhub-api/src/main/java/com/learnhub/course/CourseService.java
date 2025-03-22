@@ -361,4 +361,8 @@ public class CourseService {
     public List<Course> getNewestCourses() {
         return courseRepository.findNewestCourses(8);
     }
+
+    public List<Course> getNewestCourses() {
+        return courseRepository.findNewestCourses(8);
+    }
 }
