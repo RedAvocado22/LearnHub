@@ -1,11 +1,18 @@
 package com.learnhub.contact;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(path = "/api/v1")
+@RequestMapping(path = "/api/v1/contacts")
 public class ContactController {
     private final ContactService contactService;
 
@@ -14,20 +21,20 @@ public class ContactController {
         this.contactService = contactService;
     }
 
-    @PostMapping("/contact")
-    public ResponseEntity<String> contactUs(@RequestBody ContactRequest contact) {
-        if (contact.email() == null || contact.phone() == null || contact.firstName() == null || contact.lastName() == null || contact.message() == null) {
-            return ResponseEntity.badRequest().build();
-        }
+    @GetMapping
+    public ResponseEntity<List<Contact>> getAll() {
+        return ResponseEntity.ok(contactService.getAll());
+    }
 
-        final String PHONE_REGEX = "^[0-9]{10,11}";
-        final String EMAIL_REGEX = "^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$";
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteOne(@PathVariable("id") Long id) {
+        contactService.deleteById(id);
+        return ResponseEntity.ok("Success");
+    }
 
-        if (!contact.email().matches(EMAIL_REGEX) || !contact.phone().matches(PHONE_REGEX)) {
-            return ResponseEntity.badRequest().build();
-        }
-
-        contactService.saveContact(contact);
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateStatus(@PathVariable("id") Long id) {
+        contactService.resolveContact(id);
         return ResponseEntity.ok("Success");
     }
 }

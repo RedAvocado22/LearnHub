@@ -3,28 +3,47 @@ import { useEffect, useState } from "react";
 import { Routes, Route } from "react-router-dom";
 import {
     NotFound,
-    Home,
+    Landing,
     Login,
+    ManagerLogin,
     Register,
     Unauthorized,
     ForgotPassword,
     ResetPassword,
-    StudentDashboard,
-    TeacherDashboard,
-    TeacherProfile,
-    CourseList
+    CourseList,
+    TeacherDetails,
+    ContactUs,
+    Home,
+    UserProfile,
+    FAQ,
+    About,
+    UserCourseList,
+    ContactList,
+    ContactDetails,
+    UserList,
+    UserDetails,
+    AddUser,
+    DoQuiz,
+    QuizResult,
+    TestVideo,
+    CreateCourse,
+    CourseDetail,
+    CourseDetails,
+    AddLesson,
+    TeacherMaterialDetails,
+    AddQuiz,
+    ManagerCourseList,
+    ManagerCourseDetails,
+    ManagerMaterialDetails,
+    Order,
+    PaymentCallback,
+    StudentMaterialDetails
 } from "./pages";
-import { ManagerDashboard, ManagerLogin } from "./pages/manager";
-import GuestRoute from "./routers/GuestRoute";
-import ProtectedRoute from "./routers/ProtectedRoute";
+import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
-import AuthProvider from "./hooks/useAuth";
 import { ToastContainer } from "react-toastify";
-import { UserRole } from "./types/Account";
-import ContactUs from "./pages/ContactUs";
-import { DashboardLayout } from "./layouts";
-import Mailbox from "./pages/manager/teacher/Mailbox";
-import UserProfile from "./pages/UserProfile";
+import { UserRole } from "./types/User";
+import UserProvider from "./hooks/useUser";
 
 export default function App() {
     const [isLoading, setLoading] = useState(true);
@@ -46,59 +65,79 @@ export default function App() {
     }
 
     return (
-        <AuthProvider>
+        <UserProvider>
             <Routes>
-                <Route path="/" element={<Home />} />
-                <Route
-                    path="/test"
-                    element={
-                        <DashboardLayout>
-                            <></>
-                        </DashboardLayout>
-                    }
-                />
-
-                <Route path="/activate/:token" element={<Login />} />
-                <Route element={<GuestRoute />}>
-                    <Route path="/login" element={<Login />} />
-                </Route>
-                <Route element={<ProtectedRoute />}>
-                    <Route path="/userProfile" element={<UserProfile />}></Route>
-                </Route>
-                <Route element={<GuestRoute />}>
-                    <Route path="/manager/login" element={<ManagerLogin />} />
-                </Route>
-                <Route element={<GuestRoute />}>
-                    <Route path="/register" element={<Register />} />
-                </Route>
-                <Route element={<GuestRoute />}>
-                    <Route path="/forgot-password" element={<ForgotPassword />} />
-                </Route>
-                <Route element={<GuestRoute />}>
-                    <Route path="/reset-password/:token" element={<ResetPassword />} />
-                </Route>
-                <Route path="/teacher-profile/:id" element={<TeacherProfile />}></Route>
-                <Route path="/contact" element={<ContactUs />} />
                 <Route element={<ProtectedRoute />}>
                     <Route path="/dummy" element={<Dummy />} />
                 </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
-                    <Route path="/learning" element={<StudentDashboard />} />
-                </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
-                    <Route path="/dashboard" element={<TeacherDashboard />} />
-                </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER, UserRole.COURSE_MANAGER]} />}>
-                    <Route path="/manager/dashboard" element={<ManagerDashboard />} />
-                </Route>
+                {/* Public Routes */}
+                <Route path="/" element={<Landing />} />
+                <Route path="/contact" element={<ContactUs />} />
+                <Route path="/activate/:token" element={<Login />} />
                 <Route path="/courses" element={<CourseList />} />
-                <Route element={<ProtectedRoute roles={[UserRole.TEACHER_MANAGER]} />}>
-                    <Route path="/manager/mailbox" element={<Mailbox />} />
+                <Route path="/teacher/:id" element={<TeacherDetails />} />
+                <Route path="/faq" element={<FAQ />} />
+                <Route path="/about" element={<About />} />
+                <Route path="/courses/:id" element={<CourseDetail />} />
+
+                {/* Routes for unauthenticated users */}
+                <Route element={<GuestRoute />}>
+                    <Route path="/login" element={<Login />} />
+                    <Route path="/manager/login" element={<ManagerLogin />} />
+                    <Route path="/register" element={<Register />} />
+                    <Route path="/forgot-password" element={<ForgotPassword />} />
+                    <Route path="/reset-password/:token" element={<ResetPassword />} />
+                    <Route path="/test" element={<TestVideo />} />
                 </Route>
+
+                {/* Routes for authenticated users */}
+                <Route element={<ProtectedRoute />}>
+                    <Route path="/home" element={<Home />} />
+                    <Route path="/profile" element={<UserProfile />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT, UserRole.TEACHER]} />}>
+                    <Route path="/home/courses" element={<UserCourseList />} />
+                    <Route path="/home/courses/:id" element={<CourseDetails />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
+                    <Route path="/home/courses/:cid/materials/:mid" element={<StudentMaterialDetails />} />
+                    <Route path="/home/courses/:cid/quizzes/:qid/do-quiz" element={<DoQuiz />} />
+                    <Route path="/home/courses/:cid/quizzes/:qid/result/:rid" element={<QuizResult />} />
+                </Route>
+
+                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
+                    <Route path="/order" element={<Order />} />
+                    <Route path="/paymentcallback" element={<PaymentCallback />} />
+                </Route>
+
+                <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>
+                    <Route path="/home/courses/create" element={<CreateCourse />} />
+                    <Route path="/home/courses/:cid/chapters/:chid/lessons/add" element={<AddLesson />} />
+                    <Route path="/home/courses/:cid/chapters/:chid/quizes/add" element={<AddQuiz />} />
+                    <Route path="/home/courses/materials/:mid" element={<TeacherMaterialDetails />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
+                    <Route element={<ContactsProviderRoute />}>
+                        <Route path="/admin/contacts" element={<ContactList />} />
+                        <Route path="/admin/contacts/:id" element={<ContactDetails />} />
+                    </Route>
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
+                    <Route path="/admin/users" element={<UserList />} />
+                    <Route path="/admin/users/:id" element={<UserDetails />} />
+                    <Route path="/admin/users/add" element={<AddUser />} />
+                </Route>
+                <Route element={<ProtectedRoute roles={[UserRole.COURSE_MANAGER]} />}>
+                    <Route path="/manager/courses" element={<ManagerCourseList />} />
+                    <Route path="/manager/courses/:id" element={<ManagerCourseDetails />} />
+                    <Route path="/manager/courses/:cid/materials/:id" element={<ManagerMaterialDetails />} />
+                </Route>
+
+                {/* Error Boundary */}
                 <Route path="/unauthorized" element={<Unauthorized />} />
                 <Route path="/*" element={<NotFound />} />
             </Routes>
             <ToastContainer position="top-right" style={{ zIndex: 999999 }} />
-        </AuthProvider>
+        </UserProvider>
     );
 }
