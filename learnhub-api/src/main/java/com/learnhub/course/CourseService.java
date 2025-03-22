@@ -374,4 +374,8 @@ public class CourseService {
         course.setStatus(status);
         courseRepository.save(course);
     }
+
+    public List<Course> getNewestCourses() {
+        return courseRepository.findNewestCourses(8);
+    }
 }

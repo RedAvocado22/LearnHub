@@ -10,13 +10,13 @@ export default function CourseCard({ id, title, imagePath, category, price }: Co
     return (
         <div className="item">
             <div className="cours-bx">
-                <div className="action-box">
+                <div className="action-box" style={{ height: "155px" }}>
                     <img src={imagePath} alt="" />
                     <a href={`/courses/${id}`} className="btn">
                         Read More
                     </a>
                 </div>
-                <div className="info-bx text-center">
+                <div className="info-bx text-center" style={{ height: "110px" }}>
                     <h5>
                         <a href={`/courses/${id}`}>{title}</a>
                     </h5>

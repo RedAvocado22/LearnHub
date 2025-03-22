@@ -4,39 +4,64 @@ import Slider from "react-slick";
 import CountUp from "react-countup";
 import { MainLayout } from "../../layouts";
 import CourseCard from "../../layouts/elements/CourseCard";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { API } from "../../api";
+import { toast } from "react-toastify";
 
-const popularCourses = [
-    {
-        id: 1,
-        title: "Introduction EduChamp – LMS plugin",
-        category: "Programming",
-        imagePath: "assets/images/courses/pic1.jpg",
-        price: 120
-    },
-    {
-        id: 2,
-        title: "Introduction EduChamp – LMS plugin",
-        category: "Programming",
-        imagePath: "assets/images/courses/pic2.jpg",
-        price: 120
-    },
-    {
-        id: 3,
-        title: "Introduction EduChamp – LMS plugin",
-        category: "Programming",
-        imagePath: "assets/images/courses/pic3.jpg",
-        price: 120
-    },
-    {
-        id: 4,
-        title: "Introduction EduChamp – LMS plugin",
-        category: "Programming",
-        imagePath: "assets/images/courses/pic4.jpg",
-        price: 120
-    }
-];
+interface Category {
+    id: number;
+    name: string;
+}
+
+interface Course {
+    id: number;
+    name: string;
+    image: string;
+    price: number;
+    category: Category;
+}
+
+interface LandingPageData {
+    studentCounted: number;
+    teacherCounted: number;
+    courseCounted: number;
+    courses: Course[];
+}
 
 export default function Landing() {
+    const [searchQuery, setSearchQuery] = useState("");
+    const [landingData, setLandingData] = useState<LandingPageData>({
+        studentCounted: 0,
+        teacherCounted: 0,
+        courseCounted: 0,
+        courses: []
+    });
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchLandingPageData = async () => {
+            try {
+                setIsLoading(true);
+                const response = await API.get("public/landing-page");
+                setLandingData(response.data);
+                setIsLoading(false);
+            } catch (error) {
+                console.error("Error fetching landing page data:", error);
+                toast.error("Failed to load landing page data");
+                setIsLoading(false);
+            }
+        };
+
+        fetchLandingPageData();
+    }, []);
+
+    const handleSearch = (e) => {
+        e.preventDefault();
+        navigate(`/courses?search=${encodeURIComponent(searchQuery)}`);
+    };
+
     return (
         <MainLayout>
             <div className="page-content bg-white">
@@ -47,14 +72,16 @@ export default function Landing() {
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12 text-center text-white">
-                                <h2>Online Courses To Learn</h2>
-                                <h5>Own Your Feature Learning New Skills Online</h5>
-                                <form className="cours-search">
+                                <h2>High School Courses To Learn</h2>
+                                <h5>Enhance Your Skills with Online Learning for High School Students</h5>
+                                <form className="cours-search" onSubmit={handleSearch}>
                                     <div className="input-group">
                                         <input
                                             type="text"
                                             className="form-control"
-                                            placeholder="What do you want to learn today?"
+                                            placeholder="What subject would you like to learn today?"
+                                            value={searchQuery}
+                                            onChange={(e) => setSearchQuery(e.target.value)}
                                         />
                                         <div className="input-group-append">
                                             <button className="btn" type="submit">
@@ -65,39 +92,43 @@ export default function Landing() {
                                 </form>
                             </div>
                         </div>
+
                         <div className="mw800 m-auto">
                             <div className="row">
-                                <div className="col-md-4 col-sm-6">
+                                <div className="col-md-6 col-sm-6">
                                     <div className="cours-search-bx m-b30">
                                         <div className="icon-box">
                                             <h3>
                                                 <i className="ti-user"></i>
-                                                <CountUp start={0} end={5} duration={5} className="counter" />M
+                                                <CountUp
+                                                    start={0}
+                                                    end={isLoading ? 0 : landingData.studentCounted}
+                                                    duration={5}
+                                                    className="counter"
+                                                />
                                             </h3>
                                         </div>
-                                        <span className="cours-search-text">Over 5 million student</span>
+                                        <span className="cours-search-text">
+                                            {isLoading ? "Loading..." : `${landingData.studentCounted} Students`}
+                                        </span>
                                     </div>
                                 </div>
-                                <div className="col-md-4 col-sm-6">
+                                <div className="col-md-6 col-sm-6">
                                     <div className="cours-search-bx m-b30">
                                         <div className="icon-box">
                                             <h3>
                                                 <i className="ti-book"></i>
-                                                <CountUp start={0} end={30} duration={5} className="counter" />K
+                                                <CountUp
+                                                    start={0}
+                                                    end={isLoading ? 0 : landingData.teacherCounted}
+                                                    duration={5}
+                                                    className="counter"
+                                                />
                                             </h3>
                                         </div>
-                                        <span className="cours-search-text">30,000 Courses.</span>
-                                    </div>
-                                </div>
-                                <div className="col-md-4 col-sm-12">
-                                    <div className="cours-search-bx m-b30">
-                                        <div className="icon-box">
-                                            <h3>
-                                                <i className="ti-layout-list-post"></i>
-                                                <CountUp start={0} end={20} duration={5} className="counter" />K
-                                            </h3>
-                                        </div>
-                                        <span className="cours-search-text">Learn Anythink Online.</span>
+                                        <span className="cours-search-text">
+                                            {isLoading ? "Loading..." : `${landingData.teacherCounted} Teachers`}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -112,36 +143,44 @@ export default function Landing() {
                             <div className="row">
                                 <div className="col-md-12 heading-bx left">
                                     <h2 className="title-head">
-                                        Popular <span>Courses</span>
+                                        Newest <span>High School Courses</span>
                                     </h2>
                                     <p>
-                                        It is a long established fact that a reader will be distracted by the readable
-                                        content of a page
+                                        Discover a wide range of high school courses designed to help students build the
+                                        foundation for their future. Whether it's Math, Science, or English, we've got
+                                        everything you need to succeed.
                                     </p>
                                 </div>
                             </div>
                             <div className="row">
-                                <Slider
-                                    dots={true}
-                                    infinite={true}
-                                    speed={500}
-                                    slidesToShow={4}
-                                    slidesToScroll={1}
-                                    className="courses-carousel col-12 p-lr0">
-                                    {!!popularCourses.length &&
-                                        popularCourses.map((course) => {
-                                            return (
-                                                <CourseCard
-                                                    key={course.id.toString()}
-                                                    id={course.id}
-                                                    title={course.title}
-                                                    imagePath={course.imagePath}
-                                                    category={course.category}
-                                                    price={course.price}
-                                                />
-                                            );
-                                        })}
-                                </Slider>
+                                {isLoading ? (
+                                    <div className="col-12 text-center">
+                                        <p>Loading courses...</p>
+                                    </div>
+                                ) : (
+                                    <Slider
+                                        dots={true}
+                                        infinite={true}
+                                        speed={500}
+                                        slidesToShow={landingData.courses.length < 4 ? landingData.courses.length : 4}
+                                        slidesToScroll={1}
+                                        className="courses-carousel col-12 p-lr0">
+                                        {landingData.courses.map((course) => (
+                                            <CourseCard
+                                                key={course.id.toString()}
+                                                id={course.id}
+                                                title={course.name}
+                                                imagePath={
+                                                    course.image
+                                                        ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                        : "assets/images/courses/pic1.jpg"
+                                                }
+                                                category={course.category.name}
+                                                price={course.price}
+                                            />
+                                        ))}
+                                    </Slider>
+                                )}
                             </div>
                         </div>
                     </div>
@@ -157,17 +196,18 @@ export default function Landing() {
                                             Learn a new skill online on <br /> your time
                                         </h2>
                                         <h4>
-                                            <CountUp start={0} end={57000} duration={5} className="counter" /> Online
-                                            Courses
+                                            <CountUp
+                                                start={0}
+                                                end={landingData.courseCounted}
+                                                duration={5}
+                                                className="counter"
+                                            />{" "}
+                                            High School Courses
                                         </h4>
                                         <p>
-                                            Lorem Ipsum is simply dummy text of the printing and typesetting industry.
-                                            Lorem Ipsum has been the industry's standard dummy text ever since the
-                                            1500s, when an unknown printer took a galley of type and scrambled it to
-                                            make a type specimen book.Lorem Ipsum is simply dummy text of the printing
-                                            and typesetting industry. Lorem Ipsum has been the industry's standard dummy
-                                            text ever since the 1500s, when an unknown printer took a galley of type and
-                                            scrambled it to make a type specimen book.
+                                            Our platform provides high-quality courses that allow students to learn at
+                                            their own pace. From science to history, you can find everything you need to
+                                            excel in school and prepare for exams.
                                         </p>
                                         <a href="/register" className="btn button-md">
                                             Join Now
@@ -187,13 +227,17 @@ export default function Landing() {
                                         <br /> <span className="text-primary"> on your time</span>
                                     </h2>
                                     <h4>
-                                        <CountUp start={0} end={57000} duration={5} className="counter" /> Online
-                                        Courses
+                                        <CountUp
+                                            start={0}
+                                            end={landingData.courses.length}
+                                            duration={5}
+                                            className="counter"
+                                        />{" "}
+                                        High School Courses
                                     </h4>
                                     <p>
-                                        Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem
-                                        Ipsum has been the industry's standard dummy text ever since the 1500s, when an
-                                        unknown printer took a galley of type.
+                                        High school students can access a variety of subjects and levels. Master
+                                        subjects like Math, English, and Science to boost your grades and knowledge.
                                     </p>
                                     <a href="/register" className="btn button-md">
                                         Join Now
@@ -210,7 +254,9 @@ export default function Landing() {
                                                 </div>
                                                 <div className="icon-content">
                                                     <h5 className="ttr-tilte">Our Philosophy</h5>
-                                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
+                                                    <p>
+                                                        We believe in providing accessible education for all students.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -223,7 +269,10 @@ export default function Landing() {
                                                 </div>
                                                 <div className="icon-content">
                                                     <h5 className="ttr-tilte">Kingster's Principle</h5>
-                                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
+                                                    <p>
+                                                        We focus on providing structured courses that match school
+                                                        curriculums.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -236,7 +285,9 @@ export default function Landing() {
                                                 </div>
                                                 <div className="icon-content">
                                                     <h5 className="ttr-tilte">Key Of Success</h5>
-                                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
+                                                    <p>
+                                                        Consistency and hard work are the keys to mastering any subject.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -249,7 +300,10 @@ export default function Landing() {
                                                 </div>
                                                 <div className="icon-content">
                                                     <h5 className="ttr-tilte">Our Philosophy</h5>
-                                                    <p>Lorem ipsum dolor sit amet, consectetuer adipiscing.</p>
+                                                    <p>
+                                                        Empowering students to be independent learners with the right
+                                                        resources.
+                                                    </p>
                                                 </div>
                                             </div>
                                         </div>
@@ -259,52 +313,58 @@ export default function Landing() {
                         </div>
                     </div>
 
-                    {/* Testimonials */}
+                    {/* Stats */}
                     <div
                         className="section-area section-sp1 bg-fix ovbl-dark text-white"
                         style={{ backgroundImage: "url(assets/images/background/bg1.jpg)" }}>
                         <div className="container">
                             <div className="row">
-                                <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
+                                <div className="col-lg-4 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={3000} duration={5} className="counter" />
+                                            <CountUp
+                                                start={0}
+                                                end={landingData.studentCounted}
+                                                duration={5}
+                                                className="counter"
+                                            />
                                             <span>+</span>
                                         </div>
-                                        <span className="counter-text">Completed Projects</span>
+                                        <span className="counter-text">Students</span>
                                     </div>
                                 </div>
-                                <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
+                                <div className="col-lg-4 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={2500} duration={5} className="counter" />
+                                            <CountUp
+                                                start={0}
+                                                end={landingData.teacherCounted}
+                                                duration={5}
+                                                className="counter"
+                                            />
                                             <span>+</span>
                                         </div>
-                                        <span className="counter-text">Happy Clients</span>
+                                        <span className="counter-text">Teachers</span>
                                     </div>
                                 </div>
-                                <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
+                                <div className="col-lg-4 col-md-6 col-sm-6 col-6 m-b30">
                                     <div className="counter-style-1">
                                         <div className="text-white">
-                                            <CountUp start={0} end={1500} duration={5} className="counter" />
+                                            <CountUp
+                                                start={0}
+                                                end={landingData.courses.length}
+                                                duration={5}
+                                                className="counter"
+                                            />
                                             <span>+</span>
                                         </div>
-                                        <span className="counter-text">Questions Answered</span>
-                                    </div>
-                                </div>
-                                <div className="col-lg-3 col-md-6 col-sm-6 col-6 m-b30">
-                                    <div className="counter-style-1">
-                                        <div className="text-white">
-                                            <CountUp start={0} end={1000} duration={5} className="counter" />
-                                            <span>+</span>
-                                        </div>
-                                        <span className="counter-text">Ordered Coffee's</span>
+                                        <span className="counter-text">Courses</span>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                    {/* Testimonials END */}
+                    {/* Stats END */}
                     {/* Testimonials ==== */}
                     <div className="section-area section-sp2">
                         <div className="container">
@@ -313,10 +373,7 @@ export default function Landing() {
                                     <h2 className="title-head text-uppercase">
                                         what people <span>say</span>
                                     </h2>
-                                    <p>
-                                        It is a long established fact that a reader will be distracted by the readable
-                                        content of a page
-                                    </p>
+                                    <p>Our students and teachers share their experiences with the platform.</p>
                                 </div>
                             </div>
                             <Slider
@@ -337,9 +394,9 @@ export default function Landing() {
                                         </div>
                                         <div className="testimonial-content">
                                             <p>
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                industry. Lorem Ipsum has been the industry's standard dummy text ever
-                                                since the 1500s, when an unknown printer took a galley of type...
+                                                "This platform has helped me learn at my own pace. I can now understand
+                                                high school subjects much better, thanks to the amazing teachers and
+                                                resources available."
                                             </p>
                                         </div>
                                     </div>
@@ -350,14 +407,13 @@ export default function Landing() {
                                             <img src="assets/images/testimonials/pic2.jpg" alt="" />
                                         </div>
                                         <div className="testimonial-info">
-                                            <h5 className="name">Peter Packer</h5>
-                                            <p>-Art Director</p>
+                                            <h5 className="name">Sarah Lee</h5>
+                                            <p>-High School Student</p>
                                         </div>
                                         <div className="testimonial-content">
                                             <p>
-                                                Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                industry. Lorem Ipsum has been the industry's standard dummy text ever
-                                                since the 1500s, when an unknown printer took a galley of type...
+                                                "The courses on this platform are easy to follow, and I can study
+                                                whenever I want. It’s been an amazing experience to improve my grades!"
                                             </p>
                                         </div>
                                     </div>
