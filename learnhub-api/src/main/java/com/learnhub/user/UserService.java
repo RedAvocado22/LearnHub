@@ -1,7 +1,6 @@
 package com.learnhub.user;
 
-import java.io.IOException;
-import java.util.List;
+import com.learnhub.aws.AwsS3Service;
 import com.learnhub.user.dto.AddUserRequest;
 import com.learnhub.user.dto.UpdatePasswordRequest;
 import com.learnhub.user.dto.UpdateUserRequest;
@@ -20,6 +19,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.util.List;
+
 @Service
 public class UserService {
     private static final Logger log = LoggerFactory.getLogger(UserService.class);
@@ -27,26 +29,23 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
     private final FileService fileService;
+    private final AwsS3Service awsS3Service;
 
     @Autowired
     public UserService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             EmailService emailService,
-            FileService fileService) {
+            FileService fileService, AwsS3Service awsS3Service) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.fileService = fileService;
+        this.awsS3Service = awsS3Service;
     }
 
     public List<User> getAllExceptAdmin() {
         return userRepository.findAll().stream().filter(user -> user.getRole() != UserRole.ADMIN).toList();
-    }
-
-    public User getUserByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with email %s does not exists", email)));
     }
 
     public User getUserById(Long id) {
@@ -57,7 +56,7 @@ public class UserService {
     @Transactional(readOnly = true)
     public User getTeacherById(Long id) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
         if (user.getRole() != UserRole.TEACHER || user.getTeacher() == null) {
             throw new UserNotFoundException("User is not a teacher");
         }
@@ -67,13 +66,13 @@ public class UserService {
     public Long addUserWithDefaultPassword(AddUserRequest req) {
         String defaultPw = "ABC@123";
         User user = User.builder()
-            .email(req.email())
-            .firstName(req.firstName())
-            .lastName(req.lastName())
-            .password(passwordEncoder.encode(defaultPw))
-            .role(req.role())
-            .status(UserStatus.ACTIVE)
-            .build();
+                .email(req.email())
+                .firstName(req.firstName())
+                .lastName(req.lastName())
+                .password(passwordEncoder.encode(defaultPw))
+                .role(req.role())
+                .status(UserStatus.ACTIVE)
+                .build();
         if (user.getRole() == UserRole.STUDENT && req.student() != null) {
             user.setStudent(StudentProfile.builder().user(user)
                     .type(req.student().type())
@@ -95,7 +94,7 @@ public class UserService {
     @Transactional
     public void saveUserDocuments(Long id, MultipartFile[] files) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
         for (MultipartFile file : files) {
             try {
                 user.getDocuments().add(fileService.saveUserDocument(user, file.getOriginalFilename(), file.getInputStream()));
@@ -113,7 +112,7 @@ public class UserService {
     @Transactional
     public void deleteUserDocument(Long id, String fileName) {
         User user = userRepository.findById(id)
-            .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
         if (!fileService.deleteUserDocument(fileName)) {
             log.warn("User document {} doesn't exists on disk", fileName);
         }
@@ -144,6 +143,16 @@ public class UserService {
             throw new OldPasswordNotMatchedException("The password doesn't match with current password.");
         }
         user.setPassword(passwordEncoder.encode(req.newPassword()));
+        userRepository.save(user);
+    }
+
+    public void saveUserAvatar(User user, MultipartFile file) {
+        if (user.getAvatar() != null) {
+            awsS3Service.deleteFile(user.getAvatar());
+        }
+
+        String fileUrl = awsS3Service.saveFile(file);
+        user.setAvatar(fileUrl);
         userRepository.save(user);
     }
 }

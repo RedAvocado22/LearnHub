@@ -1,7 +1,5 @@
 package com.learnhub.util;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import com.learnhub.common.dto.PublicCourseResponse;
 import com.learnhub.common.dto.PublicTeacherResponse;
 import com.learnhub.course.Course;
@@ -12,6 +10,8 @@ import com.learnhub.course.dto.ManagerCoursesResponse;
 import com.learnhub.user.User;
 import com.learnhub.user.dto.CurrentUserResponse;
 import com.learnhub.user.dto.ManageUserResponse;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,7 +51,7 @@ public class ObjectMapper {
     public ManagerCourseResponse toManagerCourseResponse(Course course) {
         return ManagerCourseResponse.from(course);
     }
-    
+
     public ChapterResponse toChapterResponse(Chapter chapter) {
         return ChapterResponse.from(chapter);
     }

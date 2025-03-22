@@ -126,6 +126,7 @@ export interface User {
     lastName: string;
     role: UserRole;
     status: UserStatus;
+    avatar: string;
     student: StudentProfile | null;
     teacher: TeacherProfile | null;
     createdAt: Date;
