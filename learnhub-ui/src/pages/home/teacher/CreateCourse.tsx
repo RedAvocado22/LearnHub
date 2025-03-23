@@ -6,6 +6,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../../hooks/useUser";
 
 interface Category {
     id: number;
@@ -13,6 +14,7 @@ interface Category {
 }
 
 const CreateCourse: React.FC = () => {
+    const { refreshUser } = useUser();
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [categories, setCategories] = useState<Category[]>([]);
 
@@ -39,6 +41,7 @@ const CreateCourse: React.FC = () => {
                 }
             });
             if (res.status === 200) {
+                refreshUser();
                 toast.success("Course created successfully");
                 navigate("/home/courses?status=private");
             }

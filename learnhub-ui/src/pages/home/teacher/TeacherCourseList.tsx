@@ -30,7 +30,6 @@ export default function TeacherCourseList() {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
-            refreshUser();
             setEditingCourse(null);
         } catch (error) {
             console.error("Error updating course:", error);
