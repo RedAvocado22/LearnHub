@@ -111,12 +111,12 @@ export default function TeacherHome() {
                         <div className="col-lg-7 m-b30">
                             <div className="widget-box">
                                 <div className="wc-title">
-                                    <h4>Orders</h4>
+                                    <h4>Students</h4>
                                 </div>
                                 <div className="widget-inner">
                                     <div className="orders-list">
                                         <ul>
-                                            {managers.map((order, index) => (
+                                            {students.map((order, index) => (
                                                 <li key={index}>
                                                     <span className="orders-title">
                                                         <a href="#" className="orders-title-name">
@@ -139,7 +139,7 @@ export default function TeacherHome() {
                                 <div className="widget-inner">
                                     <div className="noti-box-list">
                                         <ul>
-                                            {students.map((notification, index) => (
+                                            {managers.map((notification, index) => (
                                                 <li key={index}>
                                                     <span className="notification-text">{notification.message}</span>
                                                     <span className="notification-time">

@@ -53,15 +53,16 @@ public class NotificationService {
     }
 
     public void notifyTeacherAboutEnrollment(Long courseId, Long studentId) {
-        TeacherProfile teacher = courseService.getAllCourses().stream()
-                .filter(course -> course.getId() == courseId)
+        Course course = courseService.getAllCourses().stream()
+                .filter(c -> c.getId() == courseId)
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("No course was found!"))
-                .getTeacher();
+                .orElseThrow(() -> new ResourceNotFoundException("No course was found!"));
+
+        TeacherProfile teacher = course.getTeacher();
 
         User user = userService.getUserById(studentId);
 
-        String message = user.getFirstName() + " " + user.getLastName() + " has enrolled in your course.";
+        String message = user.getFirstName() + " " + user.getLastName() + " has enrolled in your ." + course.getName();
 
         Notification notification = Notification.builder()
                 .teacher(teacher)
