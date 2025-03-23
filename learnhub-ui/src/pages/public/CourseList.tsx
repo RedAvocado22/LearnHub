@@ -37,7 +37,6 @@ export default function CourseList() {
         }
     };
 
-    // Update search params when search input changes
     const handleSearchChange = (value: string) => {
         setSearch(value);
         const newParams = new URLSearchParams(searchParams);

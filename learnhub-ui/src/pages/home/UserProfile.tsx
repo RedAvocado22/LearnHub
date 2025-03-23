@@ -360,7 +360,7 @@ export default function UserProfile() {
                                                 <div className="">
                                                     <div className="form-group row">
                                                         <div className="col-sm-10 ml-auto">
-                                                            <h3>3. Avatar</h3>
+                                                            <h3>2. Avatar</h3>
                                                         </div>
                                                     </div>
                                                     <div className="form-group row">

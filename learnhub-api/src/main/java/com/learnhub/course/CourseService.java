@@ -1,6 +1,5 @@
 package com.learnhub.course;
 
-import com.learnhub.auth.LogoutHandlerImpl;
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.category.Category;
@@ -40,7 +39,7 @@ public class CourseService {
     @PersistenceContext
     private final EntityManager entityManager;
     private final UserRepository userRepository;
-    private final LogoutHandlerImpl logoutHandlerImpl;
+
 
     @Autowired
     public CourseService(
@@ -49,7 +48,7 @@ public class CourseService {
             ChapterRepository chapterRepository,
             ChapterMaterialRepository chapterMaterialRepository,
             AwsS3Service awsS3Service,
-            EntityManager entityManager, UserRepository userRepository, LogoutHandlerImpl logoutHandlerImpl) {
+            EntityManager entityManager, UserRepository userRepository) {
         this.categoryRepository = categoryRepository;
         this.courseRepository = courseRepository;
         this.chapterRepository = chapterRepository;
@@ -57,7 +56,6 @@ public class CourseService {
         this.awsS3Service = awsS3Service;
         this.entityManager = entityManager;
         this.userRepository = userRepository;
-        this.logoutHandlerImpl = logoutHandlerImpl;
     }
 
     public List<Course> getAllPublicCourses() {
@@ -68,6 +66,7 @@ public class CourseService {
         return courseRepository.findAll();
     }
 
+    @Transactional
     public Long changeCourseStatus(Long courseId, CourseStatus newStatus) {
         Course course = courseRepository.getById(courseId);
         course.setStatus(newStatus);
@@ -358,21 +357,6 @@ public class CourseService {
 
         material.setLesson(lesson);
         chapterMaterialRepository.save(material);
-    }
-
-    public List<Course> getAllCoursesExceptPrivate() {
-        return courseRepository.findAll().stream()
-                .filter(course -> course.getStatus() != CourseStatus.PRIVATE)
-                .toList();
-    }
-
-    public List<Course> getAllCourseByStatus(CourseStatus courseStatus) {
-        return courseRepository.findAll().stream().filter(course -> course.getStatus() == courseStatus).toList();
-    }
-
-    public void updateCourseStatus(Course course, CourseStatus status) {
-        course.setStatus(status);
-        courseRepository.save(course);
     }
 
     public List<Course> getNewestCourses() {

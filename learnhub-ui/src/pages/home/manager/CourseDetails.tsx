@@ -28,12 +28,19 @@ export const ManagerCourseDetail: React.FC = () => {
 
     const handleSave = async (newStatus: CourseStatus) => {
         try {
-            const resp = await API.put(`courses/manager`, {
+            const notify = await API.post(`notifications/managers`, {
+                courseId: course?.id,
+                status: newStatus
+            });
+
+            const resp = await API.put(`courses/managers`, {
                 id: course?.id,
                 status: newStatus
             });
 
-            if (resp.status === 200) {
+            console.log(notify.status);
+
+            if (resp.status === 200 && notify.status === 200) {
                 toast.success("Course updated successfully");
                 navigate("/manager/courses");
             }
