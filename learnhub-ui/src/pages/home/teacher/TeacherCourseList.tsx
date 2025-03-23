@@ -15,8 +15,6 @@ export default function TeacherCourseList() {
         setEditingCourse(course);
     };
 
-    refreshUser();
-
     const handleSave = async (newStatus: CourseStatus) => {
         try {
             if (!editingCourse) return;
@@ -32,6 +30,7 @@ export default function TeacherCourseList() {
                 headers: { "Content-Type": "multipart/form-data" }
             });
 
+            refreshUser();
             setEditingCourse(null);
         } catch (error) {
             console.error("Error updating course:", error);
