@@ -8,7 +8,7 @@ values
 ('doanquocbaooooooo@gmail.com', 'BaoS', 'Doan Quoc', '$2a$10$BHIFmEpxSFaUGlcsCp5F5usmJirNKINm6eRkhy/rr8YgcO4QcED/m', 'STUDENT',  'ACTIVE', now()), -- ABC@456
 ('doanbao2506@gmail.com', 'BaoT1', 'Doan Quoc', '$2a$10$WG7RjXtZRyBjj6388I8fROrCr5AFWp2wnUXUFLrDYoazEDxZ4kWlC', 'TEACHER',  'ACTIVE', now()), -- ABC@789
 ('doanqbao2506@gmail.com', 'BaoT2', 'Doan Quoc', '$2a$10$m7C2R4n7BAxTGlZ1obEM0uH2iCBn.KwpE8s8GEY9QTeKZ62e1eibm', 'TEACHER',  'ACTIVE', now()), -- ABC@012
-('minhcuong2922004@gmail.com', 'CuongCM', 'Minh Cuong', '$2a$10$m7C2R4n7BAxTGlZ1obEM0uH2iCBn.KwpE8s8GEY9QTeKZ62e1eibm', 'COURSE_MANAGER',  'ACTIVE', now());
+('minhcuong2922004@gmail.com', 'CuongCM', 'Minh Cuong', '$2a$10$m7C2R4n7BAxTGlZ1obEM0uH2iCBn.KwpE8s8GEY9QTeKZ62e1eibm', 'COURSE_MANAGER',  'ACTIVE', now()); -- ABC@012
 insert into student_profile(account_id, school, `type`)
 values
 (2, 'FPT University', 'GRADE11');
@@ -17,6 +17,9 @@ insert into teacher_profile(account_id, major, phone, website, work_address, cit
 values
 (3, 'Math 12', '0382633428', 'https://youtube.com', 'FPT University', 'Hanoi', 'A normal math teacher'),
 (4, 'Literature 11', '0123456789', 'https://google.com', 'ABC School', 'Ho Chi Minh city', null);
+
+insert into manager_profile(account_id, department)
+values (5, "Math");
 
 insert into category(`name`)
 values ('Calculus'), ('Algebra'), ('Vietnam\'s Literature'), ('Foreign Literature');
