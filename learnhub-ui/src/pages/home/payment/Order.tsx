@@ -36,14 +36,15 @@ export default function Order() {
                                 <h2 className="card-title">Order Payment</h2>
                                 <form>
                                     <div className="form-group">
-                                        <label htmlFor="amount">Price:</label>
+                                        <label htmlFor="amount">Price (VND):</label>
                                         <input
                                             type="number"
                                             className="form-control"
                                             id="amount"
                                             name="amount"
                                             required
-                                            value={course.price}
+                                            readOnly
+                                            value={course.price * 23000}
                                         />
                                     </div>
                                     <div className="form-group">
@@ -54,7 +55,7 @@ export default function Order() {
                                             id="orderInfo"
                                             name="orderInfo"
                                             required
-                                            value={`Thanh toan khoa hoc ${course.name}`}
+                                            value={`${course.name} payment`}
                                         />
                                     </div>
                                     <a type="submit" className="btn btn-primary" onClick={handleSubmitAccountChange}>
