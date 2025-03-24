@@ -41,19 +41,10 @@ export default function Landing() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const fetchLandingPageData = async () => {
-            setIsLoading(true);
-            try {
-                const response = await API.get("/public/landing-page");
-                setLandingData(response.data);
-            } catch (error) {
-                toast.error("Failed to load landing page data");
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchLandingPageData();
+        API.get("/public/landing-page")
+            .then((resp) => setLandingData(resp.data))
+            .catch(() => toast.error("Failed to load landing page data"))
+            .finally(() => setIsLoading(false));
     }, []);
 
     const handleSearch = (e) => {
