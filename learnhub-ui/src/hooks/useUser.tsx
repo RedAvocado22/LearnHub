@@ -4,6 +4,7 @@ import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { CourseStatus, EnrollmentStatus, MaterialType } from "../types/Course";
 import { StudentType, UserRole, UserStatus } from "../types/User";
+import { useNavigate } from "react-router-dom";
 
 export interface Category {
     id: number;
@@ -140,8 +141,8 @@ export interface LoginRequest {
 interface UserContextType {
     user: User | null;
     login: (payload: LoginRequest) => Promise<boolean>;
-    logout: () => void;
-    refreshUser: () => void;
+    logout: () => Promise<void>;
+    refreshUser: () => Promise<void>;
 }
 
 const UserContext = createContext<UserContextType | null>(null);
@@ -153,6 +154,7 @@ type UserProviderProps = {
 const UserProvider = ({ children }: UserProviderProps) => {
     const [user, setUser] = useState<User | null>(null);
     const [ready, setReady] = useState(false);
+    const navigate = useNavigate();
 
     const fetchCurrentUser = async () => {
         try {
@@ -216,6 +218,7 @@ const UserProvider = ({ children }: UserProviderProps) => {
             if (resp.status === 200) {
                 localStorage.removeItem("access_token");
                 setUser(null);
+                setTimeout(() => navigate("/", { replace: true }), 0);
                 toast.success("Logout successful!");
             }
         } catch (err) {

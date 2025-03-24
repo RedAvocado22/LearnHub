@@ -1,7 +1,7 @@
 import { useState } from "react";
 import NotificationList from "./NotificationList";
 import { useUser } from "../../hooks/useUser";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserRole } from "../../types/User";
 
 interface SidebarItem {
@@ -78,7 +78,6 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const [displayProfile, setDisplayProfile] = useState(false);
     const [openSidebarItem, setOpenSidebarItem] = useState<number | null>(null);
     const { user, logout } = useUser();
-    const navigate = useNavigate();
 
     const menu: SidebarItem[] = userMenus[user?.role as UserRole] ?? [];
     const header: HeaderItem[] = userHeader[user?.role as UserRole] ?? [];
@@ -87,10 +86,6 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
         setOpenSidebarItem(openSidebarItem === index ? null : index);
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate("/");
-    };
     return (
         <div className={`${displaySidebar ? "ttr-opened-sidebar " : ""}ttr-pinned-sidebar`}>
             <header className="ttr-header">
@@ -181,7 +176,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                             <Link to="/profile">My profile</Link>
                                         </li>
                                         <li>
-                                            <a href="#" onClick={handleLogout}>
+                                            <a href="#" onClick={logout}>
                                                 Logout
                                             </a>
                                         </li>
