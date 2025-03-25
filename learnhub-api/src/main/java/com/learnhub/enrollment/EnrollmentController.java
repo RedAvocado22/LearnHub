@@ -3,11 +3,7 @@ package com.learnhub.enrollment;
 import com.learnhub.enrollment.dto.GradeQuizRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(path = "/api/v1/enrollments")
@@ -27,6 +23,7 @@ public class EnrollmentController {
         enrollmentService.addFinishedMaterial(studentId, courseId, materialId);
         return ResponseEntity.ok("Success");
     }
+
 
     @PostMapping("/students/{sid}/courses/{cid}/quizzes/{qid}/grade")
     public ResponseEntity<Long> gradeQuiz(

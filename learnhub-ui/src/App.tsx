@@ -37,7 +37,8 @@ import {
     ManagerMaterialDetails,
     Order,
     PaymentCallback,
-    StudentMaterialDetails
+    StudentMaterialDetails,
+    TransactionHistory
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
@@ -103,11 +104,9 @@ export default function App() {
                     <Route path="/home/courses/:cid/materials/:mid" element={<StudentMaterialDetails />} />
                     <Route path="/home/courses/:cid/quizzes/:qid/do-quiz" element={<DoQuiz />} />
                     <Route path="/home/courses/:cid/quizzes/:qid/result/:rid" element={<QuizResult />} />
-                </Route>
-
-                <Route element={<ProtectedRoute roles={[UserRole.STUDENT]} />}>
                     <Route path="/order" element={<Order />} />
-                    <Route path="/paymentcallback" element={<PaymentCallback />} />
+                    <Route path="/payment-callback" element={<PaymentCallback />} />
+                    <Route path="/transaction-history" element={<TransactionHistory />} />
                 </Route>
 
                 <Route element={<ProtectedRoute roles={[UserRole.TEACHER]} />}>

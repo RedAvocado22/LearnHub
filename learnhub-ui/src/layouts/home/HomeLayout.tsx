@@ -175,6 +175,12 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                         <li>
                                             <Link to="/profile">My profile</Link>
                                         </li>
+                                        {user?.role === UserRole.STUDENT && (
+                                            <li>
+                                                <Link to="/transaction-history">My transaction</Link>
+                                            </li>
+                                        )}
+
                                         <li>
                                             <a href="#" onClick={handleLogout}>
                                                 Logout
