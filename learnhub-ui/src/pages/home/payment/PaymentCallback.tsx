@@ -6,11 +6,11 @@ import { toast } from "react-toastify";
 import { MainLayout } from "../../../layouts";
 
 interface CoursePurchaseReq {
-    user_id: string;
-    course_id: string;
+    userId: string;
+    courseId: string;
     responseCode: string;
     price: string;
-    transaction_id: string;
+    transactionId: string;
 }
 
 export default function PaymentCallback() {
@@ -23,19 +23,19 @@ export default function PaymentCallback() {
     const [courseId, userId] = orderInfo ? orderInfo.split("&&") : ["", ""];
 
     const [coursePurchase, setCoursePurchase] = useState<CoursePurchaseReq>({
-        user_id: userId,
-        course_id: courseId,
+        userId: userId,
+        courseId: courseId,
         price: price || "",
         responseCode: vnp_ResponseCode || "",
-        transaction_id: transactionNo || ""
+        transactionId: transactionNo || ""
     });
 
     useEffect(() => {
         const purchaseCourse = async () => {
             try {
                 const resp = await API.post("/users/purchase", {
-                    user_id: userId,
-                    course_id: courseId,
+                    userId: userId,
+                    courseId: courseId,
                     price: price || "",
                     responseCode: vnp_ResponseCode,
                     transactionCode: transactionNo || ""
