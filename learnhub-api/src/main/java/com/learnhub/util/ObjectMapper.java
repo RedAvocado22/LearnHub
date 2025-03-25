@@ -8,6 +8,8 @@ import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
 import com.learnhub.course.dto.AdminCourseResponse;
 import com.learnhub.course.dto.ManagerCourseResponse;
 import com.learnhub.course.dto.ManagerCoursesResponse;
+import com.learnhub.payment.CoursePurchase;
+import com.learnhub.payment.dto.CoursePurchaseResponse;
 import com.learnhub.user.User;
 import com.learnhub.user.dto.CurrentUserResponse;
 import com.learnhub.user.dto.ManageUserResponse;
@@ -64,5 +66,9 @@ public class ObjectMapper {
 
     public ChapterResponse toChapterResponse(Chapter chapter) {
         return ChapterResponse.from(chapter);
+    }
+
+    public CoursePurchaseResponse toCoursePurchaseResponse(CoursePurchase coursePurchase) {
+        return CoursePurchaseResponse.from(coursePurchase);
     }
 }

@@ -47,6 +47,7 @@ public class EnrollmentService {
         this.userRepository = userRepository;
     }
 
+
     public List<Enrollment> getNumberOffStudentRegisterInMonth() {
         LocalDateTime now = LocalDateTime.now();
         return enrollmentRepository.getCountOfStudentRegister(now.getMonthValue());

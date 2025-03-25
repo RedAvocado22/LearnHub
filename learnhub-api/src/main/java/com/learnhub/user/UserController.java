@@ -6,6 +6,7 @@ import com.learnhub.payment.CoursePurchaseService;
 import com.learnhub.payment.PaymentRequest;
 import com.learnhub.payment.VNPayService;
 import com.learnhub.payment.dto.CoursePurchaseRequest;
+import com.learnhub.payment.dto.CoursePurchaseResponse;
 import com.learnhub.payment.dto.PaymentResponse;
 import com.learnhub.user.dto.*;
 import com.learnhub.util.ObjectMapper;
@@ -110,11 +111,16 @@ public class UserController {
         coursePurchaseService.createCoursePurchase(coursePurchaseRequest, user);
 
         if (coursePurchaseRequest.responseCode().equals("00")) {
-            enrollmentService.createEnrollment(coursePurchaseRequest.user_id(), coursePurchaseRequest.course_id());
-            notificationService.notifyTeacherAboutEnrollment(coursePurchaseRequest.course_id(), user.getId());
+            enrollmentService.createEnrollment(user.getId(), coursePurchaseRequest.courseId());
+            notificationService.notifyTeacherAboutEnrollment(coursePurchaseRequest.courseId(), user.getId());
         }
 
         return ResponseEntity.ok("Success");
+    }
+
+    @GetMapping("/me/transactionHistory")
+    public ResponseEntity<List<CoursePurchaseResponse>> getAllAllCoursePurchase(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(coursePurchaseService.getAllCoursePurchase(user).stream().map(objectMapper::toCoursePurchaseResponse).toList());
     }
 
     @PostMapping("/payment")

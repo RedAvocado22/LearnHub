@@ -18,6 +18,13 @@ export default function CourseDetail() {
     }, []);
 
     const course = courses.find((course) => course.id.toString() === id);
+    // useEffect(() => {
+    //     API.get("/enrollments/getAllEnrollment")
+    //         .then((resp) => setCourses(resp.data || []))
+    //         .catch(() => toast.error("Fetch courses failed"));
+    // }, []);
+
+    console.log(courses);
 
     const handleBuySubmit = () => {
         console.log(course);

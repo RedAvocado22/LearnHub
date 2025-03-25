@@ -8,10 +8,21 @@ import com.learnhub.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class CoursePurchaseService {
-    private CoursePurchaseRepository coursePurchaseRepository;
-    private CourseRepository courseRepository;
+    private final CoursePurchaseRepository coursePurchaseRepository;
+    private final CourseRepository courseRepository;
+
+
+    @Autowired
+    public CoursePurchaseService(CoursePurchaseRepository coursePurchaseRepository,
+                                 CourseRepository courseRepository
+    ) {
+        this.coursePurchaseRepository = coursePurchaseRepository;
+        this.courseRepository = courseRepository;
+    }
 
     @Autowired
     public CoursePurchaseService(CoursePurchaseRepository coursePurchaseRepository, CourseRepository courseRepository) {
@@ -26,7 +37,7 @@ public class CoursePurchaseService {
     }
 
     public void createCoursePurchase(CoursePurchaseRequest req, User user) {
-        Course course = courseRepository.findById(req.course_id())
+        Course course = courseRepository.findById(req.courseId())
                 .orElseThrow(() -> new ResourceNotFoundException("Can't find course"));
 
 
@@ -34,11 +45,16 @@ public class CoursePurchaseService {
                 course(course).
                 purchasePrice(req.price()).
                 student(user).
-                transaction_id((req.transactionCode())).
+                transactionId((req.transactionCode())).
                 status(responseCodeToStatus(req.responseCode())).
-                transaction_id(req.transactionCode()).
                 build();
 
         coursePurchaseRepository.save(coursePurchase);
+    }
+
+    public List<CoursePurchase> getAllCoursePurchase(User user) {
+        return coursePurchaseRepository.findAll().stream().filter(
+                coursePurchase -> coursePurchase.getStudent().getId().equals(user.getId())).toList()
+                ;
     }
 }
