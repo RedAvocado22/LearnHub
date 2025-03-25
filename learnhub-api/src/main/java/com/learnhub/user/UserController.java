@@ -100,11 +100,8 @@ public class UserController {
     @PostMapping("/purchase")
     public ResponseEntity<String> createCoursePurchase(@AuthenticationPrincipal User user, @RequestBody CoursePurchaseRequest coursePurchaseRequest) {
         coursePurchaseService.createCoursePurchase(coursePurchaseRequest, user);
-        System.out.println(coursePurchaseRequest);
-
         if (coursePurchaseRequest.responseCode().equals("00"))
-            System.out.println("1");
-        enrollmentService.createEnrollment(coursePurchaseRequest.user_id(), coursePurchaseRequest.course_id());
+            enrollmentService.createEnrollment(user.getId(), coursePurchaseRequest.courseId());
         return ResponseEntity.ok("Success");
     }
 
@@ -117,7 +114,6 @@ public class UserController {
     public ResponseEntity<PaymentResponse> createPayment(@RequestBody PaymentRequest paymentRequest,
                                                          HttpServletRequest request) {
         try {
-//            System.out.println(paymentRequest);
             String paymentUrl = vnPayService.createOrder(paymentRequest, request);
 
             return ResponseEntity.ok(
