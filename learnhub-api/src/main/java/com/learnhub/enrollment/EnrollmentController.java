@@ -1,12 +1,9 @@
 package com.learnhub.enrollment;
 
-import com.learnhub.course.Course;
 import com.learnhub.enrollment.dto.GradeQuizRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/enrollments")
@@ -27,11 +24,6 @@ public class EnrollmentController {
         return ResponseEntity.ok("Success");
     }
 
-    @GetMapping("/getAllEnrollment")
-    public ResponseEntity<List<Course>> getAllEnrollment() {
-        return ResponseEntity.ok(enrollmentService.getAllEnrollment());
-
-    }
 
     @PostMapping("/students/{sid}/courses/{cid}/quizzes/{qid}/grade")
     public ResponseEntity<Long> gradeQuiz(

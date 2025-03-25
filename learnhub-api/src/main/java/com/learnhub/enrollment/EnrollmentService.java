@@ -47,10 +47,6 @@ public class EnrollmentService {
         this.userRepository = userRepository;
     }
 
-    public List<Course> getAllEnrollment() {
-        return enrollmentRepository.findAll().stream().map(Enrollment::getCourse).toList();
-    }
-
 
     public List<Enrollment> getNumberOffStudentRegisterInMonth() {
         LocalDateTime now = LocalDateTime.now();
