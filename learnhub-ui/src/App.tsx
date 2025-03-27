@@ -128,6 +128,7 @@ export default function App() {
                         <Route path="/admin/users/:id" element={<UserDetails />} />
                         <Route path="/admin/users/add" element={<AddUser />} />
                     </Route>
+                    <Route path="/admin/categories/add" element={<AddCategory />} />
                     <Route path="/admin/courses" element={<AdminCourseList />} />
                     <Route path="/admin/courses/:courseId/assign-manager" element={<AssignCourseManager />} />
                 </Route>

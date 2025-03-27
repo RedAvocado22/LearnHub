@@ -18,6 +18,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import com.learnhub.auth.RevokedToken;
+import com.learnhub.contact.Contact;
 import com.learnhub.payment.CoursePurchase;
 import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.student.StudentProfile;
@@ -67,23 +68,26 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RevokedToken> revokedTokens;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade =  CascadeType.ALL, orphanRemoval = true)
+    private List<Contact> contacts;
+
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CoursePurchase> purchases;
+
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     private StudentProfile student;
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private TeacherProfile teacher;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CoursePurchase> purchases;
+    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    private ManagerProfile manager;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Review> reviews;
 
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
-
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
-    private ManagerProfile manager;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

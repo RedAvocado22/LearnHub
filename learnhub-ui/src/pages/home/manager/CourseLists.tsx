@@ -10,6 +10,7 @@ interface Course {
     id: number;
     name: string;
     status: CourseStatus;
+    teacherName: string;
     createdAt: Date;
 }
 
@@ -120,14 +121,15 @@ export default function ManagerCourseList() {
                                         <div className="mail-box-list">
                                             {list.map((course) => (
                                                 <div key={course.id} className="mail-list-info">
-                                                    <span
-                                                        className={`ml-2 badge ${course.status !== CourseStatus.CANCELLED ? "badge-success" : "badge-danger"}`}>
-                                                        {course.status === CourseStatus.PUBLIC
-                                                            ? "Public"
-                                                            : course.status === CourseStatus.PENDING
-                                                              ? "Pending"
-                                                              : "Cancelled"}
-                                                    </span>
+                                                    {course.status === CourseStatus.PUBLIC ? (
+                                                        <span className="ml-2 badge badge-success">Published</span>
+                                                    ) : course.status === CourseStatus.PENDING ? (
+                                                        <span className="ml-2 badge badge-warning">Pending</span>
+                                                    ) : course.status === CourseStatus.CANCELLED ? (
+                                                        <span className="ml-2 badge badge-danger">Cancelled</span>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                     <div className="mail-list-title">
                                                         <h6>
                                                             <Link
@@ -136,6 +138,10 @@ export default function ManagerCourseList() {
                                                                 {course.name}
                                                             </Link>
                                                         </h6>
+                                                    </div>
+
+                                                    <div className="mail-list-title-info">
+                                                        <p>{course.teacherName}</p>
                                                     </div>
 
                                                     <div className="mail-list-time">
