@@ -1,72 +1,18 @@
-import { Link, useLocation, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
-import { StudentType, UserRole, UserStatus } from "../../../types/User";
+import { UserRole, UserStatus } from "../../../types/User";
 import Swal from "sweetalert2";
 import NotFound from "../../error/NotFound";
-import { CourseStatus } from "../../../types/Course";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { API } from "../../../api";
-import { useUser } from "../../../hooks/useUser";
-
-interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: UserRole;
-    status: UserStatus;
-    createdAt: Date;
-    contacts: Contact[];
-    student?: Student;
-    teacher?: Teacher;
-    manager?: Manager;
-}
-
-interface Contact {
-    id: number;
-    subject: string;
-    resolved: boolean;
-    resolvedAt: Date;
-    createdAt: Date;
-}
-
-interface Student {
-    type: StudentType;
-    school: string;
-}
-
-interface Course {
-    id: number;
-    name: string;
-    image: string;
-    categoryName: string;
-    price: number;
-    status: CourseStatus;
-    description: string;
-    createdAt: Date;
-}
-
-interface Teacher {
-    major: string;
-    phone: string;
-    workAddress: string;
-    city: string;
-    website: string;
-    biography: string;
-    courses: Course[];
-}
-
-interface Manager {
-    department: string;
-}
+import { useManageUsers } from "../../../hooks/useManageUsers";
 
 export default function UserDetails() {
     const { id } = useParams();
-    const location = useLocation();
-    const user: User | null = location.state?.user || null;
-    const { refreshUser } = useUser();
-    if (!user || user.id.toString() !== id) {
+    const { users, refreshUsers } = useManageUsers();
+    const user = users.find((u) => u.id.toString() === id);
+    if (!user) {
         return <NotFound />;
     }
 
@@ -79,10 +25,34 @@ export default function UserDetails() {
         });
         if (value) {
             try {
-                const resp = await API.put(`/users/${user.id}/ban`, { reason: value });
+                const resp = await API.put(`/users/${user.id}/status`, { status: UserStatus.SUSPENDED, reason: value });
                 if (resp.status === 200) {
                     toast.success("Ban user successfully");
-                    await refreshUser();
+                    await refreshUsers();
+                }
+            } catch (err) {
+                let msg = "Something went wrong";
+                if (isAxiosError(err)) {
+                    msg = err.response?.data.error || msg;
+                }
+                toast.error(msg);
+            }
+        }
+    };
+
+    const handleUnbanUser = async () => {
+        const { value } = await Swal.fire({
+            title: "Unban Reason",
+            input: "textarea",
+            inputPlaceholder: "Type your message here...",
+            showCancelButton: true
+        });
+        if (value) {
+            try {
+                const resp = await API.put(`/users/${user.id}/status`, { status: UserStatus.ACTIVE, reason: value });
+                if (resp.status === 200) {
+                    toast.success("Unban user successfully");
+                    await refreshUsers();
                 }
             } catch (err) {
                 let msg = "Something went wrong";
@@ -116,9 +86,15 @@ export default function UserDetails() {
                                     <h4>
                                         {user.firstName} {user.lastName}
                                     </h4>
-                                    <button type="button" className="btn" onClick={handleBanUser}>
-                                        Ban User
-                                    </button>
+                                    {user.status === UserStatus.ACTIVE ? (
+                                        <button type="button" className="btn" onClick={handleBanUser}>
+                                            Ban User
+                                        </button>
+                                    ) : (
+                                        <button type="button" className="btn" onClick={handleUnbanUser}>
+                                            Unban User
+                                        </button>
+                                    )}
                                 </div>
                                 <div className="widget-inner">
                                     <form className="edit-profile m-b30">

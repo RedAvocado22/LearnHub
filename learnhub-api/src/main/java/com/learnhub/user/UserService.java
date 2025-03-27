@@ -4,6 +4,7 @@ import java.util.List;
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.contact.ContactService;
 import com.learnhub.user.dto.AddUserRequest;
+import com.learnhub.user.dto.ChangeUserStatusRequest;
 import com.learnhub.user.dto.UpdatePasswordRequest;
 import com.learnhub.user.dto.UpdateUserRequest;
 import com.learnhub.user.exception.OldPasswordNotMatchedException;
@@ -96,34 +97,17 @@ public class UserService {
         return saved.getId();
     }
 
-    //@Transactional
-    //public void saveUserDocuments(Long id, MultipartFile[] files) {
-    //    User user = userRepository.findById(id)
-    //            .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
-    //    for (MultipartFile file : files) {
-    //        try {
-    //            user.getDocuments().add(fileService.saveUserDocument(user, file.getOriginalFilename(), file.getInputStream()));
-    //        } catch (IOException e) {
-    //            log.error("Save user document {} failed", file.getName(), e);
-    //        }
-    //    }
-    //    userRepository.save(user);
-    //}
-    //
-    //public Resource getUserDocument(String fileName) {
-    //    return fileService.loadUserDocument(fileName);
-    //}
-    //
-    //@Transactional
-    //public void deleteUserDocument(Long id, String fileName) {
-    //    User user = userRepository.findById(id)
-    //            .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
-    //    if (!fileService.deleteUserDocument(fileName)) {
-    //        log.warn("User document {} doesn't exists on disk", fileName);
-    //    }
-    //    user.getDocuments().removeIf(doc -> doc.getDownloadLink().equals("documents/" + fileName));
-    //    userRepository.save(user);
-    //}
+    public void changeUserStatus(Long id, ChangeUserStatusRequest req) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
+        user.setStatus(req.status());
+        userRepository.save(user);
+        if (req.status() == UserStatus.SUSPENDED) {
+            emailService.sendBanUserEmail(user.getEmail(), req.reason());
+        } else if (req.status() == UserStatus.ACTIVE) {
+            emailService.sendUnbanUserEmail(user.getEmail(), req.reason());
+        }
+    }
 
     @Transactional
     public void updateUser(User user, UpdateUserRequest req) {

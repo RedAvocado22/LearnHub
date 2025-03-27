@@ -105,4 +105,32 @@ public class EmailService {
         mail.setText(message);
         sender.send(mail);
     }
+
+    public void sendBanUserEmail(String to, String reason) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String message = String.format("""
+            Your account has been banned with the reason: %s
+
+            Contact us if you have any question.
+        """, reason);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Account banned");
+        mail.setText(message);
+        sender.send(mail);
+    }
+
+    public void sendUnbanUserEmail(String to, String reason) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String message = String.format("""
+            Your ban has been released with the reason: %s
+
+            Contact us if you have any question.
+        """, reason);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Account released");
+        mail.setText(message);
+        sender.send(mail);
+    }
 }

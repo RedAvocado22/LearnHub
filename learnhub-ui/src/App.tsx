@@ -42,7 +42,7 @@ import {
     AssignCourseManager,
     TransactionHistory
 } from "./pages";
-import { ContactsProviderRoute, GuestRoute, ProtectedRoute } from "./routers";
+import { ContactsProviderRoute, GuestRoute, ManageUsersRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";
 import { ToastContainer } from "react-toastify";
 import { UserRole } from "./types/User";
@@ -123,11 +123,11 @@ export default function App() {
                         <Route path="/admin/contacts" element={<ContactList />} />
                         <Route path="/admin/contacts/:id" element={<ContactDetails />} />
                     </Route>
-                </Route>
-                <Route element={<ProtectedRoute roles={[UserRole.ADMIN]} />}>
-                    <Route path="/admin/users" element={<UserList />} />
-                    <Route path="/admin/users/:id" element={<UserDetails />} />
-                    <Route path="/admin/users/add" element={<AddUser />} />
+                    <Route element={<ManageUsersRoute />}>
+                        <Route path="/admin/users" element={<UserList />} />
+                        <Route path="/admin/users/:id" element={<UserDetails />} />
+                        <Route path="/admin/users/add" element={<AddUser />} />
+                    </Route>
                     <Route path="/admin/courses" element={<AdminCourseList />} />
                     <Route path="/admin/courses/:courseId/assign-manager" element={<AssignCourseManager />} />
                 </Route>

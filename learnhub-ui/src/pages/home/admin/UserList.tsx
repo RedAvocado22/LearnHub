@@ -1,81 +1,16 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
-import { StudentType, UserRole, UserStatus } from "../../../types/User";
-import { useEffect, useState } from "react";
-import { API } from "../../../api";
-import { isAxiosError } from "axios";
-import { toast } from "react-toastify";
-import { CourseStatus } from "../../../types/Course";
-
-interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: UserRole;
-    status: UserStatus;
-    createdAt: Date;
-    contacts: Contact[];
-    student?: Student;
-    teacher?: Teacher;
-    manager?: Manager;
-}
-
-interface Contact {
-    id: number;
-    subject: string;
-    resolved: boolean;
-    resolvedAt: Date;
-    createdAt: Date;
-}
-
-interface Student {
-    type: StudentType;
-    school: string;
-}
-
-interface Course {
-    id: number;
-    name: string;
-    image: string;
-    categoryName: string;
-    price: number;
-    status: CourseStatus;
-    description: string;
-    createdAt: Date;
-}
-
-interface Teacher {
-    major: string;
-    phone: string;
-    workAddress: string;
-    city: string;
-    website: string;
-    biography: string;
-    courses: Course[];
-}
-
-interface Manager {
-    department: string;
-}
+import { UserRole, UserStatus } from "../../../types/User";
+import { useState } from "react";
+import { useManageUsers } from "../../../hooks/useManageUsers";
 
 const itemsPerPage = 10;
 export default function UserList() {
     const [params, _] = useSearchParams();
     const role = params.get("role") || "teachers";
-    const [users, setUsers] = useState<User[]>([]);
+    const { users } = useManageUsers();
     const [currPage, setCurrPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    useEffect(() => {
-        API.get("/users")
-            .then((resp) => setUsers(resp.data))
-            .catch((err) => {
-                if (isAxiosError(err)) {
-                    toast.error(err.response?.data || "Something went wrong");
-                }
-                console.error((err as Error).message);
-            });
-    }, []);
 
     let list = users
         .filter((user) => {
@@ -180,7 +115,7 @@ export default function UserList() {
                                                     )}
                                                     <div className="mail-list-title">
                                                         <h6>
-                                                            <Link to={`/admin/users/${user.id}`} state={{ user }}>
+                                                            <Link to={`/admin/users/${user.id}`}>
                                                                 {user.firstName} {user.lastName}
                                                             </Link>
                                                         </h6>
