@@ -1,4 +1,4 @@
-package com.learnhub.user;
+package com.learnhub.contact;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,12 +10,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "user_document")
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,20 +29,10 @@ public class UserDocument {
     @Column(name = "file_name")
     private String fileName;
 
-    @Column(name = "file_size")
-    private Long fileSize;
-
-    @Column(name = "download_link")
-    private String downloadLink;
-
+    @Column(name = "file_url", nullable = false)
+    private String fileUrl;
+    
     @ManyToOne
-    @JoinColumn(name = "account_id", referencedColumnName = "id")
-    private User user;
-
-    public UserDocument(String fileName, Long fileSize, String downloadLink, User user) {
-        this.fileName = fileName;
-        this.fileSize = fileSize;
-        this.downloadLink = downloadLink;
-        this.user = user;
-    }
+    @JoinColumn(name = "contact_id", nullable = false)
+    private Contact contact;
 }

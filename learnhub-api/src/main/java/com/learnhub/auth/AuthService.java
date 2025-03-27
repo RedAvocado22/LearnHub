@@ -1,8 +1,12 @@
 package com.learnhub.auth;
 
-import com.learnhub.auth.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.learnhub.auth.dto.ActivateAccountRequest;
+import com.learnhub.auth.dto.AuthResponse;
+import com.learnhub.auth.dto.LoginRequest;
+import com.learnhub.auth.dto.ResetPasswordRequest;
+import com.learnhub.auth.dto.StudentRegisterRequest;
 import com.learnhub.auth.exception.InactiveAccountException;
 import com.learnhub.auth.exception.InvalidTokenException;
 import com.learnhub.auth.exception.SuspendedAccountException;

@@ -82,6 +82,7 @@ export default function App() {
                 <Route path="/faq" element={<FAQ />} />
                 <Route path="/about" element={<About />} />
                 <Route path="/courses/:id" element={<CourseDetail />} />
+                <Route path="/contact/:id/:target/add-details" element={<AddContactDetails />} />
 
                 {/* Routes for unauthenticated users */}
                 <Route element={<GuestRoute />}>

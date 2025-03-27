@@ -29,8 +29,8 @@ export default function Order() {
     return (
         <MainLayout>
             <div className="container">
-                <div className="row justify-content-center mt-5">
-                    <div className="col-md-6">
+                <div className="row justify-content-center my-5">
+                    <div className="col-6 pt-5">
                         <div className="card">
                             <div className="card-body">
                                 <h2 className="card-title">Order Payment</h2>

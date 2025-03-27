@@ -23,15 +23,11 @@ public record AddUserRequest(
         UserRole role,
 
         AddStudentRequest student,
-        AddTeacherRequest teacher
+        AddTeacherRequest teacher,
+        AddManagerRequest manager,
+        Long contactId
 ) {
-    public static record AddStudentRequest(
-            @NotNull
-            StudentType type,
-
-            @NotEmpty
-            String school
-    ) {}
+    public static record AddStudentRequest(@NotNull StudentType type, @NotEmpty String school) {}
     public static record AddTeacherRequest(
             @NotEmpty
             String major,
@@ -43,7 +39,9 @@ public record AddUserRequest(
             @NotEmpty
             String workAddress,
 
-            @NotEmpty
-            String city
+            String city,
+            String website,
+            String biography
     ) {}
+    public static record AddManagerRequest(@NotEmpty String department) {}
 }

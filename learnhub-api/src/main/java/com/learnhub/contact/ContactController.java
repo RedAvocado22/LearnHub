@@ -1,13 +1,13 @@
 package com.learnhub.contact;
 
 import java.util.List;
-
+import com.learnhub.contact.dto.ContactResponse;
+import com.learnhub.util.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -15,15 +15,22 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(path = "/api/v1/contacts")
 public class ContactController {
     private final ContactService contactService;
+    private final ObjectMapper objectMapper;
 
     @Autowired
-    public ContactController(ContactService contactService) {
+    public ContactController(ContactService contactService, ObjectMapper objectMapper) {
         this.contactService = contactService;
+        this.objectMapper = objectMapper;
     }
 
     @GetMapping
-    public ResponseEntity<List<Contact>> getAll() {
-        return ResponseEntity.ok(contactService.getAll());
+    public ResponseEntity<List<ContactResponse>> getAll() {
+        return ResponseEntity.ok(contactService.getAll().stream().map(objectMapper::toContactResponse).toList());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ContactResponse> getById(@PathVariable("id") Long id) {
+        return ResponseEntity.ok(ContactResponse.from(contactService.getById(id)));
     }
 
     @DeleteMapping("/{id}")
@@ -32,9 +39,9 @@ public class ContactController {
         return ResponseEntity.ok("Success");
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<String> updateStatus(@PathVariable("id") Long id) {
-        contactService.resolveContact(id);
+    @GetMapping("/{id}/request-details")
+    public ResponseEntity<String> requestDetails(@PathVariable("id") Long id) {
+        contactService.requestDetails(id);
         return ResponseEntity.ok("Success");
     }
 }

@@ -1,19 +1,62 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
-import { UserRole, UserStatus } from "../../../types/User";
+import { StudentType, UserRole, UserStatus } from "../../../types/User";
 import { useEffect, useState } from "react";
 import { API } from "../../../api";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
+import { CourseStatus } from "../../../types/Course";
 
 interface User {
     id: number;
     firstName: string;
     lastName: string;
     email: string;
-    status: UserStatus;
     role: UserRole;
+    status: UserStatus;
     createdAt: Date;
+    contacts: Contact[];
+    student?: Student;
+    teacher?: Teacher;
+    manager?: Manager;
+}
+
+interface Contact {
+    id: number;
+    subject: string;
+    resolved: boolean;
+    resolvedAt: Date;
+    createdAt: Date;
+}
+
+interface Student {
+    type: StudentType;
+    school: string;
+}
+
+interface Course {
+    id: number;
+    name: string;
+    image: string;
+    categoryName: string;
+    price: number;
+    status: CourseStatus;
+    description: string;
+    createdAt: Date;
+}
+
+interface Teacher {
+    major: string;
+    phone: string;
+    workAddress: string;
+    city: string;
+    website: string;
+    biography: string;
+    courses: Course[];
+}
+
+interface Manager {
+    department: string;
 }
 
 const itemsPerPage = 10;
@@ -128,19 +171,16 @@ export default function UserList() {
                                         <div className="mail-box-list">
                                             {list.map((user) => (
                                                 <div key={user.id} className="mail-list-info">
-                                                    <span
-                                                        className={`ml-2 badge ${user.status === UserStatus.ACTIVE ? "badge-success" : "badge-danger"}`}>
-                                                        {user.status === UserStatus.ACTIVE
-                                                            ? "Active"
-                                                            : user.status === UserStatus.UNACTIVE
-                                                              ? "Unactive"
-                                                              : "Suspended"}
-                                                    </span>
+                                                    {user.status === UserStatus.ACTIVE ? (
+                                                        <span className="ml-2 badge badge-success">Active</span>
+                                                    ) : user.status === UserStatus.UNACTIVE ? (
+                                                        <span className="ml-2 badge badge-warning">Inactive</span>
+                                                    ) : (
+                                                        <span className="ml-2 badge badge-danger">Suspended</span>
+                                                    )}
                                                     <div className="mail-list-title">
                                                         <h6>
-                                                            <Link
-                                                                to={`/admin/users/${user.id}`}
-                                                                state={{ role: user.role }}>
+                                                            <Link to={`/admin/users/${user.id}`} state={{ user }}>
                                                                 {user.firstName} {user.lastName}
                                                             </Link>
                                                         </h6>
