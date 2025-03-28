@@ -19,6 +19,7 @@ import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import com.learnhub.auth.RevokedToken;
 import com.learnhub.contact.Contact;
+import com.learnhub.course.review.Review;
 import com.learnhub.payment.CoursePurchase;
 import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.student.StudentProfile;
