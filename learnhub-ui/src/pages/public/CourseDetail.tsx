@@ -4,6 +4,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { Course, useUser } from "../../hooks/useUser";
 import { API } from "../../api";
 import { toast } from "react-toastify";
+import { MaterialType } from "../../types/Course";
+import CourseRating from "../../layouts/elements/Rating";
 
 export default function CourseDetail() {
     const [courses, setCourses] = useState<Course[]>([]);
@@ -18,17 +20,10 @@ export default function CourseDetail() {
     }, []);
 
     const course = courses.find((course) => course.id.toString() === id);
-    // useEffect(() => {
-    //     API.get("/enrollments/getAllEnrollment")
-    //         .then((resp) => setCourses(resp.data || []))
-    //         .catch(() => toast.error("Fetch courses failed"));
-    // }, []);
 
-    console.log(courses);
+    console.log(course);
 
     const handleBuySubmit = () => {
-        console.log(course);
-
         navigate("/order", {
             state: {
                 course: course,
@@ -80,7 +75,7 @@ export default function CourseDetail() {
                                                     <img src="/assets/images/testimonials/pic1.jpg" alt="" />
                                                 </div>
                                                 <div className="teacher-name">
-                                                    <h5>Hinata Hyuga</h5>
+                                                    <h5>{course?.teacher.name}</h5>
                                                     <span>Science Teacher</span>
                                                 </div>
                                             </div>
@@ -124,11 +119,6 @@ export default function CourseDetail() {
                                                     </a>
                                                 </li>
                                                 <li>
-                                                    <a className="nav-link" href="#instructor">
-                                                        <i className="ti-user"></i>Instructor
-                                                    </a>
-                                                </li>
-                                                <li>
                                                     <a className="nav-link" href="#reviews">
                                                         <i className="ti-comments"></i>Reviews
                                                     </a>
@@ -154,12 +144,7 @@ export default function CourseDetail() {
                                                 <h2 className="post-title">{course?.name}</h2>
                                             </div>
                                             <div className="ttr-post-text">
-                                                <p>
-                                                    Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                    industry. Lorem Ipsum has been the industry's standard dummy text
-                                                    ever since the 1500s, when an unknown printer took a galley of type
-                                                    and scrambled it to make a type specimen book.
-                                                </p>
+                                                <p>{course?.description}</p>
                                             </div>
                                         </div>
                                     </div>
@@ -169,254 +154,126 @@ export default function CourseDetail() {
                                             <div className="col-md-12 col-lg-4">
                                                 <ul className="course-features">
                                                     <li>
-                                                        <i className="ti-book"></i>{" "}
-                                                        <span className="label">Lectures</span>{" "}
-                                                        <span className="value">8</span>
-                                                    </li>
-                                                    <li>
                                                         <i className="ti-help-alt"></i>{" "}
                                                         <span className="label">Quizzes</span>{" "}
-                                                        <span className="value">1</span>
+                                                        <span className="value">
+                                                            {course?.chapters.reduce(
+                                                                (count, chapter) =>
+                                                                    count +
+                                                                    chapter.materials.filter(
+                                                                        (material) =>
+                                                                            material?.type === MaterialType.QUIZ
+                                                                    ).length,
+                                                                0
+                                                            )}
+                                                        </span>
                                                     </li>
                                                     <li>
-                                                        <i className="ti-time"></i>{" "}
-                                                        <span className="label">Duration</span>{" "}
-                                                        <span className="value">60 hours</span>
-                                                    </li>
-                                                    <li>
-                                                        <i className="ti-stats-up"></i>{" "}
-                                                        <span className="label">Skill level</span>{" "}
-                                                        <span className="value">Beginner</span>
+                                                        <i className="ti-video-clapper mr-2"></i>{" "}
+                                                        <span className="label">Lesson</span>{" "}
+                                                        <span className="value">
+                                                            {course?.chapters.reduce(
+                                                                (count, chapter) =>
+                                                                    count +
+                                                                    chapter.materials.filter(
+                                                                        (material) =>
+                                                                            material?.type === MaterialType.LESSON
+                                                                    ).length,
+                                                                0
+                                                            )}
+                                                        </span>
                                                     </li>
                                                     <li>
                                                         <i className="ti-smallcap"></i>{" "}
                                                         <span className="label">Language</span>{" "}
-                                                        <span className="value">English</span>
-                                                    </li>
-                                                    <li>
-                                                        <i className="ti-user"></i>{" "}
-                                                        <span className="label">Students</span>{" "}
-                                                        <span className="value">32</span>
-                                                    </li>
-                                                    <li>
-                                                        <i className="ti-check-box"></i>{" "}
-                                                        <span className="label">Assessments</span>{" "}
-                                                        <span className="value">Yes</span>
+                                                        <span className="value">Vietnamese</span>
                                                     </li>
                                                 </ul>
                                             </div>
                                             <div className="col-md-12 col-lg-8">
-                                                <h5 className="m-b5">Course Description</h5>
-                                                <p>{course?.description}</p>
-                                                <h5 className="m-b5">Certification</h5>
-                                                <p>
-                                                    Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                    industry. Lorem Ipsum has been the industry’s standard dummy text
-                                                    ever since the 1500s, when an unknown printer took a galley of type
-                                                    and scrambled it to make a type specimen book. It has survived not
-                                                    only five centuries, but also the leap into electronic typesetting,
-                                                    remaining essentially unchanged.
-                                                </p>
-                                                <h5 className="m-b5">Learning Outcomes</h5>
-                                                <ul className="list-checked primary">
-                                                    <li>Over 37 lectures and 55.5 hours of content!</li>
-                                                    <li>LIVE PROJECT End to End Software Testing Training Included.</li>
-                                                    <li>
-                                                        Learn Software Testing and Automation basics from a professional
-                                                        trainer from your own desk.
-                                                    </li>
-                                                    <li>
-                                                        Information packed practical training starting from basics to
-                                                        advanced testing techniques.
-                                                    </li>
-                                                    <li>
-                                                        Best suitable for beginners to advanced level users and who
-                                                        learn faster when demonstrated.
-                                                    </li>
-                                                    <li>
-                                                        Course content designed by considering current software testing
-                                                        technology and the job market.
-                                                    </li>
-                                                    <li>Practical assignments at the end of every session.</li>
-                                                    <li>
-                                                        Practical learning experience with live project work and
-                                                        examples.cv
-                                                    </li>
+                                                <h4>Curriculum</h4>
+                                                <ul className="curriculum-list">
+                                                    {course?.chapters.map((chapter) => (
+                                                        <li key={chapter.id}>
+                                                            <h5>{chapter.name}</h5>
+                                                            <ul>
+                                                                {chapter.materials.length > 0 ? (
+                                                                    chapter.materials.map((material) => (
+                                                                        <li key={material.id}>
+                                                                            <div className="curriculum-list-box">
+                                                                                <span>
+                                                                                    {material.type ===
+                                                                                    MaterialType.LESSON
+                                                                                        ? "Lesson"
+                                                                                        : "Quiz"}
+                                                                                </span>{" "}
+                                                                                {material.name}
+                                                                            </div>
+                                                                        </li>
+                                                                    ))
+                                                                ) : (
+                                                                    <li>
+                                                                        <div className="curriculum-list-box">
+                                                                            No lessons or quizzes in this chapter
+                                                                        </div>
+                                                                    </li>
+                                                                )}
+                                                            </ul>
+                                                        </li>
+                                                    ))}
                                                 </ul>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div className="m-b30" id="curriculum">
-                                        <h4>Curriculum</h4>
-                                        <ul className="curriculum-list">
-                                            <li>
-                                                <h5>First Level</h5>
-                                                <ul>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Lesson 1.</span> Introduction to UI Design
-                                                        </div>
-                                                        <span>120 minutes</span>
-                                                    </li>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Lesson 2.</span> User Research and Design
-                                                        </div>
-                                                        <span>60 minutes</span>
-                                                    </li>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Lesson 3.</span> Evaluating User Interfaces Part 1
-                                                        </div>
-                                                        <span>85 minutes</span>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <h5>Second Level</h5>
-                                                <ul>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Lesson 1.</span> Prototyping and Design
-                                                        </div>
-                                                        <span>110 minutes</span>
-                                                    </li>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Lesson 2.</span> UI Design Capstone
-                                                        </div>
-                                                        <span>120 minutes</span>
-                                                    </li>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Lesson 3.</span> Evaluating User Interfaces Part 2
-                                                        </div>
-                                                        <span>120 minutes</span>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                            <li>
-                                                <h5>Final</h5>
-                                                <ul>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Part 1.</span> Final Test
-                                                        </div>
-                                                        <span>120 minutes</span>
-                                                    </li>
-                                                    <li>
-                                                        <div className="curriculum-list-box">
-                                                            <span>Part 2.</span> Online Test
-                                                        </div>
-                                                        <span>120 minutes</span>
-                                                    </li>
-                                                </ul>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    <div className="" id="instructor">
-                                        <h4>Instructor</h4>
-                                        <div className="instructor-bx">
-                                            <div className="instructor-author">
-                                                <img src="/assets/images/testimonials/pic1.jpg" alt="" />
-                                            </div>
-                                            <div className="instructor-info">
-                                                <h6>Keny White </h6>
-                                                <span>Professor</span>
-                                                <ul className="list-inline m-tb10">
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm facebook">
-                                                            <i className="fa fa-facebook"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm twitter">
-                                                            <i className="fa fa-twitter"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm linkedin">
-                                                            <i className="fa fa-linkedin"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm google-plus">
-                                                            <i className="fa fa-google-plus"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                                <p className="m-b0">
-                                                    Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                    industry. Lorem Ipsum has been the industry's standard dummy text
-                                                    ever since the 1500s, when an unknown printer took a galley of type
-                                                    and scrambled it to make a type specimen book. It has survived not
-                                                    only five centuries
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div className="instructor-bx">
-                                            <div className="instructor-author">
-                                                <img src="/assets/images/testimonials/pic2.jpg" alt="" />
-                                            </div>
-                                            <div className="instructor-info">
-                                                <h6>Keny White </h6>
-                                                <span>Professor</span>
-                                                <ul className="list-inline m-tb10">
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm facebook">
-                                                            <i className="fa fa-facebook"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm twitter">
-                                                            <i className="fa fa-twitter"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm linkedin">
-                                                            <i className="fa fa-linkedin"></i>
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="btn sharp-sm google-plus">
-                                                            <i className="fa fa-google-plus"></i>
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                                <p className="m-b0">
-                                                    Lorem Ipsum is simply dummy text of the printing and typesetting
-                                                    industry. Lorem Ipsum has been the industry's standard dummy text
-                                                    ever since the 1500s, when an unknown printer took a galley of type
-                                                    and scrambled it to make a type specimen book. It has survived not
-                                                    only five centuries
-                                                </p>
                                             </div>
                                         </div>
                                     </div>
                                     <div className="" id="reviews">
                                         <h4>Reviews</h4>
-
+                                        <div>
+                                            {course?.reviews.find((review) => review.user === user?.id) ? (
+                                                <p className="text-center text-gray-600">
+                                                    You have already submitted a review for this course.
+                                                </p>
+                                            ) : user?.student?.enrollments?.find(
+                                                  (enrollment) => enrollment.course?.id === course?.id
+                                              ) ? (
+                                                <CourseRating courseId={course?.id || 0} />
+                                            ) : (
+                                                <p className="text-center text-gray-600">
+                                                    You need to enroll in this course to leave a review.
+                                                </p>
+                                            )}
+                                        </div>
                                         <div className="review-bx">
                                             <div className="all-review">
-                                                <h2 className="rating-type">3</h2>
+                                                <h2 className="rating-type">
+                                                    {course?.reviews.length
+                                                        ? (
+                                                              course.reviews.reduce(
+                                                                  (sum, review) => sum + review.star,
+                                                                  0
+                                                              ) / course.reviews.length
+                                                          ).toFixed(1)
+                                                        : 0}
+                                                </h2>
                                                 <ul className="cours-star">
-                                                    <li className="active">
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li className="active">
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li className="active">
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <li
+                                                            key={star}
+                                                            className={
+                                                                course?.reviews.length &&
+                                                                star <=
+                                                                    course.reviews.reduce(
+                                                                        (sum, review) => sum + review.star,
+                                                                        0
+                                                                    ) /
+                                                                        course.reviews.length
+                                                                    ? "active"
+                                                                    : ""
+                                                            }>
+                                                            <i className="fa fa-star"></i>
+                                                        </li>
+                                                    ))}
                                                 </ul>
-                                                <span>3 Rating</span>
+                                                <span>{course?.reviews.length} Rating</span>
                                             </div>
                                             <div className="review-bar">
                                                 <div className="bar-bx">
@@ -425,11 +282,28 @@ export default function CourseDetail() {
                                                     </div>
                                                     <div className="middle">
                                                         <div className="bar-container">
-                                                            <div className="bar-5" style={{ width: "90%" }}></div>
+                                                            <div
+                                                                className="bar-5"
+                                                                style={{
+                                                                    width: `${
+                                                                        course?.reviews.length
+                                                                            ? (course.reviews.filter(
+                                                                                  (review) => review.star === 5
+                                                                              ).length /
+                                                                                  course.reviews.length) *
+                                                                              100
+                                                                            : 0
+                                                                    }%`
+                                                                }}></div>
                                                         </div>
                                                     </div>
                                                     <div className="side right">
-                                                        <div>150</div>
+                                                        <div>
+                                                            {
+                                                                course?.reviews.filter((review) => review.star === 5)
+                                                                    .length
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="bar-bx">
@@ -438,11 +312,28 @@ export default function CourseDetail() {
                                                     </div>
                                                     <div className="middle">
                                                         <div className="bar-container">
-                                                            <div className="bar-5" style={{ width: "70%" }}></div>
+                                                            <div
+                                                                className="bar-5"
+                                                                style={{
+                                                                    width: `${
+                                                                        course?.reviews.length
+                                                                            ? (course.reviews.filter(
+                                                                                  (review) => review.star === 4
+                                                                              ).length /
+                                                                                  course.reviews.length) *
+                                                                              100
+                                                                            : 0
+                                                                    }%`
+                                                                }}></div>
                                                         </div>
                                                     </div>
                                                     <div className="side right">
-                                                        <div>140</div>
+                                                        <div>
+                                                            {
+                                                                course?.reviews.filter((review) => review.star === 4)
+                                                                    .length
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="bar-bx">
@@ -451,11 +342,28 @@ export default function CourseDetail() {
                                                     </div>
                                                     <div className="middle">
                                                         <div className="bar-container">
-                                                            <div className="bar-5" style={{ width: "50%" }}></div>
+                                                            <div
+                                                                className="bar-5"
+                                                                style={{
+                                                                    width: `${
+                                                                        course?.reviews.length
+                                                                            ? (course.reviews.filter(
+                                                                                  (review) => review.star === 3
+                                                                              ).length /
+                                                                                  course.reviews.length) *
+                                                                              100
+                                                                            : 0
+                                                                    }%`
+                                                                }}></div>
                                                         </div>
                                                     </div>
                                                     <div className="side right">
-                                                        <div>120</div>
+                                                        <div>
+                                                            {
+                                                                course?.reviews.filter((review) => review.star === 3)
+                                                                    .length
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="bar-bx">
@@ -464,11 +372,28 @@ export default function CourseDetail() {
                                                     </div>
                                                     <div className="middle">
                                                         <div className="bar-container">
-                                                            <div className="bar-5" style={{ width: "40%" }}></div>
+                                                            <div
+                                                                className="bar-5"
+                                                                style={{
+                                                                    width: `${
+                                                                        course?.reviews.length
+                                                                            ? (course.reviews.filter(
+                                                                                  (review) => review.star === 2
+                                                                              ).length /
+                                                                                  course.reviews.length) *
+                                                                              100
+                                                                            : 0
+                                                                    }%`
+                                                                }}></div>
                                                         </div>
                                                     </div>
                                                     <div className="side right">
-                                                        <div>110</div>
+                                                        <div>
+                                                            {
+                                                                course?.reviews.filter((review) => review.star === 2)
+                                                                    .length
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                                 <div className="bar-bx">
@@ -477,11 +402,28 @@ export default function CourseDetail() {
                                                     </div>
                                                     <div className="middle">
                                                         <div className="bar-container">
-                                                            <div className="bar-5" style={{ width: "20%" }}></div>
+                                                            <div
+                                                                className="bar-5"
+                                                                style={{
+                                                                    width: `${
+                                                                        course?.reviews.length
+                                                                            ? (course.reviews.filter(
+                                                                                  (review) => review.star === 1
+                                                                              ).length /
+                                                                                  course.reviews.length) *
+                                                                              100
+                                                                            : 0
+                                                                    }%`
+                                                                }}></div>
                                                         </div>
                                                     </div>
                                                     <div className="side right">
-                                                        <div>80</div>
+                                                        <div>
+                                                            {
+                                                                course?.reviews.filter((review) => review.star === 1)
+                                                                    .length
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>

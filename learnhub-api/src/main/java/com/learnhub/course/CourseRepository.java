@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    @Query("SELECT c FROM Course c ORDER BY c.createdAt DESC")
+    @Query("SELECT c FROM Course c WHERE c.status = 'PUBLIC' ORDER BY c.createdAt DESC")
     List<Course> findNewestCourses(int limit);
 }

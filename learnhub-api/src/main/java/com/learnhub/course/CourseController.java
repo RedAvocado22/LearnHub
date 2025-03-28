@@ -4,6 +4,7 @@ import com.learnhub.auth.dto.AssignManagerRequest;
 import com.learnhub.course.chapter.ChapterService;
 import com.learnhub.course.chapter.lesson.dto.*;
 import com.learnhub.course.dto.*;
+import com.learnhub.course.review.ReviewService;
 import com.learnhub.user.User;
 import com.learnhub.util.ObjectMapper;
 import jakarta.persistence.EntityNotFoundException;
@@ -24,12 +25,14 @@ public class CourseController {
     private final CourseService courseService;
     private final ChapterService chapterService;
     private final ObjectMapper objectMapper;
+    private final ReviewService reviewService;
 
     @Autowired
-    public CourseController(CourseService courseService, ChapterService chapterService, ObjectMapper objectMapper) {
+    public CourseController(CourseService courseService, ChapterService chapterService, ObjectMapper objectMapper, ReviewService reviewService) {
         this.courseService = courseService;
         this.chapterService = chapterService;
         this.objectMapper = objectMapper;
+        this.reviewService = reviewService;
     }
 
 
@@ -54,6 +57,16 @@ public class CourseController {
         return ResponseEntity.ok("Success");
     }
 
+
+    @PostMapping("{id}/reviews")
+    public ResponseEntity<String> createReview(
+            @AuthenticationPrincipal User user,
+            @PathVariable(name = "id") Long courseId,
+            @RequestBody ReviewRequest req
+    ) {
+        reviewService.save(user, courseId, req);
+        return ResponseEntity.ok("Success");
+    }
 
     @GetMapping("/managers")
     public ResponseEntity<List<ManagerCoursesResponse>> getManagerCourses(@AuthenticationPrincipal User user) {

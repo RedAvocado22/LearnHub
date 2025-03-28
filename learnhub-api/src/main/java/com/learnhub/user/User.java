@@ -1,6 +1,7 @@
 package com.learnhub.user;
 
 import com.learnhub.auth.RevokedToken;
+import com.learnhub.course.review.Review;
 import com.learnhub.payment.CoursePurchase;
 import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.student.StudentProfile;
@@ -60,19 +61,22 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<RevokedToken> revokedTokens;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private StudentProfile student;
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private TeacherProfile teacher;
 
     @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CoursePurchase> purchases;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
+
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
 
-    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private ManagerProfile manager;
 
     @Override

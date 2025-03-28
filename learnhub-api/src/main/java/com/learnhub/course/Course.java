@@ -2,6 +2,7 @@ package com.learnhub.course;
 
 import com.learnhub.course.category.Category;
 import com.learnhub.course.chapter.Chapter;
+import com.learnhub.course.review.Review;
 import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.teacher.TeacherProfile;
 import jakarta.persistence.*;
@@ -47,6 +48,9 @@ public class Course {
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters;
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Review> reviews;
 
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
