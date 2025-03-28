@@ -1,13 +1,18 @@
 package com.learnhub.auth;
 
-import com.learnhub.auth.dto.*;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import com.learnhub.auth.dto.ActivateAccountRequest;
+import com.learnhub.auth.dto.AuthResponse;
+import com.learnhub.auth.dto.LoginRequest;
+import com.learnhub.auth.dto.ResetPasswordRequest;
+import com.learnhub.auth.dto.StudentRegisterRequest;
 import com.learnhub.auth.exception.InactiveAccountException;
 import com.learnhub.auth.exception.InvalidTokenException;
 import com.learnhub.auth.exception.SuspendedAccountException;
 import com.learnhub.auth.exception.UserExistsException;
 import com.learnhub.auth.jwt.JwtService;
+import com.learnhub.notification.NotificationService;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
@@ -29,6 +34,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final EmailService emailService;
     private final JwtService jwtService;
+    private final NotificationService notificationService;
     private final AuthenticationManager authenticationManager;
     private final PasswordEncoder passwordEncoder;
 
@@ -37,11 +43,13 @@ public class AuthService {
             UserRepository userRepository,
             EmailService emailService,
             JwtService jwtService,
+            NotificationService notificationService,
             AuthenticationManager authenticationManager,
             PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.jwtService = jwtService;
+        this.notificationService = notificationService;
         this.authenticationManager = authenticationManager;
         this.passwordEncoder = passwordEncoder;
     }
@@ -86,6 +94,7 @@ public class AuthService {
                         .build())
                 .build());
 
+        notificationService.notifyUserRegistered(user);
         String token = jwtService.generateToken(user, 30 * 60 * 1000);
         emailService.sendAccountActivationEmail(user.getEmail(), token);
         return new AuthResponse(token);

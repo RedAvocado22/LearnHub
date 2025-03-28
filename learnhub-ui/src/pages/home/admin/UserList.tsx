@@ -1,38 +1,16 @@
 import { Link, useSearchParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
 import { UserRole, UserStatus } from "../../../types/User";
-import { useEffect, useState } from "react";
-import { API } from "../../../api";
-import { isAxiosError } from "axios";
-import { toast } from "react-toastify";
-
-interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    status: UserStatus;
-    role: UserRole;
-    createdAt: Date;
-}
+import { useState } from "react";
+import { useManageUsers } from "../../../hooks/useManageUsers";
 
 const itemsPerPage = 10;
 export default function UserList() {
     const [params, _] = useSearchParams();
     const role = params.get("role") || "teachers";
-    const [users, setUsers] = useState<User[]>([]);
+    const { users } = useManageUsers();
     const [currPage, setCurrPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    useEffect(() => {
-        API.get("/users")
-            .then((resp) => setUsers(resp.data))
-            .catch((err) => {
-                if (isAxiosError(err)) {
-                    toast.error(err.response?.data || "Something went wrong");
-                }
-                console.error((err as Error).message);
-            });
-    }, []);
 
     let list = users
         .filter((user) => {
@@ -128,19 +106,16 @@ export default function UserList() {
                                         <div className="mail-box-list">
                                             {list.map((user) => (
                                                 <div key={user.id} className="mail-list-info">
-                                                    <span
-                                                        className={`ml-2 badge ${user.status === UserStatus.ACTIVE ? "badge-success" : "badge-danger"}`}>
-                                                        {user.status === UserStatus.ACTIVE
-                                                            ? "Active"
-                                                            : user.status === UserStatus.UNACTIVE
-                                                              ? "Unactive"
-                                                              : "Suspended"}
-                                                    </span>
+                                                    {user.status === UserStatus.ACTIVE ? (
+                                                        <span className="ml-2 badge badge-success">Active</span>
+                                                    ) : user.status === UserStatus.UNACTIVE ? (
+                                                        <span className="ml-2 badge badge-warning">Inactive</span>
+                                                    ) : (
+                                                        <span className="ml-2 badge badge-danger">Suspended</span>
+                                                    )}
                                                     <div className="mail-list-title">
                                                         <h6>
-                                                            <Link
-                                                                to={`/admin/users/${user.id}`}
-                                                                state={{ role: user.role }}>
+                                                            <Link to={`/admin/users/${user.id}`}>
                                                                 {user.firstName} {user.lastName}
                                                             </Link>
                                                         </h6>

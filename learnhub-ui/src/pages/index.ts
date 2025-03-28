@@ -7,6 +7,7 @@ export { default as FAQ } from "./public/FAQ";
 export { default as About } from "./public/About";
 export { default as TestVideo } from "./public/TestVideo";
 export { default as CourseDetail } from "./public/CourseDetail";
+export { default as AddContactDetails } from "./public/AddContactDetails";
 
 // Auth pages
 export { default as Register } from "./auth/Register";
@@ -37,9 +38,10 @@ export { default as ContactDetails } from "./home/admin/ContactDetails";
 export { default as UserList } from "./home/admin/UserList";
 export { default as UserDetails } from "./home/admin/UserDetails";
 export { default as AddUser } from "./home/admin/AddUser";
-export { default as AdminCourseList} from "./home/admin/CourseList";
+export { default as AdminCourseList } from "./home/admin/CourseList";
 export { default as AssignCourseManager } from "./home/admin/AssignCourseManager";
 export { default as TransactionHistory } from "./home/student/TransactionHistory";
+export { default as AddCategory } from "./home/admin/AddCategory";
 
 //Payment
 export { default as Order } from "./home/payment/Order";

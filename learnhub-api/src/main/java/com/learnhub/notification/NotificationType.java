@@ -1,5 +1,13 @@
 package com.learnhub.notification;
 
 public enum NotificationType {
-    MANAGER, STUDENT
+    COURSE_SUBMITTED,
+    COURSE_PUBLISHED,
+    COURSE_REJECTED,
+    COURSE_UPDATED,
+    COURSE_ASSIGNED,
+    CONTACT_SUBMITTED,
+    CONTACT_UPDATED,
+    USER_REGISTERED,
+    STUDENT_ENROLLED
 }

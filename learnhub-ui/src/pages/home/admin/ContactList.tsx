@@ -1,42 +1,15 @@
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
 import { useContacts } from "../../../hooks/useContacts";
 import { useState } from "react";
-import { isAxiosError } from "axios";
-import { toast } from "react-toastify";
-import { API } from "../../../api";
 
 const itemsPerPage = 10;
 export default function ContactList() {
-    const { contacts, deleteContacts } = useContacts();
+    const { contacts } = useContacts();
     const [params, _] = useSearchParams();
     const status = params.get("status") || "pending";
-    const [selectedItems, setSelectedItems] = useState<number[]>([]);
     const [currPage, setCurrPage] = useState(0);
     const [searchQuery, setSearchQuery] = useState("");
-    const navigate = useNavigate();
-    const getTimestamp = (str: string): number => {
-        const timestamp = new Date(str).getTime();
-        return isNaN(timestamp) ? -Infinity : timestamp;
-    };
-    const handleItemCheckbox = (id: number) => {
-        setSelectedItems((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]));
-    };
-
-    const handleResolveContact = async (contact: any) => {
-        try {
-            const resp = await API.put(`/contacts/${contact.id}`);
-            if (resp.status === 200) {
-                toast.success("Resolve successfully");
-                navigate("/admin/users/add", { state: { contact: contact } });
-            }
-        } catch (err) {
-            if (isAxiosError(err)) {
-                toast.error(err.response?.data || "Something went wrong");
-            }
-            console.error((err as Error).message);
-        }
-    };
 
     let list = contacts
         .filter((contact) => {
@@ -51,7 +24,7 @@ export default function ContactList() {
             }
             return true;
         })
-        .sort((a, b) => getTimestamp(b.createdAt) - getTimestamp(a.createdAt));
+        .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
 
     const totalPages = Math.ceil(list.length / itemsPerPage);
     const startIdx = currPage * itemsPerPage;
@@ -85,24 +58,6 @@ export default function ContactList() {
                                     </div>
                                     <div className="mail-list-container">
                                         <div className="mail-toolbar">
-                                            <div className="check-all">
-                                                <div className="custom-control custom-checkbox checkbox-st1">
-                                                    <input
-                                                        checked={
-                                                            list.length > 0 && selectedItems.length === list.length
-                                                        }
-                                                        onChange={(e) =>
-                                                            e.target.checked
-                                                                ? setSelectedItems(list.map((item) => item.id))
-                                                                : setSelectedItems([])
-                                                        }
-                                                        type="checkbox"
-                                                        className="custom-control-input"
-                                                        id="check0"
-                                                    />
-                                                    <label className="custom-control-label" htmlFor="check0"></label>
-                                                </div>
-                                            </div>
                                             <div className="mail-search-bar">
                                                 <input
                                                     value={searchQuery}
@@ -111,18 +66,6 @@ export default function ContactList() {
                                                     className="form-control"
                                                     placeholder="Search"
                                                 />
-                                            </div>
-                                            <div className="dropdown all-msg-toolbar">
-                                                <span className="btn btn-info-icon" data-toggle="dropdown">
-                                                    <i className="fa fa-ellipsis-v"></i>
-                                                </span>
-                                                <ul className="dropdown-menu">
-                                                    <li>
-                                                        <a href="#" onClick={() => deleteContacts(selectedItems)}>
-                                                            <i className="fa fa-trash-o"></i> Delete
-                                                        </a>
-                                                    </li>
-                                                </ul>
                                             </div>
                                             <div className="next-prev-btn">
                                                 <span className="mr-3">
@@ -151,23 +94,9 @@ export default function ContactList() {
                                         <div className="mail-box-list">
                                             {list.map((contact) => (
                                                 <div key={contact.id} className="mail-list-info">
-                                                    <div className="checkbox-list">
-                                                        <div className="custom-control custom-checkbox checkbox-st1">
-                                                            <input
-                                                                checked={selectedItems.includes(contact.id)}
-                                                                onChange={() => handleItemCheckbox(contact.id)}
-                                                                type="checkbox"
-                                                                className="custom-control-input"
-                                                                id={`check${contact.id}`}
-                                                            />
-                                                            <label
-                                                                className="custom-control-label"
-                                                                htmlFor={`check${contact.id}`}></label>
-                                                        </div>
-                                                    </div>
                                                     <div className="mail-rateing">
                                                         <span>
-                                                            <i className="fa fa-star-o"></i>
+                                                            <i className="fa fa-user-o"></i>
                                                         </span>
                                                     </div>
                                                     <div className="mail-list-title">
@@ -184,16 +113,13 @@ export default function ContactList() {
                                                         <span>{new Date(contact.createdAt).toDateString()}</span>
                                                     </div>
                                                     <ul className="mailbox-toolbar">
-                                                        <li data-toggle="tooltip" title="Delete">
-                                                            <i
-                                                                onClick={() => deleteContacts([contact.id])}
-                                                                className="fa fa-trash-o"></i>
-                                                        </li>{" "}
-                                                        <li data-toggle="tooltip" title="Resolve">
-                                                            <a href="#" onClick={() => handleResolveContact(contact)}>
-                                                                <i className="fa fa-arrow-down"></i>
-                                                            </a>
-                                                        </li>
+                                                        {!contact.resolved && (
+                                                            <li data-toggle="tooltip" title="Resolve">
+                                                                <Link to="/admin/users/add" state={{ contact }}>
+                                                                    <i className="fa fa-arrow-down"></i>
+                                                                </Link>
+                                                            </li>
+                                                        )}
                                                     </ul>
                                                 </div>
                                             ))}

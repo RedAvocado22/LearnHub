@@ -25,7 +25,7 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
         { label: "Dashboard", icon: "ti-home", link: "/home" },
         { label: "Mailbox", icon: "ti-email", link: "/admin/contacts" },
         { label: "Manage Users", icon: "ti-user", link: "/admin/users" },
-        { label: "Manage Course", icon: "ti-user", link: "/admin/courses" }
+        { label: "Manage Course", icon: "ti-book", link: "/admin/courses" }
     ],
     COURSE_MANAGER: [
         { label: "Dashboard", icon: "ti-home", link: "/home" },
@@ -161,7 +161,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                             src={
                                                 user?.avatar
                                                     ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${user.avatar}`
-                                                    : "/assets/images/avatar.png"
+                                                    : "/assets/images/testimonials/default.jpg"
                                             }
                                             width="32"
                                             height="32"

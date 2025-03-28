@@ -1,42 +1,48 @@
 package com.learnhub.notification;
 
-import com.learnhub.user.manager.ManagerProfile;
-import com.learnhub.user.teacher.TeacherProfile;
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Map;
+import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import com.learnhub.user.User;
+import com.learnhub.util.JsonConverter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.time.LocalDateTime;
-
+import lombok.Setter;
 
 @Entity
-@Data
+@Getter
+@Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Notification {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id")
-    private TeacherProfile teacher;
-
-    @ManyToOne
-    @JoinColumn(name = "manager_id")
-    private ManagerProfile manager;
-
-    @Column(nullable = false)
-    private String message;
-
-    @Column(nullable = false)
-    private LocalDateTime timeSent = LocalDateTime.now();
+    @JoinColumn(name = "user_id")
+    private User recipient;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "type", nullable = false)
     private NotificationType type;
+
+    @Convert(converter = JsonConverter.class)
+    @Column(columnDefinition = "TEXT")
+    private Map<String, Object> context;
+
+    @Column(name = "time_sent", nullable = false)
+    private final LocalDateTime timeSent = LocalDateTime.now();
 }

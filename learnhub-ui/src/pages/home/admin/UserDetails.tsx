@@ -1,128 +1,20 @@
 import { Link, useParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
+import { UserRole, UserStatus } from "../../../types/User";
+import Swal from "sweetalert2";
 import NotFound from "../../error/NotFound";
-import { StudentType, UserRole, UserStatus } from "../../../types/User";
-import prettyBytes from "pretty-bytes";
-import { API } from "../../../api";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
-import { useEffect, useRef, useState } from "react";
-import Swal from "sweetalert2";
-
-interface Document {
-    fileName: string;
-    fileSize: number;
-    downloadLink: string;
-}
-
-interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    role: UserRole;
-    status: UserStatus;
-    createdAt: Date;
-    student?: Student;
-    teacher?: Teacher;
-    documents: Document[];
-}
-
-interface Student {
-    type: StudentType;
-    school: string;
-}
-
-interface Teacher {
-    major: string;
-    phone: string;
-    workAddress: string;
-    city: string;
-    website: string;
-    biography: string;
-    documents: Document[];
-}
+import { API } from "../../../api";
+import { useManageUsers } from "../../../hooks/useManageUsers";
 
 export default function UserDetails() {
     const { id } = useParams();
-    const [user, setUser] = useState<User | null>(null);
-    const [uploadFiles, setUploadFiles] = useState<File[]>([]);
-    const [deleteFiles, setDeleteFiles] = useState<string[]>([]);
-    const fileUploadInput = useRef<HTMLInputElement>(null);
-    useEffect(() => {
-        API.get(`/users/${id}`)
-            .then((resp) => setUser(resp.data))
-            .catch((err) => {
-                if (isAxiosError(err)) {
-                    toast.error(err.response?.data || "Something went wrong");
-                }
-                console.error((err as Error).message);
-            });
-    }, []);
+    const { users, refreshUsers } = useManageUsers();
+    const user = users.find((u) => u.id.toString() === id);
     if (!user) {
         return <NotFound />;
     }
-    const handleDownloadDocument = async (fileName: string, link: string) => {
-        try {
-            const resp = await API.get(`/users/${link}`, { responseType: "blob" });
-            const href = URL.createObjectURL(resp.data);
-            const a = document.createElement("a");
-            a.href = href;
-            a.setAttribute("download", fileName);
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(href);
-        } catch (err) {
-            if (isAxiosError(err)) {
-                toast.error(err.response?.data || "Something went wrong");
-            }
-            console.error((err as Error).message);
-        }
-    };
-
-    const handleUploadDocument = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files && files.length > 0) {
-            setUploadFiles([...uploadFiles, files[0]]);
-        }
-    };
-
-    const handleSaveDocumentChanges = async () => {
-        for (const url of deleteFiles) {
-            try {
-                const resp = await API.delete(`/users/${user.id}/${url}`);
-                if (resp.status === 200) {
-                    toast.success("Delete file successfully");
-                }
-            } catch (err) {
-                if (isAxiosError(err)) {
-                    toast.error(err.response?.data || "Something went wrong");
-                }
-                console.error((err as Error).message);
-            }
-        }
-        const formData = new FormData();
-        for (const file of uploadFiles) {
-            if (!file) continue;
-            formData.append("files", file);
-        }
-        if (Array.from(formData.entries()).length > 0) {
-            try {
-                const resp = await API.post(`/users/${user.id}/documents`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" }
-                });
-                if (resp.status === 200) {
-                    toast.success("Upload file successfully");
-                }
-            } catch (err) {
-                if (isAxiosError(err)) {
-                    toast.error(err.response?.data || "Something went wrong");
-                }
-                console.error((err as Error).message);
-            }
-        }
-    };
 
     const handleBanUser = async () => {
         const { value } = await Swal.fire({
@@ -132,8 +24,43 @@ export default function UserDetails() {
             showCancelButton: true
         });
         if (value) {
-            // TODO: Handle ban user
-            console.log(value);
+            try {
+                const resp = await API.put(`/users/${user.id}/status`, { status: UserStatus.SUSPENDED, reason: value });
+                if (resp.status === 200) {
+                    toast.success("Ban user successfully");
+                    await refreshUsers();
+                }
+            } catch (err) {
+                let msg = "Something went wrong";
+                if (isAxiosError(err)) {
+                    msg = err.response?.data.error || msg;
+                }
+                toast.error(msg);
+            }
+        }
+    };
+
+    const handleUnbanUser = async () => {
+        const { value } = await Swal.fire({
+            title: "Unban Reason",
+            input: "textarea",
+            inputPlaceholder: "Type your message here...",
+            showCancelButton: true
+        });
+        if (value) {
+            try {
+                const resp = await API.put(`/users/${user.id}/status`, { status: UserStatus.ACTIVE, reason: value });
+                if (resp.status === 200) {
+                    toast.success("Unban user successfully");
+                    await refreshUsers();
+                }
+            } catch (err) {
+                let msg = "Something went wrong";
+                if (isAxiosError(err)) {
+                    msg = err.response?.data.error || msg;
+                }
+                toast.error(msg);
+            }
         }
     };
 
@@ -159,9 +86,15 @@ export default function UserDetails() {
                                     <h4>
                                         {user.firstName} {user.lastName}
                                     </h4>
-                                    <button type="button" className="btn" onClick={handleBanUser}>
-                                        Ban User
-                                    </button>
+                                    {user.status === UserStatus.ACTIVE ? (
+                                        <button type="button" className="btn" onClick={handleBanUser}>
+                                            Ban User
+                                        </button>
+                                    ) : (
+                                        <button type="button" className="btn" onClick={handleUnbanUser}>
+                                            Unban User
+                                        </button>
+                                    )}
                                 </div>
                                 <div className="widget-inner">
                                     <form className="edit-profile m-b30">
@@ -189,7 +122,7 @@ export default function UserDetails() {
                                             </div>
                                             <div className="form-group col-6">
                                                 <label className="col-form-label">Joined Date</label>
-                                                <div>{new Date(user.createdAt).toDateString()}</div>
+                                                <div>{new Date(user.createdAt || "").toDateString()}</div>
                                             </div>
                                             <div className="form-group col-6">
                                                 <label className="col-form-label">Account Status</label>
@@ -255,145 +188,59 @@ export default function UserDetails() {
                                                     </div>
                                                 </>
                                             )}
-                                            {(user.role === UserRole.TEACHER ||
-                                                user.role === UserRole.COURSE_MANAGER) && (
-                                                <>
-                                                    <div className="col-12 m-t20">
-                                                        <div className="ml-auto">
-                                                            <h3 className="m-form__section">3. Documents</h3>
-                                                        </div>
-                                                    </div>
-                                                    <div className="col-12">
-                                                        <table id="item-add" style={{ width: "100%" }}>
-                                                            <tbody>
-                                                                {(user as User | Teacher).documents
-                                                                    ?.filter(
-                                                                        (doc) => !deleteFiles.includes(doc.downloadLink)
-                                                                    )
-                                                                    .map((doc, index) => (
-                                                                        <tr key={index} className="list-item">
-                                                                            <td>
-                                                                                <div className="row">
-                                                                                    <div className="col-md-4">
-                                                                                        <label className="col-form-label">
-                                                                                            File name
-                                                                                        </label>
-                                                                                        <div>{doc.fileName}</div>
-                                                                                    </div>
-                                                                                    <div className="col-md-3">
-                                                                                        <label className="col-form-label">
-                                                                                            File size
-                                                                                        </label>
-                                                                                        <div>
-                                                                                            {prettyBytes(doc.fileSize)}
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-2">
-                                                                                        <label className="col-form-label">
-                                                                                            Close
-                                                                                        </label>
-                                                                                        <div className="form-group">
-                                                                                            <a
-                                                                                                className="delete"
-                                                                                                href="#"
-                                                                                                onClick={() =>
-                                                                                                    setDeleteFiles([
-                                                                                                        ...deleteFiles,
-                                                                                                        doc.downloadLink
-                                                                                                    ])
-                                                                                                }>
-                                                                                                <i className="fa fa-close"></i>
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <div className="col-md-2">
-                                                                                        <label className="col-form-label">
-                                                                                            Download
-                                                                                        </label>
-                                                                                        <div className="form-group">
-                                                                                            <a
-                                                                                                className="download"
-                                                                                                href="#"
-                                                                                                onClick={() =>
-                                                                                                    handleDownloadDocument(
-                                                                                                        doc.fileName,
-                                                                                                        doc.downloadLink
-                                                                                                    )
-                                                                                                }>
-                                                                                                <i className="fa fa-download"></i>
-                                                                                            </a>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </td>
-                                                                        </tr>
-                                                                    ))}
-                                                                {uploadFiles.map((file, index) => (
-                                                                    <tr key={index} className="list-item">
-                                                                        <td>
-                                                                            <div className="row">
-                                                                                <div className="col-md-4">
-                                                                                    <label className="col-form-label">
-                                                                                        File name
-                                                                                    </label>
-                                                                                    <div>{file.name}</div>
-                                                                                </div>
-                                                                                <div className="col-md-3">
-                                                                                    <label className="col-form-label">
-                                                                                        File size
-                                                                                    </label>
-                                                                                    <div>{prettyBytes(file.size)}</div>
-                                                                                </div>
-                                                                                <div className="col-md-2">
-                                                                                    <label className="col-form-label">
-                                                                                        Close
-                                                                                    </label>
-                                                                                    <div className="form-group">
-                                                                                        <a
-                                                                                            className="delete"
-                                                                                            href="#"
-                                                                                            onClick={() => {
-                                                                                                setUploadFiles(
-                                                                                                    uploadFiles.filter(
-                                                                                                        (_, idx) =>
-                                                                                                            idx != index
-                                                                                                    )
-                                                                                                );
-                                                                                            }}>
-                                                                                            <i className="fa fa-close"></i>
-                                                                                        </a>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                ))}
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                    <div className="col-12">
-                                                        <button
-                                                            type="button"
-                                                            onClick={() => fileUploadInput.current?.click()}
-                                                            className="btn-secondry add-item m-r5">
-                                                            <i className="fa fa-fw fa-plus-circle"></i>Add Item
-                                                        </button>
-                                                        <input
-                                                            type="file"
-                                                            ref={fileUploadInput}
-                                                            hidden
-                                                            onChange={handleUploadDocument}
-                                                            multiple
-                                                        />
-                                                        <button
-                                                            type="button"
-                                                            className="btn"
-                                                            onClick={handleSaveDocumentChanges}>
-                                                            Save changes
-                                                        </button>
-                                                    </div>
-                                                </>
+                                            {user.role === UserRole.COURSE_MANAGER && user.manager && (
+                                                <div className="form-group col-6">
+                                                    <label className="col-form-label">Department</label>
+                                                    <div>{user.manager.department}</div>
+                                                </div>
                                             )}
+                                            <div className="seperator"></div>
+
+                                            <div className="col-12 m-t20">
+                                                <div className="ml-auto m-b5">
+                                                    <h3>3. Contacts</h3>
+                                                </div>
+                                            </div>
+                                            <div className="col-12">
+                                                <table className="table table-striped table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Subject</th>
+                                                            <th scope="col">State</th>
+                                                            <th scope="col">Resolved Date</th>
+                                                            <th scope="col">Created Date</th>
+                                                            <th scope="col">Details</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {user.contacts.map((contact, idx) => (
+                                                            <tr key={idx}>
+                                                                <td>{contact.subject}</td>
+                                                                <td>
+                                                                    {contact.resolved ? (
+                                                                        <p className="text-success">Resolved</p>
+                                                                    ) : (
+                                                                        <p className="text-danger">Not resolved</p>
+                                                                    )}
+                                                                </td>
+                                                                <td>
+                                                                    {contact.resolvedAt
+                                                                        ? new Date(contact.resolvedAt).toDateString()
+                                                                        : ""}
+                                                                </td>
+                                                                <td>{new Date(contact.createdAt).toDateString()}</td>
+                                                                <td>
+                                                                    <Link
+                                                                        to={`/admin/contacts/${contact.id}`}
+                                                                        style={{ textDecoration: "underline" }}>
+                                                                        Details
+                                                                    </Link>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>

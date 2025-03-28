@@ -1,7 +1,11 @@
 package com.learnhub.util;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import com.learnhub.common.dto.PublicCourseResponse;
 import com.learnhub.common.dto.PublicTeacherResponse;
+import com.learnhub.contact.Contact;
+import com.learnhub.contact.dto.ContactResponse;
 import com.learnhub.course.Course;
 import com.learnhub.course.chapter.Chapter;
 import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
@@ -14,8 +18,6 @@ import com.learnhub.user.User;
 import com.learnhub.user.dto.CurrentUserResponse;
 import com.learnhub.user.dto.ManageUserResponse;
 import com.learnhub.user.dto.ManagerResponse;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +36,10 @@ public class ObjectMapper {
     public CurrentUserResponse toCurrentUserResponse(User user) {
         //NOTE: User lấy từ spring security bị detached nên phải dùng cái của nợ này để merge lại vào.
         return CurrentUserResponse.from(entityManager.merge(user));
+    }
+
+    public ContactResponse toContactResponse(Contact contact) {
+        return ContactResponse.from(contact);
     }
 
     public ManageUserResponse toManageUserResponse(User user) {

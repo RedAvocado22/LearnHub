@@ -7,13 +7,14 @@ import * as yup from "yup";
 import * as validation from "../../utils/validation";
 import { Form, Formik, FormikHelpers } from "formik";
 import FormField from "../../layouts/FormField";
+import { ContactSubject } from "../../hooks/useContacts";
 
 interface FormValues {
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
-    subject: string;
+    subject: ContactSubject;
     message: string;
 }
 
@@ -22,7 +23,10 @@ const validationSchema = yup.object({
     lastName: yup.string().required("Last name is required"),
     email: yup.string().email("Email is invalid").required("Email is required"),
     phone: validation.phone.required("Phone is required"),
-    subject: yup.string().required("Subject is required"),
+    subject: yup
+        .mixed<ContactSubject>()
+        .oneOf(Object.values(ContactSubject), "Select a valid subject")
+        .required("Subject is required"),
     message: yup.string().required("Message is required")
 });
 
@@ -32,7 +36,7 @@ export default function ContactUs() {
         lastName: "",
         email: "",
         phone: "",
-        subject: "",
+        subject: ContactSubject.ADD_TEACHER,
         message: ""
     };
     const navigate = useNavigate();
@@ -124,13 +128,12 @@ export default function ContactUs() {
                                                 <div className="col-lg-6">
                                                     <div className="form-group">
                                                         <FormField name="subject" as="select" className="form-select">
-                                                            <option value="Want to become a teacher">
+                                                            <option value={ContactSubject.ADD_TEACHER}>
                                                                 I want to become a teacher
                                                             </option>
-                                                            <option value="Want to become a course manager">
+                                                            <option value={ContactSubject.ADD_MANAGER}>
                                                                 I want to become a manager
                                                             </option>
-                                                            <option value="Have a problem">I have a problem</option>
                                                         </FormField>
                                                     </div>
                                                 </div>

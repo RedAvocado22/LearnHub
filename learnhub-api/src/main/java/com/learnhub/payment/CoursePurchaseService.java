@@ -1,5 +1,6 @@
 package com.learnhub.payment;
 
+import java.util.List;
 import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseRepository;
@@ -7,8 +8,6 @@ import com.learnhub.payment.dto.CoursePurchaseRequest;
 import com.learnhub.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CoursePurchaseService {

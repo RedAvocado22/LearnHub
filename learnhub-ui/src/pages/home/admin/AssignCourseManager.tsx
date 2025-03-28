@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { API } from "../../../api";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
@@ -9,15 +9,17 @@ interface Manager {
     id: number;
     name: string;
     email: string;
+    department: string;
 }
 
 export default function AssignCourseManager() {
     const { courseId } = useParams();
+    const location = useLocation();
+    const course = location.state?.course || null;
     const navigate = useNavigate();
     const [managers, setManagers] = useState<Manager[]>([]);
     const [selectedManager, setSelectedManager] = useState<number | null>(null);
     const [loading, setLoading] = useState(false);
-    const [courseName, setCourseName] = useState("");
 
     useEffect(() => {
         API.get("users/managers")
@@ -28,19 +30,6 @@ export default function AssignCourseManager() {
                 }
                 console.error((err as Error).message);
             });
-
-        if (courseId) {
-            API.get(`courses/managers/${courseId}`)
-                .then((resp) => {
-                    setCourseName(resp.data.name);
-                })
-                .catch((err) => {
-                    if (isAxiosError(err)) {
-                        toast.error(err.response?.data || "Failed to load course details");
-                    }
-                    console.error((err as Error).message);
-                });
-        }
     }, [courseId]);
 
     const handleAssignManager = async () => {
@@ -90,9 +79,17 @@ export default function AssignCourseManager() {
                                 <div className="widget-inner">
                                     <div className="card">
                                         <div className="card-header">
-                                            <h4>Assign Manager to Course: {courseName}</h4>
+                                            <h4>Assign Manager to Course: {course?.name}</h4>
                                         </div>
                                         <div className="card-body">
+                                            <div className="form-group">
+                                                <label className="col-form-label">Teacher</label>
+                                                <div>{course?.teacherEmail}</div>
+                                            </div>
+                                            <div className="form-group">
+                                                <label className="col-form-label">Category</label>
+                                                <div>{course?.category.name}</div>
+                                            </div>
                                             <div className="form-group">
                                                 <label className="col-form-label">Select Manager</label>
                                                 <select
@@ -102,7 +99,8 @@ export default function AssignCourseManager() {
                                                     <option value="">-- Select a Manager --</option>
                                                     {managers.map((manager) => (
                                                         <option key={manager.id} value={manager.id}>
-                                                            {manager.name} ({manager.email})
+                                                            {manager.name} ({manager.email}) - Department:{" "}
+                                                            {manager.department}
                                                         </option>
                                                     ))}
                                                 </select>

@@ -29,7 +29,7 @@ export default function TeacherCourseList() {
             await API.put(`courses/${updatedCourse.id}/teacher`, data, {
                 headers: { "Content-Type": "multipart/form-data" }
             });
-
+            refreshUser();
             setEditingCourse(null);
         } catch (error) {
             console.error("Error updating course:", error);

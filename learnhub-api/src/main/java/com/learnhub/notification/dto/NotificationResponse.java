@@ -1,21 +1,21 @@
 package com.learnhub.notification.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.time.LocalDateTime;
+import java.util.Map;
 import com.learnhub.notification.Notification;
 import com.learnhub.notification.NotificationType;
 
-import java.time.LocalDateTime;
-
 public record NotificationResponse(
-        String message,
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm")
-        LocalDateTime timeSent,
-        NotificationType type) {
+        Long id,
+        NotificationType type,
+        Map<String, Object> context,
+        LocalDateTime timeSent) {
     public static NotificationResponse from(Notification notification) {
         return new NotificationResponse(
-                notification.getMessage(),
-                notification.getTimeSent(),
-                notification.getType()
+                notification.getId(),
+                notification.getType(),
+                notification.getContext(),
+                notification.getTimeSent()
         );
     }
 }

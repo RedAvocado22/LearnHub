@@ -9,12 +9,11 @@ import { CourseStatus } from "../../../types/Course";
 interface Course {
     id: number;
     name: string;
+    teacherEmail: string;
+    category: { id: number; name: string };
     status: CourseStatus;
     createdAt: Date;
-    manager?: {
-        id: number;
-        name: string;
-    } | null;
+    manager?: { id: number; name: string } | null;
 }
 
 const itemsPerPage = 10;
@@ -70,6 +69,11 @@ export default function AdminCourseList() {
                             <div className="widget-box">
                                 <div className="email-wrapper">
                                     <div className="email-menu-bar">
+                                        <div className="compose-mail">
+                                            <Link to="/admin/categories/add" className="btn btn-block">
+                                                Add Category
+                                            </Link>
+                                        </div>
                                         <div className="email-menu-bar-inner">
                                             <ul>
                                                 <li className={status === "pending" ? "active" : ""}>
@@ -130,39 +134,63 @@ export default function AdminCourseList() {
                                         <div className="mail-box-list">
                                             {list.map((course) => (
                                                 <div key={course.id} className="mail-list-info">
-                                                    <span
-                                                        className={`ml-2 badge ${course.status !== CourseStatus.CANCELLED ? "badge-success" : "badge-danger"}`}>
-                                                        {course.status === CourseStatus.PUBLIC
-                                                            ? "Public"
-                                                            : course.status === CourseStatus.PENDING
-                                                              ? "Pending"
-                                                              : "Cancelled"}
-                                                    </span>
+                                                    {course.status === CourseStatus.PUBLIC ? (
+                                                        <span className="ml-2 badge badge-success">Published</span>
+                                                    ) : course.status === CourseStatus.PENDING ? (
+                                                        <span className="ml-2 badge badge-warning">Pending</span>
+                                                    ) : course.status === CourseStatus.CANCELLED ? (
+                                                        <span className="ml-2 badge badge-danger">Cancelled</span>
+                                                    ) : (
+                                                        <></>
+                                                    )}
                                                     <div className="mail-list-title">
                                                         <h6>
-                                                            <Link
-                                                                to={`/admin/courses/${course.id}`}
-                                                                state={{ status: course.status }}>
-                                                                {course.name}
-                                                            </Link>
+                                                            {!course.manager ? (
+                                                                <Link
+                                                                    to={`/admin/courses/${course.id}/assign-manager`}
+                                                                    state={{
+                                                                        course: {
+                                                                            name: course.name,
+                                                                            category: course.category,
+                                                                            teacherEmail: course.teacherEmail
+                                                                        }
+                                                                    }}>
+                                                                    {course.name}
+                                                                </Link>
+                                                            ) : (
+                                                                <>{course.name}</>
+                                                            )}
                                                         </h6>
+                                                    </div>
+                                                    <div className="mail-list-title-info">
+                                                        <p>{course.teacherEmail}</p>
                                                     </div>
                                                     <div className="mail-list-time">
                                                         <span>{new Date(course.createdAt).toDateString()}</span>
                                                     </div>
-                                                    <div className="mail-list-manager">
-                                                        {course.manager ? (
+                                                    {course.manager ? (
+                                                        <div className="mx-2">
                                                             <small className="text-muted">
                                                                 Manager: {course.manager.name}
                                                             </small>
-                                                        ) : (
-                                                            <Link
-                                                                to={`/admin/courses/${course.id}/assign-manager`}
-                                                                className=" assign-manager">
-                                                                Assign Manager
-                                                            </Link>
-                                                        )}
-                                                    </div>
+                                                        </div>
+                                                    ) : (
+                                                        <ul className="mailbox-toolbar">
+                                                            <li data-toggle="tooltip" title="Assign">
+                                                                <Link
+                                                                    to={`/admin/courses/${course.id}/assign-manager`}
+                                                                    state={{
+                                                                        course: {
+                                                                            name: course.name,
+                                                                            category: course.category,
+                                                                            teacherEmail: course.teacherEmail
+                                                                        }
+                                                                    }}>
+                                                                    <i className="fa fa-tasks"></i>
+                                                                </Link>
+                                                            </li>
+                                                        </ul>
+                                                    )}
                                                 </div>
                                             ))}
                                         </div>

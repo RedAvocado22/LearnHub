@@ -1,6 +1,6 @@
-insert into contact(email, first_name, last_name, phone, `subject`, message, resolved, created_at)
+insert into contact(email, first_name, last_name, phone, `subject`, message, account_id, created_at)
 values
-('baodqhe180053@fpt.edu.vn', 'BaoT3', 'Doan Quoc', '2345678901', 'Want to become a teacher', 'I want to become a teacher!!!', 0, now());
+('baodqhe180053@fpt.edu.vn', 'BaoT3', 'Doan Quoc', '2345678901', 'Want to become a teacher', 'I want to become a teacher!!!', null, now());
 
 insert into `account`(email, first_name, last_name, `password`, `role`, `status`, created_at)
 values

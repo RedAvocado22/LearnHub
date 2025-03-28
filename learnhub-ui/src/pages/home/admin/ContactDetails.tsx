@@ -1,8 +1,9 @@
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
 import MailboxLayout from "../admin/MailboxLayout";
 import NotFound from "../../error/NotFound";
-import { useContacts } from "../../../hooks/useContacts";
+import { ContactSubject, useContacts } from "../../../hooks/useContacts";
+import Swal from "sweetalert2";
 import { API } from "../../../api";
 import { toast } from "react-toastify";
 import { isAxiosError } from "axios";
@@ -11,26 +12,45 @@ export default function ContactDetails() {
     const { id } = useParams();
     const { contacts, deleteContacts } = useContacts();
     const contact = contacts.find((e) => e.id.toString() === id);
-    const navigate = useNavigate();
+
+    const handleDelete = async (id: number) => {
+        const { isConfirmed } = await Swal.fire({
+            title: "Delete contact?",
+            icon: "warning",
+            showCancelButton: true
+        });
+        if (isConfirmed) {
+            await deleteContacts([id]);
+        }
+    };
+
+    const handleRequest = async () => {
+        const { isConfirmed } = await Swal.fire({
+            title: "Send request to contact email?",
+            icon: "info",
+            showCancelButton: true
+        });
+        if (!isConfirmed || !contact) return;
+        try {
+            const resp = await API.get(`/contacts/${contact.id}/request-details`);
+            if (resp.status === 200) {
+                toast.success("Request sent successfully");
+            }
+        } catch (err) {
+            let msg = "Something went wrong";
+            if (isAxiosError(err)) {
+                switch (err.response?.status) {
+                    case 404:
+                        msg = "Can not find contact";
+                }
+            }
+            toast.error(msg);
+        }
+    };
 
     if (!contact) {
         return <NotFound />;
     }
-
-    const handleResolveContact = async (contact: any) => {
-        try {
-            const resp = await API.put(`/contacts/${contact.id}`);
-            if (resp.status === 200) {
-                toast.success("Resolve successfully");
-                navigate("/admin/users/add", { state: { contact: contact } });
-            }
-        } catch (err) {
-            if (isAxiosError(err)) {
-                toast.error(err.response?.data || "Something went wrong");
-            }
-            console.error((err as Error).message);
-        }
-    };
 
     return (
         <HomeLayout>
@@ -54,31 +74,99 @@ export default function ContactDetails() {
                                         <h5>Phone: {contact.phone}</h5>
                                     </div>
                                 </div>
-                                <div className="ml-auto send-mail-full-info">
-                                    <div className="time">
-                                        <span>{new Date(contact.createdAt).toDateString()}</span>
+                                {contact.resolved ? (
+                                    <div className="ml-auto send-mail-full-info">
+                                        <div className="time">
+                                            <span>{new Date(contact.resolvedAt || "").toDateString()}</span>
+                                        </div>
                                     </div>
-                                    <div className="dropdown all-msg-toolbar ml-auto">
-                                        <span className="btn btn-info-icon" data-toggle="dropdown">
-                                            <i className="fa fa-ellipsis-v"></i>
-                                        </span>
-                                        <ul className="dropdown-menu dropdown-menu-right">
-                                            <li>
-                                                <a href="#" onClick={() => deleteContacts([contact.id])}>
-                                                    <i className="fa fa-trash-o"></i> Delete
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#" onClick={() => handleResolveContact(contact)}>
-                                                    <i className="fa fa-arrow-down"></i> Resolve
-                                                </a>
-                                            </li>
-                                        </ul>
+                                ) : (
+                                    <div className="ml-auto send-mail-full-info">
+                                        <div className="time">
+                                            <span>{new Date(contact.createdAt).toDateString()}</span>
+                                        </div>
+                                        <button onClick={handleRequest} className="btn btn-info-icon">
+                                            Request Details
+                                        </button>
+                                        <div className="dropdown all-msg-toolbar ml-auto">
+                                            <span className="btn btn-info-icon" data-toggle="dropdown">
+                                                <i className="fa fa-ellipsis-v"></i>
+                                            </span>
+                                            <ul className="dropdown-menu dropdown-menu-right">
+                                                <li>
+                                                    <a href="#" onClick={() => handleDelete(contact.id)}>
+                                                        <i className="fa fa-trash-o"></i> Delete
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <Link to="/admin/users/add" state={{ contact }}>
+                                                        <i className="fa fa-arrow-down"></i> Resolve
+                                                    </Link>
+                                                </li>
+                                            </ul>
+                                        </div>
                                     </div>
-                                </div>
+                                )}
                             </div>
-                            <div className="read-content-body">
-                                <div dangerouslySetInnerHTML={{ __html: contact.message || "" }} />
+                            <div className="read-content-body">{contact.message}</div>
+                            {contact.subject === ContactSubject.ADD_TEACHER && contact.teacher && (
+                                <>
+                                    <hr />
+                                    <h6>Teacher Details</h6>
+                                    <div className="row">
+                                        <div className="col-6">
+                                            <span className="fw6">Major: </span>
+                                            {contact.teacher.major}
+                                        </div>
+                                        <div className="col-6">
+                                            <span className="fw6">Work Address: </span>
+                                            {contact.teacher.workAddress}
+                                        </div>
+                                    </div>
+                                    <div className="row">
+                                        <div className="col-6">
+                                            <span className="fw6">City: </span>
+                                            {contact.teacher.city}
+                                        </div>
+                                        <div className="col-6">
+                                            <span className="fw6">Website: </span>
+                                            <a target="_blank" href={contact.teacher.website || "#"}>
+                                                {contact.teacher.website}
+                                            </a>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span className="fw6">Biography: </span>
+                                        {contact.teacher.biography}
+                                    </div>
+                                </>
+                            )}
+                            {contact.subject === ContactSubject.ADD_MANAGER && contact.manager && (
+                                <>
+                                    <hr />
+                                    <h6>Manager Details</h6>
+                                    <div>
+                                        <span className="fw6">Department: </span>
+                                        {contact.manager?.department}
+                                    </div>
+                                </>
+                            )}
+                            <hr />
+                            <h6>
+                                <i className="fa fa-download m-r5"></i> Documents{" "}
+                                <span>({contact.documents.length})</span>
+                            </h6>
+                            <div className="mailbox-download-file">
+                                {contact.documents.map((doc, index) => (
+                                    <a
+                                        key={index}
+                                        download
+                                        target="_blank"
+                                        href={`https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${doc.fileUrl}`}
+                                        className="mr-2">
+                                        <i className="fa fa-file-o"></i> {doc.fileName}
+                                    </a>
+                                ))}
                             </div>
                         </div>
                     </div>

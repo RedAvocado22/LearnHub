@@ -1,51 +1,70 @@
 package com.learnhub.user;
 
+import java.math.BigDecimal;
+import java.util.List;
 import com.learnhub.aws.AwsS3Service;
+import com.learnhub.contact.ContactService;
+import com.learnhub.course.CourseRepository;
+import com.learnhub.course.CourseStatus;
+import com.learnhub.payment.CoursePurchase;
+import com.learnhub.payment.CoursePurchaseRepository;
 import com.learnhub.user.dto.AddUserRequest;
+import com.learnhub.user.dto.AdminStatsResponse;
+import com.learnhub.user.dto.ChangeUserStatusRequest;
 import com.learnhub.user.dto.UpdatePasswordRequest;
 import com.learnhub.user.dto.UpdateUserRequest;
 import com.learnhub.user.exception.OldPasswordNotMatchedException;
 import com.learnhub.user.exception.UserNotFoundException;
+import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.student.StudentProfile;
 import com.learnhub.user.teacher.TeacherProfile;
-import com.learnhub.util.io.FileService;
 import com.learnhub.util.mail.EmailService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
-import java.util.List;
-
 @Service
 public class UserService {
-    private static final Logger log = LoggerFactory.getLogger(UserService.class);
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final EmailService emailService;
-    private final FileService fileService;
     private final AwsS3Service awsS3Service;
+    private final ContactService contactService;
+    private final CourseRepository courseRepository;
+    private final CoursePurchaseRepository coursePurchaseRepository;
 
     @Autowired
     public UserService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             EmailService emailService,
-            FileService fileService, AwsS3Service awsS3Service) {
+            AwsS3Service awsS3Service,
+            ContactService contactService,
+            CourseRepository courseRepository,
+            CoursePurchaseRepository coursePurchaseRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
-        this.fileService = fileService;
         this.awsS3Service = awsS3Service;
+        this.contactService = contactService;
+        this.courseRepository = courseRepository;
+        this.coursePurchaseRepository = coursePurchaseRepository;
     }
 
     public List<User> getAllExceptAdmin() {
         return userRepository.findAll().stream().filter(user -> user.getRole() != UserRole.ADMIN).toList();
+    }
+
+    public AdminStatsResponse getAdminStats() {
+        Long totalUsers = userRepository.findAll().stream().count();
+        Long totalCourses = courseRepository.findAll().stream().filter(course -> course.getStatus() == CourseStatus.PUBLIC).count();
+        Long totalPurchases = coursePurchaseRepository.findAll().stream().count();
+        BigDecimal totalProfits = coursePurchaseRepository.findAll().stream()
+            .map(CoursePurchase::getPurchasePrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new AdminStatsResponse(totalProfits, totalCourses, totalPurchases, totalUsers);
     }
 
     public User getUserById(Long id) {
@@ -84,40 +103,32 @@ public class UserService {
                     .phone(req.teacher().phone())
                     .workAddress(req.teacher().workAddress())
                     .city(req.teacher().city())
+                    .website(req.teacher().website())
+                    .biography(req.teacher().biography())
+                    .build());
+        } else if (user.getRole() == UserRole.COURSE_MANAGER && req.manager() != null) {
+            user.setManager(ManagerProfile.builder().user(user)
+                    .department(req.manager().department())
                     .build());
         }
         User saved = userRepository.save(user);
         emailService.sendAccountCreatedEmail(saved.getEmail(), defaultPw);
+        if (req.contactId() != null) {
+            contactService.resolveContact(req.contactId(), saved);
+        }
         return saved.getId();
     }
 
-    @Transactional
-    public void saveUserDocuments(Long id, MultipartFile[] files) {
+    public void changeUserStatus(Long id, ChangeUserStatusRequest req) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
-        for (MultipartFile file : files) {
-            try {
-                user.getDocuments().add(fileService.saveUserDocument(user, file.getOriginalFilename(), file.getInputStream()));
-            } catch (IOException e) {
-                log.error("Save user document {} failed", file.getName(), e);
-            }
-        }
+        user.setStatus(req.status());
         userRepository.save(user);
-    }
-
-    public Resource getUserDocument(String fileName) {
-        return fileService.loadUserDocument(fileName);
-    }
-
-    @Transactional
-    public void deleteUserDocument(Long id, String fileName) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException(String.format("User with id %d does not exists", id)));
-        if (!fileService.deleteUserDocument(fileName)) {
-            log.warn("User document {} doesn't exists on disk", fileName);
+        if (req.status() == UserStatus.SUSPENDED) {
+            emailService.sendBanUserEmail(user.getEmail(), req.reason());
+        } else if (req.status() == UserStatus.ACTIVE) {
+            emailService.sendUnbanUserEmail(user.getEmail(), req.reason());
         }
-        user.getDocuments().removeIf(doc -> doc.getDownloadLink().equals("documents/" + fileName));
-        userRepository.save(user);
     }
 
     @Transactional

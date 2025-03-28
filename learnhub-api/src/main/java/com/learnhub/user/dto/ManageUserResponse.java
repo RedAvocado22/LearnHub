@@ -1,14 +1,9 @@
 package com.learnhub.user.dto;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
-
-import com.learnhub.course.category.Category;
-import com.learnhub.course.Course;
-import com.learnhub.course.CourseStatus;
+import com.learnhub.contact.Contact;
 import com.learnhub.user.User;
-import com.learnhub.user.UserDocument;
 import com.learnhub.user.UserRole;
 import com.learnhub.user.UserStatus;
 import com.learnhub.user.student.StudentProfile;
@@ -22,11 +17,29 @@ public record ManageUserResponse(
         String lastName,
         UserRole role,
         UserStatus status,
+        List<ContactResponse> contacts,
         ManageStudentResponse student,
         ManageTeacherResponse teacher,
-        List<UserDocumentResponse> documents,
+        ManageManagerResponse manager,
         LocalDateTime createdAt
 ) {
+    public static record ContactResponse(
+            Long id,
+            String subject,
+            Boolean resolved,
+            LocalDateTime resolvedAt,
+            LocalDateTime createdAt) {
+        public static ContactResponse from(Contact contact) {
+            Boolean resolved = contact.getUser() != null;
+            LocalDateTime resolvedAt = resolved ? contact.getUser().getCreatedAt() : null;
+            return new ContactResponse(
+                    contact.getId(),
+                    contact.getSubject(),
+                    resolved,
+                    resolvedAt,
+                    contact.getCreatedAt());
+        }
+    }
     public static record ManageStudentResponse(StudentType type, String school) {
         public static ManageStudentResponse from(StudentProfile student) {
             return new ManageStudentResponse(student.getType(), student.getSchool());
@@ -39,36 +52,8 @@ public record ManageUserResponse(
             String workAddress,
             String city,
             String website,
-            String biography,
-            List<TeacherCourseResponse> courses
+            String biography
     ) {
-        public static record TeacherCourseResponse(
-                Long id,
-                String name,
-                Category category,
-                BigDecimal price,
-                CourseStatus status,
-                String description,
-                LocalDateTime createdAt,
-                LocalDateTime updatedAt,
-                LocalDateTime cancelledAt,
-                LocalDateTime archivedAt
-        ) {
-            public static TeacherCourseResponse from(Course course) {
-                return new TeacherCourseResponse(
-                        course.getId(),
-                        course.getName(),
-                        course.getCategory(),
-                        course.getPrice(),
-                        course.getStatus(),
-                        course.getDescription(),
-                        course.getCreatedAt(),
-                        course.getUpdatedAt(),
-                        course.getCancelledAt(),
-                        course.getArchivedAt());
-            }
-        }
-
         public static ManageTeacherResponse from(TeacherProfile teacher) {
             return new ManageTeacherResponse(
                     teacher.getMajor(),
@@ -76,19 +61,11 @@ public record ManageUserResponse(
                     teacher.getWorkAddress(),
                     teacher.getCity(),
                     teacher.getWebsite(),
-                    teacher.getBiography(),
-                    teacher.getCourses().stream().map(TeacherCourseResponse::from).toList());
+                    teacher.getBiography());
         }
     }
 
-    public static record UserDocumentResponse(String fileName, Long fileSize, String downloadLink) {
-        public static UserDocumentResponse from(UserDocument doc) {
-            return new UserDocumentResponse(
-                    doc.getFileName(),
-                    doc.getFileSize(),
-                    doc.getDownloadLink());
-        }
-    }
+    public static record ManageManagerResponse(String department) {}
 
     public static ManageUserResponse from(User user) {
         if (user.getRole() == UserRole.STUDENT && user.getStudent() != null) {
@@ -99,9 +76,10 @@ public record ManageUserResponse(
                     user.getLastName(),
                     user.getRole(),
                     user.getStatus(),
+                    user.getContacts().stream().map(ContactResponse::from).toList(),
                     ManageStudentResponse.from(user.getStudent()),
                     null,
-                    user.getDocuments().stream().map(UserDocumentResponse::from).toList(),
+                    null,
                     user.getCreatedAt());
         } else if (user.getRole() == UserRole.TEACHER && user.getTeacher() != null) {
             return new ManageUserResponse(
@@ -111,9 +89,23 @@ public record ManageUserResponse(
                     user.getLastName(),
                     user.getRole(),
                     user.getStatus(),
+                    user.getContacts().stream().map(ContactResponse::from).toList(),
                     null,
                     ManageTeacherResponse.from(user.getTeacher()),
-                    user.getDocuments().stream().map(UserDocumentResponse::from).toList(),
+                    null,
+                    user.getCreatedAt());
+        } else if (user.getRole() == UserRole.COURSE_MANAGER && user.getManager() != null) {
+            return new ManageUserResponse(
+                    user.getId(),
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getRole(),
+                    user.getStatus(),
+                    user.getContacts().stream().map(ContactResponse::from).toList(),
+                    null,
+                    null,
+                    new ManageManagerResponse(user.getManager().getDepartment()),
                     user.getCreatedAt());
         }
         return new ManageUserResponse(
@@ -123,9 +115,10 @@ public record ManageUserResponse(
                 user.getLastName(),
                 user.getRole(),
                 user.getStatus(),
+                user.getContacts().stream().map(ContactResponse::from).toList(),
                 null,
                 null,
-                user.getDocuments().stream().map(UserDocumentResponse::from).toList(),
+                null,
                 user.getCreatedAt());
     }
 }

@@ -25,5 +25,4 @@ public record AddContactRequest(
 
         @NotEmpty
         String message
-) {
-}
+) {}

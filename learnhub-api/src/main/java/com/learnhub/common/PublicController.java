@@ -1,10 +1,13 @@
 package com.learnhub.common;
 
+import java.util.List;
+import jakarta.validation.Valid;
 import com.learnhub.common.dto.LandingPageResponse;
 import com.learnhub.common.dto.PublicCourseResponse;
 import com.learnhub.common.dto.PublicTeacherResponse;
 import com.learnhub.contact.ContactService;
 import com.learnhub.contact.dto.AddContactRequest;
+import com.learnhub.contact.dto.UpdateContactRequest;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseService;
 import com.learnhub.course.category.Category;
@@ -13,12 +16,16 @@ import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import com.learnhub.user.UserService;
 import com.learnhub.util.ObjectMapper;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping(path = "/api/v1/public")
@@ -28,7 +35,6 @@ public class PublicController {
     private final UserService userService;
     private final ContactService contactService;
     private final CategoryService categoryService;
-
 
     @Autowired
     public PublicController(
@@ -64,9 +70,18 @@ public class PublicController {
         return ResponseEntity.ok("Success");
     }
 
+    @PostMapping("/contacts/{id}")
+    public ResponseEntity<String> updateContactDetails(
+            @PathVariable("id") Long id,
+            @Valid @RequestPart(name = "details", required = true) UpdateContactRequest details,
+            @RequestPart(name = "documents") MultipartFile[] documents) {
+        contactService.updateContact(id, details, documents);
+        return ResponseEntity.ok("Success");
+    }
+
     @GetMapping("/categories")
     public List<Category> getAllCategories() {
-        return categoryService.getAllCategories();
+        return categoryService.getAll();
     }
 
     @GetMapping("/landing-page")

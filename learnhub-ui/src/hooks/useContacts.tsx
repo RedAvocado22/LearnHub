@@ -4,22 +4,49 @@ import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-interface Contact {
+export enum ContactSubject {
+    ADD_TEACHER = "Want to become a teacher",
+    ADD_MANAGER = "Want to become a course manager"
+}
+
+export interface TeacherDetails {
+    major: string;
+    workAddress: string;
+    city: string | null;
+    website: string | null;
+    biography: string | null;
+}
+
+export interface ManagerDetails {
+    department: string;
+}
+
+export interface UserDocument {
+    id: number;
+    fileName: string;
+    fileUrl: string;
+}
+
+export interface Contact {
     id: number;
     firstName: string;
     lastName: string;
     email: string;
     phone: string;
-    subject: string;
+    subject: ContactSubject;
     message: string;
+    teacher: TeacherDetails | null;
+    manager: ManagerDetails | null;
+    documents: UserDocument[];
     resolved: boolean;
-    createdAt: string;
+    resolvedAt: Date | null;
+    createdAt: Date;
 }
 
 interface ContactsContextType {
     contacts: Contact[];
-    refreshContacts: () => void;
-    deleteContacts: (contactIds: number[]) => void;
+    refreshContacts: () => Promise<void>;
+    deleteContacts: (contactIds: number[]) => Promise<void>;
 }
 
 const ContactsContext = createContext<ContactsContextType | null>(null);

@@ -90,4 +90,47 @@ public class EmailService {
         mail.setText(message);
         sender.send(mail);
     }
+
+    public void sendContactDetailsRequestEmail(String to, String target, Long id) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String url = feBaseUrl + "/contact/" + id + "/" + target + "/add-details";
+        String message = String.format("""
+            We have read your contact, please fill in the form in this link to let us know more about you: %s
+            
+            Please don't share this link with anyone.
+        """, url);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Request more details");
+        mail.setText(message);
+        sender.send(mail);
+    }
+
+    public void sendBanUserEmail(String to, String reason) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String message = String.format("""
+            Your account has been banned with the reason: %s
+
+            Contact us if you have any question.
+        """, reason);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Account banned");
+        mail.setText(message);
+        sender.send(mail);
+    }
+
+    public void sendUnbanUserEmail(String to, String reason) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String message = String.format("""
+            Your ban has been released with the reason: %s
+
+            Contact us if you have any question.
+        """, reason);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Account released");
+        mail.setText(message);
+        sender.send(mail);
+    }
 }
