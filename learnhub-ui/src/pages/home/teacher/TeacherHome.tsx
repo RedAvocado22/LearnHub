@@ -1,35 +1,9 @@
-import { useEffect, useState } from "react";
 import { HomeLayout } from "../../../layouts";
-import { API } from "../../../api";
-import { NotificationType } from "../../../types/Notification";
-
-interface Notification {
-    id: number;
-    type: NotificationType;
-    message: string;
-    timeSent: string;
-}
+import { useNotifications } from "../../../hooks/useNotifications";
+import NotificationCard from "../../../layouts/home/NotificationCard";
 
 export default function TeacherHome() {
-    const [notifications, setNotifications] = useState<Notification[]>([]);
-
-    useEffect(() => {
-        async function fetchData() {
-            try {
-                const resp = await API.get("/notifications/me");
-                setNotifications(resp.data);
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        }
-
-        fetchData();
-    }, []);
-
-    console.log(notifications);
-
-    const managers = notifications.filter((notification) => notification.type === NotificationType.MANAGER);
-    const students = notifications.filter((notification) => notification.type === NotificationType.STUDENT);
+    const { notifications } = useNotifications();
 
     return (
         <HomeLayout>
@@ -50,9 +24,9 @@ export default function TeacherHome() {
                                             className="progress-bar"
                                             role="progressbar"
                                             style={{ width: "78%" }}
-                                            aria-valuenow="50"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"></div>
+                                            aria-valuenow={50}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}></div>
                                     </div>
                                     <span className="wc-progress-bx">
                                         <span className="wc-change">Change</span>
@@ -72,9 +46,9 @@ export default function TeacherHome() {
                                             className="progress-bar"
                                             role="progressbar"
                                             style={{ width: "88%" }}
-                                            aria-valuenow="50"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"></div>
+                                            aria-valuenow={50}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}></div>
                                     </div>
                                     <span className="wc-progress-bx">
                                         <span className="wc-change">Change</span>
@@ -94,9 +68,9 @@ export default function TeacherHome() {
                                             className="progress-bar"
                                             role="progressbar"
                                             style={{ width: "65%" }}
-                                            aria-valuenow="50"
-                                            aria-valuemin="0"
-                                            aria-valuemax="100"></div>
+                                            aria-valuenow={50}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}></div>
                                     </div>
                                     <span className="wc-progress-bx">
                                         <span className="wc-change">Change</span>
@@ -108,30 +82,7 @@ export default function TeacherHome() {
                     </div>
                     {/* Card END */}
                     <div className="row">
-                        <div className="col-lg-7 m-b30">
-                            <div className="widget-box">
-                                <div className="wc-title">
-                                    <h4>Students</h4>
-                                </div>
-                                <div className="widget-inner">
-                                    <div className="orders-list">
-                                        <ul>
-                                            {students.map((order, index) => (
-                                                <li key={index}>
-                                                    <span className="orders-title">
-                                                        <a href="#" className="orders-title-name">
-                                                            {order.message}
-                                                        </a>
-                                                        <span className="orders-info">Date {order.timeSent}</span>
-                                                    </span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-lg-5 m-b30">
+                        <div className="col-lg-12 m-b30">
                             <div className="widget-box">
                                 <div className="wc-title">
                                     <h4>Notifications</h4>
@@ -139,12 +90,9 @@ export default function TeacherHome() {
                                 <div className="widget-inner">
                                     <div className="noti-box-list">
                                         <ul>
-                                            {managers.map((notification, index) => (
+                                            {notifications.map((notification, index) => (
                                                 <li key={index}>
-                                                    <span className="notification-text">{notification.message}</span>
-                                                    <span className="notification-time">
-                                                        <span>{notification.timeSent}</span>
-                                                    </span>
+                                                    <NotificationCard notif={notification} />
                                                 </li>
                                             ))}
                                         </ul>

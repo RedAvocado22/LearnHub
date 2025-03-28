@@ -5,6 +5,7 @@ import com.learnhub.aws.AwsS3Service;
 import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.contact.dto.AddContactRequest;
 import com.learnhub.contact.dto.UpdateContactRequest;
+import com.learnhub.notification.NotificationService;
 import com.learnhub.user.User;
 import com.learnhub.util.mail.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,16 +18,19 @@ public class ContactService {
     private final ContactRepository contactRepository;
     private final EmailService emailService;
     private final AwsS3Service awsS3Service;
+    private final NotificationService notificationService;
 
     @Autowired
-    public ContactService(ContactRepository contactRepository, EmailService emailService, AwsS3Service awsS3Service) {
+    public ContactService(ContactRepository contactRepository, EmailService emailService, AwsS3Service awsS3Service,
+            NotificationService notificationService) {
         this.contactRepository = contactRepository;
         this.emailService = emailService;
         this.awsS3Service = awsS3Service;
+        this.notificationService = notificationService;
     }
 
     public void saveContact(AddContactRequest req) {
-        contactRepository.save(Contact.builder()
+        Contact contact = contactRepository.save(Contact.builder()
                 .firstName(req.firstName())
                 .lastName(req.lastName())
                 .email(req.email())
@@ -34,6 +38,7 @@ public class ContactService {
                 .subject(req.subject())
                 .message(req.message())
                 .build());
+        notificationService.notifyContactSubmitted(contact);
     }
 
     public List<Contact> getAll() {
@@ -86,6 +91,7 @@ public class ContactService {
                 .fileUrl(paths[i])
                 .build());
         }
+        notificationService.notifyContactUpdated(contact);
     }
 
     public void resolveContact(Long id, User user) {

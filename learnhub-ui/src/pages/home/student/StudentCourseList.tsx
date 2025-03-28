@@ -40,11 +40,12 @@ export default function StudentCourseList({ status }: { status: string }) {
             <div
                 className="container-fluid "
                 style={{ marginTop: "80px", maxHeight: "calc(100vh - 80px)", padding: "0 100px" }}>
-                <h1>{status === "progress" ? "In Progress" : "Finished"}</h1>
+                <h1>{status === "progress" ? "In Progress" : status === "finished" ? "Finished" : "All"}</h1>
                 <ul>
                     {enrolls.map((e, idx) => {
                         const { lessonCount, quizCount } = countMaterials(e.course);
-                        const progress = Math.floor((e.finishedMaterials.length / (lessonCount + quizCount)) * 100);
+                        const total = lessonCount + quizCount;
+                        const progress = total > 0 ? Math.floor((e.finishedMaterials.length / total) * 100) : 0;
                         return (
                             <li key={idx} className="row px-0 shadow p-4 mb-4" style={{ borderRadius: "10px" }}>
                                 <div className="col-3">

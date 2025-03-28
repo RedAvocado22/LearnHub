@@ -89,6 +89,10 @@ public class User implements UserDetails {
     @Column(name = "created_at")
     private final LocalDateTime createdAt = LocalDateTime.now();
 
+    public String getFullName() {
+        return firstName + " " + lastName;
+    }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role.name());

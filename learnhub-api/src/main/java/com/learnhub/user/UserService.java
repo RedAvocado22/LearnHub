@@ -1,9 +1,15 @@
 package com.learnhub.user;
 
+import java.math.BigDecimal;
 import java.util.List;
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.contact.ContactService;
+import com.learnhub.course.CourseRepository;
+import com.learnhub.course.CourseStatus;
+import com.learnhub.payment.CoursePurchase;
+import com.learnhub.payment.CoursePurchaseRepository;
 import com.learnhub.user.dto.AddUserRequest;
+import com.learnhub.user.dto.AdminStatsResponse;
 import com.learnhub.user.dto.ChangeUserStatusRequest;
 import com.learnhub.user.dto.UpdatePasswordRequest;
 import com.learnhub.user.dto.UpdateUserRequest;
@@ -26,6 +32,8 @@ public class UserService {
     private final EmailService emailService;
     private final AwsS3Service awsS3Service;
     private final ContactService contactService;
+    private final CourseRepository courseRepository;
+    private final CoursePurchaseRepository coursePurchaseRepository;
 
     @Autowired
     public UserService(
@@ -33,16 +41,30 @@ public class UserService {
             PasswordEncoder passwordEncoder,
             EmailService emailService,
             AwsS3Service awsS3Service,
-            ContactService contactService) {
+            ContactService contactService,
+            CourseRepository courseRepository,
+            CoursePurchaseRepository coursePurchaseRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.emailService = emailService;
         this.awsS3Service = awsS3Service;
         this.contactService = contactService;
+        this.courseRepository = courseRepository;
+        this.coursePurchaseRepository = coursePurchaseRepository;
     }
 
     public List<User> getAllExceptAdmin() {
         return userRepository.findAll().stream().filter(user -> user.getRole() != UserRole.ADMIN).toList();
+    }
+
+    public AdminStatsResponse getAdminStats() {
+        Long totalUsers = userRepository.findAll().stream().count();
+        Long totalCourses = courseRepository.findAll().stream().filter(course -> course.getStatus() == CourseStatus.PUBLIC).count();
+        Long totalPurchases = coursePurchaseRepository.findAll().stream().count();
+        BigDecimal totalProfits = coursePurchaseRepository.findAll().stream()
+            .map(CoursePurchase::getPurchasePrice)
+            .reduce(BigDecimal.ZERO, BigDecimal::add);
+        return new AdminStatsResponse(totalProfits, totalCourses, totalPurchases, totalUsers);
     }
 
     public User getUserById(Long id) {

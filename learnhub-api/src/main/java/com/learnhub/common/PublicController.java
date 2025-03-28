@@ -11,7 +11,7 @@ import com.learnhub.contact.dto.UpdateContactRequest;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseService;
 import com.learnhub.course.category.Category;
-import com.learnhub.course.category.CategoryService;
+import com.learnhub.course.category.CategoryRepository;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import com.learnhub.user.UserService;
@@ -34,8 +34,7 @@ public class PublicController {
     private final CourseService courseService;
     private final UserService userService;
     private final ContactService contactService;
-    private final CategoryService categoryService;
-
+    private final CategoryRepository categoryRepository;
 
     @Autowired
     public PublicController(
@@ -43,12 +42,12 @@ public class PublicController {
             CourseService courseService,
             UserService userService,
             ContactService contactService,
-            CategoryService categoryService) {
+            CategoryRepository categoryRepository) {
         this.objectMapper = objectMapper;
         this.courseService = courseService;
         this.userService = userService;
         this.contactService = contactService;
-        this.categoryService = categoryService;
+        this.categoryRepository = categoryRepository;
     }
 
     @GetMapping("/courses")

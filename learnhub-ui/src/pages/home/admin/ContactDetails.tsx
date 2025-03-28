@@ -157,8 +157,9 @@ export default function ContactDetails() {
                                 <span>({contact.documents.length})</span>
                             </h6>
                             <div className="mailbox-download-file">
-                                {contact.documents.map((doc) => (
+                                {contact.documents.map((doc, index) => (
                                     <a
+                                        key={index}
                                         download
                                         target="_blank"
                                         href={`https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${doc.fileUrl}`}

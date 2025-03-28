@@ -1,5 +1,9 @@
 package com.learnhub.enrollment;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseRepository;
@@ -9,18 +13,15 @@ import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
+import com.learnhub.enrollment.dto.EnrollmentStatResponse;
 import com.learnhub.enrollment.dto.GradeQuizRequest;
+import com.learnhub.notification.NotificationService;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Service
 public class EnrollmentService {
@@ -30,6 +31,7 @@ public class EnrollmentService {
     private final QuizAttemptRepository quizAttemptRepository;
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Autowired
     public EnrollmentService(
@@ -38,19 +40,20 @@ public class EnrollmentService {
             FinishedMaterialRepository finishedMaterialRepository,
             QuizAttemptRepository quizAttemptRepository,
             CourseRepository courseRepository,
-            UserRepository userRepository) {
+            UserRepository userRepository,
+            NotificationService notificationService) {
         this.enrollmentRepository = enrollmentRepository;
         this.chapterMaterialRepository = chapterMaterialRepository;
         this.finishedMaterialRepository = finishedMaterialRepository;
         this.quizAttemptRepository = quizAttemptRepository;
         this.courseRepository = courseRepository;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
 
-    public List<Enrollment> getNumberOffStudentRegisterInMonth() {
-        LocalDateTime now = LocalDateTime.now();
-        return enrollmentRepository.getCountOfStudentRegister(now.getMonthValue());
+    public List<EnrollmentStatResponse> getEnrollmentsByMonth() {
+        return enrollmentRepository.getStats();
     }
 
     public void createEnrollment(Long userId, Long courseId) {
@@ -67,7 +70,7 @@ public class EnrollmentService {
                 course(course).
                 build()
         );
-
+        notificationService.notifyStudentEnrolled(course);
     }
 
     @Transactional

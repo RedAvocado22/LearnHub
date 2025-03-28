@@ -1,84 +1,133 @@
 package com.learnhub.notification;
 
-import com.learnhub.common.exception.ResourceNotFoundException;
-import com.learnhub.course.Course;
-import com.learnhub.course.CourseService;
-import com.learnhub.course.CourseStatus;
-import com.learnhub.user.User;
-import com.learnhub.user.UserService;
-import com.learnhub.user.teacher.TeacherProfile;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
+import com.learnhub.contact.Contact;
+import com.learnhub.course.Course;
+import com.learnhub.enrollment.EnrollmentRepository;
+import com.learnhub.user.User;
+import com.learnhub.user.UserRepository;
+import com.learnhub.user.UserRole;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import lombok.RequiredArgsConstructor;
 
 @Service
+@RequiredArgsConstructor
 public class NotificationService {
-
-    private final CourseService courseService;
     private final NotificationRepository notificationRepository;
-    private final UserService userService;
+    private final UserRepository userRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
-    @Autowired
-    public NotificationService(CourseService courseService, NotificationRepository notificationRepository, UserService userService) {
-        this.courseService = courseService;
-        this.notificationRepository = notificationRepository;
-        this.userService = userService;
+    @Transactional
+    public void notifyUserRegistered(User user) {
+        List<User> recipients = userRepository.findAllByRole(UserRole.ADMIN);
+        notifyUsers(recipients, NotificationType.USER_REGISTERED, Map.of("id", user.getId(), "email", user.getEmail()));
     }
 
-    public void notifyTeacherAboutStatusChange(Long courseId, CourseStatus status) {
-        Course course = courseService.getAllCourses().stream()
-                .filter(c -> c.getId() == courseId)
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("No course was found!"));
-
-        TeacherProfile teacher = course.getTeacher();
-
-        String message;
-        if (status == CourseStatus.PUBLIC) {
-            message = "Your " + course.getName() + " has been accepted";
+    @Transactional
+    public void notifyCourseSubmitted(Course course) {
+        if (course.getManager() == null) {
+            List<User> admins = userRepository.findAllByRole(UserRole.ADMIN);
+            notifyUsers(
+                    admins,
+                    NotificationType.COURSE_SUBMITTED,
+                    Map.of("id", course.getId(), "isManager", false, "teacherName", course.getTeacher().getUser().getFullName()));
         } else {
-            message = "Your " + course.getName() + " has been declined";
+            notifyUsers(
+                    List.of(course.getManager().getUser()),
+                    NotificationType.COURSE_SUBMITTED,
+                    Map.of("id", course.getId(), "isManager", true, "teacherName", course.getTeacher().getUser().getFullName()));
         }
-
-        Notification notification = Notification.builder()
-                .teacher(teacher)
-                .message(message)
-                .type(NotificationType.MANAGER)
-                .timeSent(LocalDateTime.now())
-                .build();
-
-        notificationRepository.save(notification);
     }
 
-    public void notifyTeacherAboutEnrollment(Long courseId, Long studentId) {
-        Course course = courseService.getAllCourses().stream()
-                .filter(c -> c.getId() == courseId)
-                .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundException("No course was found!"));
+    @Transactional
+    public void notifyCoursePublished(Course course) {
+        if (course.getManager() == null) {
+            throw new IllegalStateException("Published course doesn't have a manager");
+        }
+        List<User> admins = userRepository.findAllByRole(UserRole.ADMIN);
+        notifyUsers(
+                admins,
+                NotificationType.COURSE_PUBLISHED,
+                Map.of("id", course.getId(), "managerName", course.getManager().getUser().getFullName()));
 
-        TeacherProfile teacher = course.getTeacher();
-
-        User user = userService.getUserById(studentId);
-
-        String message = user.getFirstName() + " " + user.getLastName() + " has enrolled in your ." + course.getName();
-
-        Notification notification = Notification.builder()
-                .teacher(teacher)
-                .message(message)
-                .type(NotificationType.STUDENT)
-                .timeSent(LocalDateTime.now())
-                .build();
-
-        notificationRepository.save(notification);
+        notifyUsers(
+                List.of(course.getTeacher().getUser()),
+                NotificationType.COURSE_PUBLISHED,
+                Map.of("id", course.getId(), "courseName", course.getName()));
     }
 
-    public List<Notification> getTeacherNotifications(User user) {
-        List<Notification> notifications = notificationRepository.findAll().stream().toList();
+    @Transactional
+    public void notifyCourseRejected(Course course) {
+        notifyUsers(
+                List.of(course.getTeacher().getUser()),
+                NotificationType.COURSE_REJECTED,
+                Map.of("id", course.getId(), "courseName", course.getName()));
+    }
 
-        return notifications.stream()
-                .filter(n -> n.getTeacher().getId() == user.getId())
-                .toList();
+    @Transactional
+    public void notifyCourseUpdated(Course course) {
+        List<User> enrolled = enrollmentRepository.findUsersEnrolledInCourse(course.getId());
+        notifyUsers(
+                enrolled,
+                NotificationType.COURSE_UPDATED,
+                Map.of("id", course.getId(), "courseName", course.getName()));
+    }
+
+    @Transactional
+    public void notifyCourseAssigned(Course course) {
+        if (course.getManager() == null) {
+            throw new IllegalStateException("Published course doesn't have a manager");
+        }
+        notifyUsers(
+                List.of(course.getManager().getUser()),
+                NotificationType.COURSE_ASSIGNED,
+                Map.of("id", course.getId()));
+    }
+
+    @Transactional
+    public void notifyContactSubmitted(Contact contact) {
+        List<User> admins = userRepository.findAllByRole(UserRole.ADMIN);
+        notifyUsers(
+                admins,
+                NotificationType.CONTACT_SUBMITTED,
+                Map.of("id", contact.getId()));
+    }
+
+    @Transactional
+    public void notifyContactUpdated(Contact contact) {
+        List<User> admins = userRepository.findAllByRole(UserRole.ADMIN);
+        notifyUsers(
+                admins,
+                NotificationType.CONTACT_UPDATED,
+                Map.of("id", contact.getId(), "contactName", contact.getFirstName() + " " + contact.getLastName()));
+    }
+
+    @Transactional
+    public void notifyStudentEnrolled(Course course) {
+        notifyUsers(
+                List.of(course.getTeacher().getUser()),
+                NotificationType.STUDENT_ENROLLED,
+                Map.of("id", course.getId(), "courseName", course.getName()));
+    }
+
+    @Transactional
+    public void notifyUsers(List<User> recipients, NotificationType type, Map<String, Object> context) {
+        recipients.stream().forEach(recipient -> {
+            notificationRepository.save(Notification.builder()
+                    .recipient(recipient)
+                    .type(type)
+                    .context(context)
+                    .build());
+        });
+    }
+
+    public List<Notification> getUserNotifications(User user) {
+        return notificationRepository.findAllByRecipient(user);
+    }
+
+    public void deleteNotification(Long id) {
+        notificationRepository.deleteById(id);
     }
 }

@@ -1,10 +1,20 @@
 package com.learnhub.course;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.category.Category;
 import com.learnhub.course.category.CategoryRepository;
-import com.learnhub.course.chapter.*;
+import com.learnhub.course.chapter.Chapter;
+import com.learnhub.course.chapter.ChapterMaterial;
+import com.learnhub.course.chapter.ChapterMaterialRepository;
+import com.learnhub.course.chapter.ChapterRepository;
+import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.chapter.lesson.Lesson;
 import com.learnhub.course.chapter.lesson.LessonMaterial;
 import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
@@ -13,32 +23,27 @@ import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
 import com.learnhub.course.dto.UpdateCourseRequest;
+import com.learnhub.notification.NotificationService;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 @Service
 public class CourseService {
+    private final UserRepository userRepository;
     private final CategoryRepository categoryRepository;
     private final CourseRepository courseRepository;
     private final ChapterRepository chapterRepository;
     private final ChapterMaterialRepository chapterMaterialRepository;
     private final AwsS3Service awsS3Service;
+    private final NotificationService notificationService;
 
     @PersistenceContext
     private final EntityManager entityManager;
-    private final UserRepository userRepository;
 
     @Autowired
     public CourseService(
@@ -47,7 +52,8 @@ public class CourseService {
             ChapterRepository chapterRepository,
             ChapterMaterialRepository chapterMaterialRepository,
             AwsS3Service awsS3Service,
-            EntityManager entityManager, UserRepository userRepository) {
+            EntityManager entityManager, UserRepository userRepository,
+            NotificationService notificationService) {
         this.categoryRepository = categoryRepository;
         this.courseRepository = courseRepository;
         this.chapterRepository = chapterRepository;
@@ -55,6 +61,7 @@ public class CourseService {
         this.awsS3Service = awsS3Service;
         this.entityManager = entityManager;
         this.userRepository = userRepository;
+        this.notificationService = notificationService;
     }
 
     public List<Course> getAllPublicCourses() {
@@ -67,9 +74,21 @@ public class CourseService {
 
     @Transactional
     public Long changeCourseStatus(Long courseId, CourseStatus newStatus) {
-        Course course = courseRepository.getById(courseId);
+        Course course = courseRepository.findById(courseId).orElseThrow(
+                () -> new ResourceNotFoundException("Course not found"));
         course.setStatus(newStatus);
-        return courseRepository.save(course).getId();
+        Course saved = courseRepository.save(course);
+        switch (newStatus) {
+            case PRIVATE:
+                notificationService.notifyCourseRejected(saved);
+                break;
+            case PUBLIC:
+                notificationService.notifyCoursePublished(saved);
+                break;
+            default:
+                break;
+        }
+        return saved.getId();
     }
 
     @Transactional
@@ -91,6 +110,7 @@ public class CourseService {
         if (metadata.price() != null) {
             course.setPrice(metadata.price());
         }
+        boolean notify = false;
         if (metadata.status() != null) {
             switch (metadata.status()) {
                 case PUBLIC:
@@ -108,6 +128,7 @@ public class CourseService {
                 case PENDING:
                     course.setStatus(CourseStatus.PENDING);
                     course.setUpdatedAt(LocalDateTime.now());
+                    notify = true;
                     break;
                 case CANCELLED:
                     course.setStatus(CourseStatus.CANCELLED);
@@ -127,7 +148,10 @@ public class CourseService {
             course.setImage(imageUrl);
         }
 
-        courseRepository.save(course);
+        Course saved = courseRepository.save(course);
+        if (notify) {
+            notificationService.notifyCourseSubmitted(saved);
+        }
     }
 
     @Transactional
@@ -262,7 +286,8 @@ public class CourseService {
 
         course.setAssignAt(LocalDateTime.now());
         course.setManager(manager.getManager());
-        courseRepository.save(course);
+        Course saved = courseRepository.save(course);
+        notificationService.notifyCourseAssigned(saved);
     }
 
     @Transactional

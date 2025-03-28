@@ -4,7 +4,6 @@ import java.util.List;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import com.learnhub.enrollment.EnrollmentService;
-import com.learnhub.notification.NotificationService;
 import com.learnhub.payment.CoursePurchaseService;
 import com.learnhub.payment.PaymentRequest;
 import com.learnhub.payment.VNPayService;
@@ -42,16 +41,14 @@ public class UserController {
     private final VNPayService vnPayService;
     private final CoursePurchaseService coursePurchaseService;
     private final EnrollmentService enrollmentService;
-    private final NotificationService notificationService;
 
     @Autowired
-    public UserController(UserService userService, ObjectMapper objectMapper, VNPayService vnPayService, CoursePurchaseService coursePurchaseService, EnrollmentService enrollmentService, NotificationService notificationService) {
+    public UserController(UserService userService, ObjectMapper objectMapper, VNPayService vnPayService, CoursePurchaseService coursePurchaseService, EnrollmentService enrollmentService) {
         this.userService = userService;
         this.objectMapper = objectMapper;
         this.vnPayService = vnPayService;
         this.coursePurchaseService = coursePurchaseService;
         this.enrollmentService = enrollmentService;
-        this.notificationService = notificationService;
     }
 
     @GetMapping
@@ -64,6 +61,9 @@ public class UserController {
         return ResponseEntity.ok(objectMapper.toManageUserResponse(userService.getUserById(id)));
     }
 
+    @GetMapping("/admin/stats")
+    public ResponseEntity<AdminStatsResponse> getStats() {
+        return ResponseEntity.ok(userService.getAdminStats());
     }
 
     @PutMapping("/{id}/status")
