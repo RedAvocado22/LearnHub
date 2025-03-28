@@ -15,15 +15,6 @@ public class CoursePurchaseService {
     private final CoursePurchaseRepository coursePurchaseRepository;
     private final CourseRepository courseRepository;
 
-
-    @Autowired
-    public CoursePurchaseService(CoursePurchaseRepository coursePurchaseRepository,
-                                 CourseRepository courseRepository
-    ) {
-        this.coursePurchaseRepository = coursePurchaseRepository;
-        this.courseRepository = courseRepository;
-    }
-
     @Autowired
     public CoursePurchaseService(CoursePurchaseRepository coursePurchaseRepository, CourseRepository courseRepository) {
         this.coursePurchaseRepository = coursePurchaseRepository;
@@ -53,8 +44,8 @@ public class CoursePurchaseService {
     }
 
     public List<CoursePurchase> getAllCoursePurchase(User user) {
-        return coursePurchaseRepository.findAll().stream().filter(
-                coursePurchase -> coursePurchase.getStudent().getId().equals(user.getId())).toList()
-                ;
+        return coursePurchaseRepository.findAll().stream()
+                .filter(coursePurchase -> coursePurchase.getStudent().getId().equals(user.getId()))
+                .toList();
     }
 }

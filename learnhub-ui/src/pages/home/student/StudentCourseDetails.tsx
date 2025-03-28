@@ -3,6 +3,7 @@ import { HomeLayout } from "../../../layouts";
 import { MaterialType } from "../../../types/Course";
 import { Course, Enrollment } from "../../../hooks/useUser";
 import defaultThumbnail from "/assets/images/blog/default/thum1.jpg";
+import Rating from "../../../layouts/elements/Rating";
 
 interface StudentCourseDetailsProps {
     enrollment: Enrollment;

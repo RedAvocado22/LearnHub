@@ -54,6 +54,14 @@ export interface CourseChapter {
     materials: ChapterMaterial[];
 }
 
+export interface Review {
+    id: number;
+    star: number;
+    reviewer: string;
+    user: number;
+    comment: string;
+    course: number;
+}
 export interface Course {
     id: number;
     name: string;
@@ -63,6 +71,7 @@ export interface Course {
     image: string;
     description: string;
     chapters: CourseChapter[];
+    reviews: Review[];
     createdAt: Date;
     updatedAt: Date;
     cancelledAt: Date;
