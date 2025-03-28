@@ -647,7 +647,7 @@
 /*
 .m-header, .m-search-bar{
 	background: #159957;
-	background: -webkit-linear-gradient(to right, #155799, #159957); 
+	background: -webkit-linear-gradient(to right, #155799, #159957);
 	background: linear-gradient(to right, #155799, #159957);
 }
 
@@ -1379,6 +1379,33 @@
 .mail-list-info:nth-child(2n + 1) {
     background-color: #f6f6f6;
 }
+.mail-list-info {
+    display: flex;
+    align-items: center;
+    position: relative;
+    justify-content: space-between; /* Distributes space between the items */
+}
+
+.mail-list-title {
+    flex-grow: 1; /* Ensures the title takes up remaining space */
+}
+
+.mail-list-time {
+    margin-right: 10px; /* Space between time and manager section */
+}
+
+.mail-list-manager {
+    display: flex;
+    justify-content: flex-end; /* Aligns the button to the right */
+    margin-right: 10px; /* Adds some space between the button and the manager section */
+}
+
+.assign-manager {
+    margin-left: 10px; /* Adds some space between the button and the manager section */
+}
+
+
+
 /* Mailbox Toolbar */
 .mailbox-toolbar {
     list-style: none;

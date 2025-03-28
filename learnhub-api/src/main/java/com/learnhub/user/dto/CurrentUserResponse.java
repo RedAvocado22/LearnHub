@@ -1,8 +1,5 @@
 package com.learnhub.user.dto;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
 import com.learnhub.course.category.Category;
@@ -14,27 +11,30 @@ import com.learnhub.course.chapter.lesson.LessonMaterial;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
-import com.learnhub.enrollment.AnsweredQuestion;
-import com.learnhub.enrollment.Enrollment;
-import com.learnhub.enrollment.EnrollmentStatus;
-import com.learnhub.enrollment.FinishedMaterial;
-import com.learnhub.enrollment.QuizAttempt;
+import com.learnhub.enrollment.*;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import com.learnhub.user.UserStatus;
+import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.student.StudentProfile;
 import com.learnhub.user.student.StudentType;
 import com.learnhub.user.teacher.TeacherProfile;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 public record CurrentUserResponse(
         Long id,
         String email,
         String firstName,
         String lastName,
+        String avatar,
         UserRole role,
         UserStatus status,
         CurrentStudentResponse student,
         CurrentTeacherResponse teacher,
+        CurrentManagerResponse manager,
         LocalDateTime createdAt
 ) {
     static record CurrentStudentResponse(StudentType type, String school, List<EnrollmentResponse> enrollments) {
@@ -65,6 +65,7 @@ public record CurrentUserResponse(
                                 teacher.getMajor());
                     }
                 }
+
                 public static StudentCourseResponse from(Course course) {
                     return new StudentCourseResponse(
                             course.getId(),
@@ -79,11 +80,13 @@ public record CurrentUserResponse(
                             course.getCreatedAt());
                 }
             }
+
             static record FinishedMaterialResponse(Long materialId, LocalDateTime finishedAt) {
                 public static FinishedMaterialResponse from(FinishedMaterial material) {
                     return new FinishedMaterialResponse(material.getMaterial().getId(), material.getFinishedAt());
                 }
             }
+
             static record QuizAttemptResponse(
                     Long id,
                     Long quizId,
@@ -99,6 +102,7 @@ public record CurrentUserResponse(
                                 answer.getChosenOptions().stream().map(option -> option.getId()).toList());
                     }
                 }
+
                 public static QuizAttemptResponse from(QuizAttempt attempt) {
                     return new QuizAttemptResponse(
                             attempt.getId(),
@@ -109,6 +113,7 @@ public record CurrentUserResponse(
                             attempt.getSubmittedAt());
                 }
             }
+
             public static EnrollmentResponse from(Enrollment enrollment) {
                 return new EnrollmentResponse(
                         StudentCourseResponse.from(enrollment.getCourse()),
@@ -119,6 +124,7 @@ public record CurrentUserResponse(
                         enrollment.getFinishedAt());
             }
         }
+
         public static CurrentStudentResponse from(StudentProfile student) {
             return new CurrentStudentResponse(
                     student.getType(),
@@ -148,6 +154,15 @@ public record CurrentUserResponse(
         }
     }
 
+    static record CurrentManagerResponse(String department, List<CourseResponse> courses) {
+        public static CurrentManagerResponse from(ManagerProfile manager) {
+            return new CurrentManagerResponse(
+                    manager.getDepartment(),
+                    manager.getCourses().stream().map(CourseResponse::from).toList()
+            );
+        }
+    }
+
     public static CurrentUserResponse from(User user) {
         if (user.getRole() == UserRole.STUDENT && user.getStudent() != null) {
             return new CurrentUserResponse(
@@ -155,9 +170,11 @@ public record CurrentUserResponse(
                     user.getEmail(),
                     user.getFirstName(),
                     user.getLastName(),
+                    user.getAvatar(),
                     user.getRole(),
                     user.getStatus(),
                     CurrentStudentResponse.from(user.getStudent()),
+                    null,
                     null,
                     user.getCreatedAt());
         } else if (user.getRole() == UserRole.TEACHER && user.getTeacher() != null) {
@@ -166,10 +183,24 @@ public record CurrentUserResponse(
                     user.getEmail(),
                     user.getFirstName(),
                     user.getLastName(),
+                    user.getAvatar(),
                     user.getRole(),
                     user.getStatus(),
                     null,
                     CurrentTeacherResponse.from(user.getTeacher()),
+                    null,
+                    user.getCreatedAt());
+        } else if (user.getRole() == UserRole.COURSE_MANAGER && user.getManager() != null) {
+            return new CurrentUserResponse(user.getId(),
+                    user.getEmail(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    user.getAvatar(),
+                    user.getRole(),
+                    user.getStatus(),
+                    null,
+                    null,
+                    CurrentManagerResponse.from(user.getManager()),
                     user.getCreatedAt());
         }
         return new CurrentUserResponse(
@@ -177,8 +208,10 @@ public record CurrentUserResponse(
                 user.getEmail(),
                 user.getFirstName(),
                 user.getLastName(),
+                user.getAvatar(),
                 user.getRole(),
                 user.getStatus(),
+                null,
                 null,
                 null,
                 user.getCreatedAt());
@@ -281,6 +314,7 @@ record CourseResponse(
                     chapter.getMaterials().stream().map(ChapterMaterialResponse::from).toList());
         }
     }
+
     public static CourseResponse from(Course course) {
         return new CourseResponse(
                 course.getId(),

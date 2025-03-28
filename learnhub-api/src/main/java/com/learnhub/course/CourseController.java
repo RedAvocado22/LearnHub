@@ -1,15 +1,15 @@
 package com.learnhub.course;
 
+import com.learnhub.auth.dto.AssignManagerRequest;
 import com.learnhub.course.chapter.ChapterService;
 import com.learnhub.course.chapter.lesson.dto.*;
-import com.learnhub.course.dto.ManagerCourseResponse;
-import com.learnhub.course.dto.ManagerCourseResquest;
-import com.learnhub.course.dto.ManagerCoursesResponse;
-import com.learnhub.course.dto.UpdateCourseRequest;
+import com.learnhub.course.dto.*;
 import com.learnhub.user.User;
 import com.learnhub.util.ObjectMapper;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -55,10 +55,12 @@ public class CourseController {
     }
 
 
-    @GetMapping("/manager")
-    public ResponseEntity<List<ManagerCoursesResponse>> getManagerCourses() {
+    @GetMapping("/managers")
+    public ResponseEntity<List<ManagerCoursesResponse>> getManagerCourses(@AuthenticationPrincipal User user) {
         return ResponseEntity.ok(
                 courseService.getAllCourses().stream()
+                        .filter(course -> course.getManager() != null)
+                        .filter(course -> course.getManager().getId() == user.getManager().getId())
                         .filter(
                                 course -> course.getStatus().equals(CourseStatus.PENDING) ||
                                         course.getStatus().equals(CourseStatus.CANCELLED) ||
@@ -69,20 +71,44 @@ public class CourseController {
         );
     }
 
-    @PutMapping("/manager")
-    public ResponseEntity<String> changeCourseStatus(@RequestBody ManagerCourseResquest req) {
+    @PutMapping("/managers")
+    public ResponseEntity<String> changeCourseStatus(@RequestBody ManagerCourseRequest req) {
         Long id = courseService.changeCourseStatus(req.id(), req.status());
         return ResponseEntity.ok("Success update course: " + id);
     }
 
-    @GetMapping("/manager/{id}")
-    public ResponseEntity<ManagerCourseResponse> getManagerCourse(@PathVariable Long id) {
+    @GetMapping("/managers/{id}")
+    public ResponseEntity<ManagerCourseResponse> getManagerCourses(@PathVariable Long id) {
         return courseService.getAllCourses().stream()
                 .filter(course -> course.getId() == id)
                 .map(objectMapper::toManagerCourseResponse)
                 .findFirst()
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/admin")
+    public ResponseEntity<List<AdminCourseResponse>> getAdminCourses() {
+        return ResponseEntity.ok(
+                courseService.getAllCourses().stream()
+                        .map(objectMapper::toAdminCourseResponse)
+                        .toList()
+        );
+    }
+
+    @PostMapping("/{courseId}/assign-manager")
+    public ResponseEntity<Void> assignCourseManager(
+            @PathVariable Long courseId,
+            @RequestBody AssignManagerRequest request
+    ) {
+        try {
+            courseService.assignManager(courseId, request.id());
+            return ResponseEntity.ok().build();
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     //get voi post deu la id cua course

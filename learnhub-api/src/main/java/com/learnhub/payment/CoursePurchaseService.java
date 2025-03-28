@@ -24,6 +24,12 @@ public class CoursePurchaseService {
         this.courseRepository = courseRepository;
     }
 
+    @Autowired
+    public CoursePurchaseService(CoursePurchaseRepository coursePurchaseRepository, CourseRepository courseRepository) {
+        this.coursePurchaseRepository = coursePurchaseRepository;
+        this.courseRepository = courseRepository;
+    }
+
     public String responseCodeToStatus(String responseCode) {
         if (responseCode.equals("00"))
             return "SUCCESS";

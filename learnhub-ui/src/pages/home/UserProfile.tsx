@@ -8,6 +8,8 @@ import NotFound from "../error/NotFound";
 import { API } from "../../api";
 import { HomeLayout } from "../../layouts";
 import FormField from "../../layouts/FormField";
+import { is } from "date-fns/locale";
+import { useState } from "react";
 
 interface UserFormValues {
     firstName: string;
@@ -25,7 +27,9 @@ interface UserFormValues {
         biography?: string;
     };
 }
-
+interface AvatarFormValues {
+    avatar: File | null;
+}
 interface PasswordFormValues {
     oldPassword: string;
     newPassword: string;
@@ -69,13 +73,14 @@ const updatePasswordSchema = yup.object({
 
 export default function UserProfile() {
     const { user, refreshUser } = useUser();
+    const [imagePreview, setImagePreview] = useState<string | null>(null);
 
     if (!user) {
         return <NotFound />;
     }
 
     let updateUserSchema = yup.object({ ...baseSchema });
-    let initialUserValues: UserFormValues = {
+    const initialUserValues: UserFormValues = {
         firstName: user.firstName,
         lastName: user.lastName
     };
@@ -83,6 +88,9 @@ export default function UserProfile() {
         oldPassword: "",
         newPassword: "",
         confirmPassword: ""
+    };
+    const initialAvatarValues: AvatarFormValues = {
+        avatar: null
     };
     if (user.role === UserRole.STUDENT && user.student) {
         updateUserSchema = yup.object({ ...baseSchema, ...studentSchema });
@@ -101,6 +109,40 @@ export default function UserProfile() {
             biography: user.teacher.biography
         };
     }
+
+    const handleUpdateAvatar = async (
+        values: AvatarFormValues,
+        { setSubmitting, resetForm, setFieldValue }: FormikHelpers<AvatarFormValues>
+    ) => {
+        try {
+            const formData = new FormData();
+            if (values.avatar) {
+                formData.append("avatar", values.avatar);
+
+                console.log("FormData has file:", formData.has("avatar"));
+
+                const resp = await API.put("/users/me/avatar", formData, {
+                    headers: {
+                        "Content-Type": "multipart/form-data"
+                    }
+                });
+
+                if (resp.status === 200) {
+                    toast.success("Update avatar successfully");
+                    refreshUser();
+                }
+            } else {
+                throw new Error("No file selected");
+            }
+        } catch (err) {
+            toast.error("Something went wrong");
+            resetForm();
+            setImagePreview(null);
+            setFieldValue("avatar", null);
+        } finally {
+            setSubmitting(false);
+        }
+    };
 
     const handleUpdateUser = async (
         values: UserFormValues,
@@ -139,6 +181,21 @@ export default function UserProfile() {
             resetForm();
         } finally {
             setSubmitting(false);
+        }
+    };
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>, setFieldValue: any) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setImagePreview(reader.result as string);
+                setFieldValue("avatar", file);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            setImagePreview(null);
+            setFieldValue("avatar", null);
         }
     };
 
@@ -293,6 +350,71 @@ export default function UserProfile() {
                                         )}
                                     </Formik>
                                     <Formik
+                                        initialValues={initialAvatarValues}
+                                        validationSchema={yup.object({
+                                            avatar: yup.mixed<File>().required("Avatar is required")
+                                        })}
+                                        onSubmit={handleUpdateAvatar}>
+                                        {({ isSubmitting, resetForm, setFieldValue }) => (
+                                            <Form noValidate className="edit-profile">
+                                                <div className="">
+                                                    <div className="form-group row">
+                                                        <div className="col-sm-10 ml-auto">
+                                                            <h3>2. Avatar</h3>
+                                                        </div>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <label className="col-sm-2 col-form-label">Avatar</label>
+                                                        <div className="col-sm-7">
+                                                            <input
+                                                                className="form-control"
+                                                                type="file"
+                                                                id="avatar"
+                                                                name="avatar"
+                                                                accept="image/*"
+                                                                onChange={(e) => handleImageChange(e, setFieldValue)}
+                                                            />
+                                                        </div>
+                                                    </div>
+                                                    <div className="form-group row">
+                                                        <div className="col-sm-2"></div>
+                                                        <div className="col-sm-7">
+                                                            {imagePreview && (
+                                                                <img
+                                                                    src={imagePreview}
+                                                                    alt="Avatar"
+                                                                    style={{ width: "100px", height: "100px" }}
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div className="row">
+                                                    <div className="col-sm-2"></div>
+                                                    <div className="col-sm-7">
+                                                        <button type="submit" className="btn" disabled={isSubmitting}>
+                                                            {isSubmitting ? "Saving..." : "Save changes"}
+                                                        </button>{" "}
+                                                        <button
+                                                            type="reset"
+                                                            className="btn-secondry"
+                                                            onClick={() => {
+                                                                resetForm();
+                                                                setFieldValue("avatar", null);
+                                                                setImagePreview(null);
+                                                                const fileInput = document.getElementById(
+                                                                    "avatar"
+                                                                ) as HTMLInputElement;
+                                                                if (fileInput) fileInput.value = "";
+                                                            }}>
+                                                            Cancel
+                                                        </button>
+                                                    </div>
+                                                </div>
+                                            </Form>
+                                        )}
+                                    </Formik>
+                                    <Formik
                                         initialValues={initialPasswordValues}
                                         validationSchema={updatePasswordSchema}
                                         onSubmit={handleUpdatePassword}>
@@ -301,7 +423,7 @@ export default function UserProfile() {
                                                 <div className="">
                                                     <div className="form-group row">
                                                         <div className="col-sm-10 ml-auto">
-                                                            <h3>2. Password</h3>
+                                                            <h3>3. Password</h3>
                                                         </div>
                                                     </div>
                                                     <div className="form-group row">

@@ -60,9 +60,19 @@ export default function CourseDetail() {
                                         </div>
 
                                         <div className="course-buy-now text-center">
-                                            <a className="btn radius-xl text-uppercase" onClick={handleBuySubmit}>
-                                                Buy Now This Courses
-                                            </a>
+                                            {user?.student?.enrollments?.find(
+                                                (enrollment) => enrollment.course?.id === course?.id
+                                            ) ? (
+                                                <a
+                                                    className="btn radius-xl text-uppercase"
+                                                    onClick={() => navigate("/home/courses?status=progess")}>
+                                                    Already Enrolled
+                                                </a>
+                                            ) : (
+                                                <a className="btn radius-xl text-uppercase" onClick={handleBuySubmit}>
+                                                    Buy Now This Courses
+                                                </a>
+                                            )}
                                         </div>
                                         <div className="teacher-bx">
                                             <div className="teacher-info">

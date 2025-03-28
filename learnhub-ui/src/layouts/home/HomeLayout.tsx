@@ -1,7 +1,7 @@
 import { useState } from "react";
 import NotificationList from "./NotificationList";
 import { useUser } from "../../hooks/useUser";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { UserRole } from "../../types/User";
 
 interface SidebarItem {
@@ -24,7 +24,8 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
     ADMIN: [
         { label: "Dashboard", icon: "ti-home", link: "/home" },
         { label: "Mailbox", icon: "ti-email", link: "/admin/contacts" },
-        { label: "Manage Users", icon: "ti-user", link: "/admin/users" }
+        { label: "Manage Users", icon: "ti-user", link: "/admin/users" },
+        { label: "Manage Course", icon: "ti-user", link: "/admin/courses" }
     ],
     COURSE_MANAGER: [
         { label: "Dashboard", icon: "ti-home", link: "/home" },
@@ -77,7 +78,6 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
     const [displayProfile, setDisplayProfile] = useState(false);
     const [openSidebarItem, setOpenSidebarItem] = useState<number | null>(null);
     const { user, logout } = useUser();
-    const navigate = useNavigate();
 
     const menu: SidebarItem[] = userMenus[user?.role as UserRole] ?? [];
     const header: HeaderItem[] = userHeader[user?.role as UserRole] ?? [];
@@ -86,10 +86,6 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
         setOpenSidebarItem(openSidebarItem === index ? null : index);
     };
 
-    const handleLogout = () => {
-        logout();
-        navigate("/");
-    };
     return (
         <div className={`${displaySidebar ? "ttr-opened-sidebar " : ""}ttr-pinned-sidebar`}>
             <header className="ttr-header">
@@ -162,7 +158,11 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                     <span className="ttr-user-avatar">
                                         <img
                                             alt=""
-                                            src="/assets/images/testimonials/default.jpg"
+                                            src={
+                                                user?.avatar
+                                                    ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${user.avatar}`
+                                                    : "/assets/images/avatar.png"
+                                            }
                                             width="32"
                                             height="32"
                                         />
@@ -182,7 +182,7 @@ export default function HomeLayout({ children }: HomeLayoutProps) {
                                         )}
 
                                         <li>
-                                            <a href="#" onClick={handleLogout}>
+                                            <a href="#" onClick={logout}>
                                                 Logout
                                             </a>
                                         </li>

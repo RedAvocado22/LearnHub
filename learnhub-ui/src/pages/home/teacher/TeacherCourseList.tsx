@@ -15,8 +15,6 @@ export default function TeacherCourseList() {
         setEditingCourse(course);
     };
 
-    refreshUser();
-
     const handleSave = async (newStatus: CourseStatus) => {
         try {
             if (!editingCourse) return;

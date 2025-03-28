@@ -23,9 +23,10 @@ const itemsPerPage = 6;
 
 export default function CourseList() {
     const { user } = useUser();
-    const [params] = useSearchParams();
-    const chosenCategory = params.get("category") || "All Courses";
-    const [search, setSearch] = useState("");
+    const [searchParams, setSearchParams] = useSearchParams();
+    const chosenCategory = searchParams.get("category") || "All Courses";
+    const initialSearch = searchParams.get("search") || "";
+    const [search, setSearch] = useState(initialSearch);
     const [categories, setCategories] = useState<Category[]>([]);
     const [courses, setCourses] = useState<Course[]>([]);
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -34,6 +35,17 @@ export default function CourseList() {
         if (page >= 1 && page <= totalPages) {
             setCurrentPage(page);
         }
+    };
+
+    const handleSearchChange = (value: string) => {
+        setSearch(value);
+        const newParams = new URLSearchParams(searchParams);
+        if (value) {
+            newParams.set("search", value);
+        } else {
+            newParams.delete("search");
+        }
+        setSearchParams(newParams);
     };
 
     useEffect(() => {
@@ -48,6 +60,14 @@ export default function CourseList() {
     useEffect(() => {
         setCurrentPage(1);
     }, [search, chosenCategory]);
+
+    // Update search state if URL param changes
+    useEffect(() => {
+        const searchFromUrl = searchParams.get("search") || "";
+        if (searchFromUrl !== search) {
+            setSearch(searchFromUrl);
+        }
+    }, [searchParams]);
 
     const filteredCourses = courses
         .filter((course) => course.name.toLowerCase().includes(search.toLowerCase()))
@@ -80,7 +100,7 @@ export default function CourseList() {
                                                 <input
                                                     type="text"
                                                     value={search}
-                                                    onChange={(e) => setSearch(e.target.value)}
+                                                    onChange={(e) => handleSearchChange(e.target.value)}
                                                     className="form-control"
                                                     placeholder="Search Course"
                                                     required
@@ -92,13 +112,17 @@ export default function CourseList() {
                                         <h5 className="widget-title style-1">All Courses</h5>
                                         <ul>
                                             <li className={chosenCategory === "All Courses" ? "active" : ""}>
-                                                <Link to="/courses">All</Link>
+                                                <Link
+                                                    to={`/courses${search ? `?search=${encodeURIComponent(search)}` : ""}`}>
+                                                    All
+                                                </Link>
                                             </li>
                                             {categories.map((category) => (
                                                 <li
                                                     key={category.id}
                                                     className={chosenCategory === category.name ? "active" : ""}>
-                                                    <Link to={`/courses?category=${category.name}`}>
+                                                    <Link
+                                                        to={`/courses?category=${category.name}${search ? `&search=${encodeURIComponent(search)}` : ""}`}>
                                                         {category.name}
                                                     </Link>
                                                 </li>
@@ -113,6 +137,7 @@ export default function CourseList() {
                                         </div>
                                     )}
                                 </div>
+
                                 <div className="col-lg-9 col-md-8 col-sm-12">
                                     <div className="row">
                                         {list.map((course) => (

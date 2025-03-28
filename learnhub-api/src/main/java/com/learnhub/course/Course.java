@@ -1,29 +1,18 @@
 package com.learnhub.course;
 
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
-
 import com.learnhub.course.category.Category;
 import com.learnhub.course.chapter.Chapter;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.teacher.TeacherProfile;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "course")
@@ -56,10 +45,6 @@ public class Course {
     @Column(name = "image")
     private String image;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "teacher_id", nullable = false)
-    private TeacherProfile teacher;
-
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Chapter> chapters;
 
@@ -74,4 +59,15 @@ public class Course {
 
     @Column(name = "archived_at")
     private LocalDateTime archivedAt;
+
+    @Column(name = "assign_at")
+    private LocalDateTime assignAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "teacher_id", nullable = false)
+    private TeacherProfile teacher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "manager_id")
+    private ManagerProfile manager;
 }
