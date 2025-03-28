@@ -108,7 +108,6 @@ public class UserController {
 
         if (coursePurchaseRequest.responseCode().equals("00")) {
             enrollmentService.createEnrollment(user.getId(), coursePurchaseRequest.courseId());
-            notificationService.notifyTeacherAboutEnrollment(coursePurchaseRequest.courseId(), user.getId());
         }
 
         return ResponseEntity.ok("Success");

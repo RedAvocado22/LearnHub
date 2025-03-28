@@ -40,7 +40,9 @@ import {
     StudentMaterialDetails,
     AdminCourseList,
     AssignCourseManager,
-    TransactionHistory
+    TransactionHistory,
+    AddContactDetails,
+    AddCategory
 } from "./pages";
 import { ContactsProviderRoute, GuestRoute, ManageUsersRoute, NotificationsRoute, ProtectedRoute } from "./routers";
 import Dummy from "./pages/Dummy";

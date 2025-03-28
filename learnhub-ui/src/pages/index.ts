@@ -38,12 +38,10 @@ export { default as ContactDetails } from "./home/admin/ContactDetails";
 export { default as UserList } from "./home/admin/UserList";
 export { default as UserDetails } from "./home/admin/UserDetails";
 export { default as AddUser } from "./home/admin/AddUser";
-export { default as AdminCourseList} from "./home/admin/CourseList";
+export { default as AdminCourseList } from "./home/admin/CourseList";
 export { default as AssignCourseManager } from "./home/admin/AssignCourseManager";
 export { default as TransactionHistory } from "./home/student/TransactionHistory";
 export { default as AddCategory } from "./home/admin/AddCategory";
-export { default as AdminCourseList} from "./home/admin/CourseList";
-export { default as AssignCourseManager } from "./home/admin/AssignCourseManager";
 
 //Payment
 export { default as Order } from "./home/payment/Order";
