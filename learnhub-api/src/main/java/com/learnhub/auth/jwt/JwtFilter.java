@@ -49,16 +49,16 @@ public class JwtFilter extends OncePerRequestFilter {
                 filterChain.doFilter(request, response);
                 return;
             }
+
             String accessToken = authHeader.substring(7);
             String username = jwtService.extractUsername(accessToken);
             if (username == null) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                 return;
             }
+
             User user = userRepository.findByEmail(username).orElse(null);
-            if (user == null ||
-                    user.getStatus() == UserStatus.UNACTIVE || user.getStatus() == UserStatus.SUSPENDED ||
-                    !jwtService.isTokenValid(accessToken, user) ||
+            if (user == null || !jwtService.isTokenValid(accessToken, user) ||
                     revokedTokenRepository.findByToken(accessToken).isPresent()) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Invalid token");
                 return;

@@ -32,6 +32,7 @@ public class AuthController {
         if (resp.accessToken() == null) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(resp);
         }
+
         return ResponseEntity.ok().body(resp);
     }
 

@@ -81,6 +81,7 @@ public class AuthService {
         userRepository.findByEmail(req.email()).ifPresent(user -> {
             throw new UserExistsException(String.format("User with email %s is already exists.", req.email()));
         });
+
         String encoded = passwordEncoder.encode(req.password());
         User user = userRepository.save(User.builder()
                 .email(req.email())
@@ -169,6 +170,7 @@ public class AuthService {
             emailService.sendAccountResetPasswordEmail(user.getEmail(), jwtService.generateToken(user, 30 * 60 * 1000));
             throw new InvalidTokenException("Link is expired.");
         }
+
         user.setPassword(passwordEncoder.encode(resp.password()));
         userRepository.save(user);
     }
