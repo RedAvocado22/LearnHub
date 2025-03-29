@@ -3,9 +3,10 @@ import { API } from "../../../api";
 import { MainLayout } from "../../../layouts";
 import { toast } from "react-toastify";
 import { useLocation } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 
 interface Order {
-    orderInfo: String;
+    orderInfo: string;
     totalPrice: number;
 }
 
@@ -26,6 +27,23 @@ export default function Order() {
             }
         }
     };
+
+    const [rate, setRate] = useState(23000);
+
+    useEffect(() => {
+        const fetchRate = async () => {
+            try {
+                const response = await fetch("https://api.exchangerate-api.com/v4/latest/USD");
+                const data = await response.json();
+                setRate(data.rates.VND);
+            } catch (error) {
+                console.error("Error fetching exchange rate:", error);
+                setRate(23000); // fallback rate
+            }
+        };
+        fetchRate();
+    }, []);
+
     return (
         <MainLayout>
             <div className="container">
@@ -44,7 +62,7 @@ export default function Order() {
                                             name="amount"
                                             required
                                             readOnly
-                                            value={course.price * 23000}
+                                            value={course.price * rate}
                                         />
                                     </div>
                                     <div className="form-group">
