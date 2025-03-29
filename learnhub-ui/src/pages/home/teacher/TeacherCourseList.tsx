@@ -107,26 +107,10 @@ export default function TeacherCourseList() {
                                                                         <div className="button-container">
                                                                             <button
                                                                                 onClick={() =>
-                                                                                    handleSave(CourseStatus.PRIVATE)
+                                                                                    handleSave(CourseStatus.CANCELLED)
                                                                                 }
                                                                                 className="btn m-b15 m-r15">
-                                                                                Update Course
-                                                                            </button>
-                                                                            <button
-                                                                                onClick={handleCancel}
-                                                                                className="btn m-b15">
-                                                                                Cancel
-                                                                            </button>
-                                                                        </div>
-                                                                    )}
-                                                                    {editingCourse.status === "CANCELLED" && (
-                                                                        <div className="button-container">
-                                                                            <button
-                                                                                onClick={() =>
-                                                                                    handleSave(CourseStatus.PRIVATE)
-                                                                                }
-                                                                                className="btn m-b15 m-r15">
-                                                                                Reactivate Course
+                                                                                Cancel Course
                                                                             </button>
                                                                             <button
                                                                                 onClick={handleCancel}

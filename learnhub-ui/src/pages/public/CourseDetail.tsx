@@ -55,9 +55,15 @@ export default function CourseDetail() {
                                         </div>
 
                                         <div className="course-buy-now text-center">
-                                            {user?.student?.enrollments?.find(
-                                                (enrollment) => enrollment.course?.id === course?.id
-                                            ) ? (
+                                            {!user ? (
+                                                <a
+                                                    className="btn radius-xl text-uppercase"
+                                                    onClick={() => navigate("/login")}>
+                                                    Login to Buy Now
+                                                </a>
+                                            ) : user?.student?.enrollments?.find(
+                                                  (enrollment) => enrollment.course?.id === course?.id
+                                              ) ? (
                                                 <a
                                                     className="btn radius-xl text-uppercase"
                                                     onClick={() => navigate("/home/courses?status=progess")}>
