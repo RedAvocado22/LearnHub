@@ -70,7 +70,7 @@ const CreateCourse: React.FC = () => {
     const validationSchema = Yup.object().shape({
         name: Yup.string().required("Course Name is required"),
         categoryId: Yup.number().required("Category is required"),
-        price: Yup.number().required("Price is required").positive("Price must be positive"),
+        price: Yup.number().required("Price is required").min(0, "Price must be greater than 0"),
         description: Yup.string().max(150, "Description must be 150 words or less").required("Description is required"),
         image: Yup.mixed().required("Image is required")
     });

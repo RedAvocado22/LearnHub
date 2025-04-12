@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Star } from "lucide-react";
 import { API } from "../../api";
 import { toast } from "react-toastify";
@@ -44,13 +44,11 @@ export default function CourseRating({ courseId, onRatingSubmit }: CourseRatingP
 
     return (
         <div className="edit-profile p-4 bg-gray-100">
-            {" "}
-            {/* Changed bg-gray-1 to bg-gray-100 */}
             <h5>Rate the course</h5>
             <div className="form-group row">
                 <label className="col-sm-2 col-form-label">Star</label>
                 <div className="col-sm-7">
-                    {[...Array(5)].map((star, index) => {
+                    {[...Array(5)].map((_, index) => {
                         index += 1;
                         return (
                             <button
@@ -73,8 +71,8 @@ export default function CourseRating({ courseId, onRatingSubmit }: CourseRatingP
                 </div>
             </div>
             <div className="form-group row">
-                <label className="col-sm-2 col-form-label">Comment</label>
-                <div className="col-sm-7">
+                <label className="col-2 col-form-label">Comment</label>
+                <div className="col-10">
                     <textarea
                         name="comment"
                         value={comment}
@@ -86,7 +84,7 @@ export default function CourseRating({ courseId, onRatingSubmit }: CourseRatingP
             </div>
             <div className="form-group row">
                 <div className="col-sm-7">
-                    <button onClick={handleRatingSubmit} className="btn btn-primary mr-2" disabled={rating === 0}>
+                    <button onClick={handleRatingSubmit} className="btn mr-2" disabled={rating === 0}>
                         Submit Rating
                     </button>
                 </div>

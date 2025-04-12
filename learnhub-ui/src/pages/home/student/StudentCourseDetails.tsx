@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
 import { HomeLayout } from "../../../layouts";
 import { MaterialType } from "../../../types/Course";
-import { Course, Enrollment } from "../../../hooks/useUser";
+import { Course, Enrollment, useUser } from "../../../hooks/useUser";
 import defaultThumbnail from "/assets/images/blog/default/thum1.jpg";
-import Rating from "../../../layouts/elements/Rating";
+import CourseRating from "../../../layouts/elements/Rating";
+import ReviewCard from "../../../layouts/elements/ReviewCard";
 
 interface StudentCourseDetailsProps {
     enrollment: Enrollment;
@@ -27,6 +28,8 @@ const countMaterials = (course: Course): { lessonCount: number; quizCount: numbe
 };
 
 export default function StudentCourseDetails({ enrollment }: StudentCourseDetailsProps) {
+    const { user } = useUser();
+    const review = enrollment.course.reviews?.find((r) => r.user === user?.id);
     const { lessonCount, quizCount } = countMaterials(enrollment.course);
     return (
         <HomeLayout>
@@ -44,7 +47,14 @@ export default function StudentCourseDetails({ enrollment }: StudentCourseDetail
                                             <div className="teacher-bx">
                                                 <div className="teacher-info">
                                                     <div className="teacher-thumb">
-                                                        <img src="/assets/images/testimonials/default.jpg" alt="" />
+                                                        <img
+                                                            src={
+                                                                enrollment.course.teacher.avatar
+                                                                    ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${enrollment.course.teacher.avatar}`
+                                                                    : "/assets/images/testimonials/default.jpg"
+                                                            }
+                                                            alt=""
+                                                        />
                                                     </div>
                                                     <div className="teacher-name">
                                                         <h5>
@@ -58,23 +68,26 @@ export default function StudentCourseDetails({ enrollment }: StudentCourseDetail
                                             </div>
                                             <div className="cours-more-info">
                                                 <div className="review">
-                                                    <span>3 Review</span>
+                                                    <span>{enrollment.course?.reviews.length || 0} Review</span>
                                                     <ul className="cours-star">
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li className="active">
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                        <li>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
+                                                        {[1, 2, 3, 4, 5].map((star) => (
+                                                            <li
+                                                                key={star}
+                                                                className={
+                                                                    enrollment.course?.reviews.length &&
+                                                                    enrollment.course.reviews.length > 0 &&
+                                                                    star <=
+                                                                        enrollment.course.reviews.reduce(
+                                                                            (sum, review) => sum + review.star,
+                                                                            0
+                                                                        ) /
+                                                                            enrollment.course.reviews.length
+                                                                        ? "active"
+                                                                        : ""
+                                                                }>
+                                                                <i className="fa fa-star"></i>
+                                                            </li>
+                                                        ))}
                                                     </ul>
                                                 </div>
                                                 <div className="price categories">
@@ -187,6 +200,19 @@ export default function StudentCourseDetails({ enrollment }: StudentCourseDetail
                                                     </li>
                                                 ))}
                                             </ul>
+                                        </div>
+                                        <div className="m-b30" id="reviews">
+                                            <h4>Reviews</h4>
+                                            {review ? (
+                                                <ReviewCard
+                                                    username={review.reviewer}
+                                                    submittedAt={review.submittedAt}
+                                                    rating={review.star}
+                                                    comment={review.comment}
+                                                />
+                                            ) : (
+                                                <CourseRating courseId={enrollment.course.id} />
+                                            )}
                                         </div>
                                     </div>
                                 </div>

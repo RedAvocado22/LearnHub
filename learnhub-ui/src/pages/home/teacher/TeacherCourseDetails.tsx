@@ -9,6 +9,8 @@ import defaultThumbnail from "/assets/images/blog/default/thum1.jpg";
 import CourseCurriculum from "./CourseCurriculum";
 import { toast } from "react-toastify";
 import { API } from "../../../api";
+import ReviewCard from "../../../layouts/elements/ReviewCard";
+import ReviewOverview from "../../../layouts/elements/ReviewOverview";
 
 export default function CourseDetails() {
     const { user, refreshUser } = useUser();
@@ -52,7 +54,7 @@ export default function CourseDetails() {
                         <div className="content-block">
                             <div className="section-area">
                                 <div className="row d-flex flex-row-reverse">
-                                    <div className="col-lg-12 col-md-8 col-sm-12">
+                                    <div className="col-lg-12 col-md-8 col-sm-12 m-b30">
                                         <div className="courses-post">
                                             <div className="ttr-post-media media-effect">
                                                 <img
@@ -151,6 +153,19 @@ export default function CourseDetails() {
                                             course={course}
                                             editable={course.status === CourseStatus.PRIVATE}
                                         />
+                                        <div className="" id="reviews">
+                                            <h4>Reviews</h4>
+                                            <ReviewOverview reviews={course?.reviews || []} />
+                                            {course?.reviews?.map((review) => (
+                                                <ReviewCard
+                                                    key={review.id}
+                                                    username={review.reviewer}
+                                                    submittedAt={review.submittedAt}
+                                                    rating={review.star}
+                                                    comment={review.comment}
+                                                />
+                                            ))}
+                                        </div>
                                     </div>
                                 </div>
                             </div>

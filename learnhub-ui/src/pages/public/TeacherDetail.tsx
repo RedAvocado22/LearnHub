@@ -5,12 +5,15 @@ import { useParams } from "react-router-dom";
 import NotFound from "../error/NotFound";
 import { isAxiosError } from "axios";
 import { toast } from "react-toastify";
+import { Review } from "../../hooks/useUser";
 
 interface Course {
     id: number;
     name: string;
     category: { id: number; name: string };
+    image: string;
     price: number;
+    reviews: Review[];
 }
 
 interface Teacher {
@@ -19,6 +22,7 @@ interface Teacher {
     firstName: string;
     lastName: string;
     major: string;
+    avatar: string;
     phone: string;
     workAddress: string;
     city: string;
@@ -74,7 +78,14 @@ export default function TeacherDetails() {
                                 <div className="col-lg-3 col-md-4 col-sm-12 m-b30">
                                     <div className="profile-bx text-center">
                                         <div className="user-profile-thumb">
-                                            <img src="/assets/images/profile/pic1.jpg" alt="" />
+                                            <img
+                                                src={
+                                                    teacher.avatar
+                                                        ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${teacher.avatar}`
+                                                        : "/assets/images/testimonials/default.jpg"
+                                                }
+                                                alt=""
+                                            />
                                         </div>
                                         <div className="profile-info">
                                             <h4>
@@ -127,7 +138,11 @@ export default function TeacherDetails() {
                                                                     <div className="cours-bx">
                                                                         <div className="action-box">
                                                                             <img
-                                                                                src="/assets/images/courses/pic1.jpg"
+                                                                                src={
+                                                                                    course.image
+                                                                                        ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
+                                                                                        : "/assets/images/courses/pic1.jpg"
+                                                                                }
                                                                                 alt=""
                                                                             />
                                                                             <a href="#" className="btn">
@@ -144,23 +159,33 @@ export default function TeacherDetails() {
                                                                         </div>
                                                                         <div className="cours-more-info">
                                                                             <div className="review">
-                                                                                <span>3 Review</span>
+                                                                                <span>
+                                                                                    {course?.reviews.length || 0} Review
+                                                                                </span>
                                                                                 <ul className="cours-star">
-                                                                                    <li className="active">
-                                                                                        <i className="fa fa-star"></i>
-                                                                                    </li>
-                                                                                    <li className="active">
-                                                                                        <i className="fa fa-star"></i>
-                                                                                    </li>
-                                                                                    <li className="active">
-                                                                                        <i className="fa fa-star"></i>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <i className="fa fa-star"></i>
-                                                                                    </li>
-                                                                                    <li>
-                                                                                        <i className="fa fa-star"></i>
-                                                                                    </li>
+                                                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                                                        <li
+                                                                                            key={star}
+                                                                                            className={
+                                                                                                course?.reviews
+                                                                                                    .length &&
+                                                                                                course.reviews.length >
+                                                                                                    0 &&
+                                                                                                star <=
+                                                                                                    course.reviews.reduce(
+                                                                                                        (sum, review) =>
+                                                                                                            sum +
+                                                                                                            review.star,
+                                                                                                        0
+                                                                                                    ) /
+                                                                                                        course.reviews
+                                                                                                            .length
+                                                                                                    ? "active"
+                                                                                                    : ""
+                                                                                            }>
+                                                                                            <i className="fa fa-star"></i>
+                                                                                        </li>
+                                                                                    ))}
                                                                                 </ul>
                                                                             </div>
                                                                             <div className="price">

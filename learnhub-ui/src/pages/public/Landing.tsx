@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { API } from "../../api";
 import { toast } from "react-toastify";
+import { Review } from "../../hooks/useUser";
 
 interface Category {
     id: number;
@@ -19,6 +20,7 @@ interface Course {
     name: string;
     image: string;
     price: number;
+    reviews: Review[];
     category: Category;
 }
 
@@ -165,6 +167,7 @@ export default function Landing() {
                                                         ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${course.image}`
                                                         : "assets/images/courses/pic1.jpg"
                                                 }
+                                                reviews={course.reviews}
                                                 category={course.category.name}
                                                 price={course.price}
                                             />

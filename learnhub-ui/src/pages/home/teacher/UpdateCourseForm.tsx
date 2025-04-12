@@ -60,6 +60,7 @@ export default function UpdateCourseForm({ course, setPreviewImage }: UpdateCour
                 headers: { "Content-Type": "multipart/form-data" }
             });
             if (resp.status === 200) {
+                toast.success("Update course successfully");
                 refreshUser();
             }
         } catch (err) {

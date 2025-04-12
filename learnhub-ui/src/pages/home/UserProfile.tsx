@@ -356,7 +356,7 @@ export default function UserProfile() {
                                         })}
                                         onSubmit={handleUpdateAvatar}>
                                         {({ isSubmitting, resetForm, setFieldValue }) => (
-                                            <Form noValidate className="edit-profile">
+                                            <Form noValidate className="edit-profile m-b30">
                                                 <div className="">
                                                     <div className="form-group row">
                                                         <div className="col-sm-10 ml-auto">

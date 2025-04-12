@@ -5,6 +5,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.AddressException;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,6 +131,26 @@ public class EmailService {
         mail.setFrom(from);
         mail.setTo(to);
         mail.setSubject("Account released");
+        mail.setText(message);
+        sender.send(mail);
+    }
+
+    public void sendRejectCourseEmail(String to, String courseName, String reason) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String message = String.format("Your \"%s\" course has been rejected with the reason: %s", courseName, reason);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Course rejected");
+        mail.setText(message);
+        sender.send(mail);
+    }
+
+    public void sendApproveCourseEmail(String to, String courseName, String reason) {
+        SimpleMailMessage mail = new SimpleMailMessage();
+        String message = String.format("Your \"%s\" course has been published with the reason: %s", courseName, reason);
+        mail.setFrom(from);
+        mail.setTo(to);
+        mail.setSubject("Course approved");
         mail.setText(message);
         sender.send(mail);
     }

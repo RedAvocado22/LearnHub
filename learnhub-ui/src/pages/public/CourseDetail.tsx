@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import MainLayout from "../../layouts/MainLayout";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { Course, useUser } from "../../hooks/useUser";
 import { API } from "../../api";
 import { toast } from "react-toastify";
 import { MaterialType } from "../../types/Course";
-import CourseRating from "../../layouts/elements/Rating";
+import ReviewCard from "../../layouts/elements/ReviewCard";
+import ReviewOverview from "../../layouts/elements/ReviewOverview";
 
 export default function CourseDetail() {
     const [courses, setCourses] = useState<Course[]>([]);
@@ -81,35 +82,45 @@ export default function CourseDetail() {
                                                     <img src="/assets/images/testimonials/pic1.jpg" alt="" />
                                                 </div>
                                                 <div className="teacher-name">
-                                                    <h5>{course?.teacher.name}</h5>
-                                                    <span>Science Teacher</span>
+                                                    <h5>
+                                                        <Link to={`/teacher/${course?.teacher.id}`}>
+                                                            {course?.teacher.name}
+                                                        </Link>
+                                                    </h5>
                                                 </div>
                                             </div>
                                         </div>
                                         <div className="cours-more-info">
                                             <div className="review">
-                                                <span>3 Review</span>
+                                                <span>{course?.reviews.length || 0} Review</span>
                                                 <ul className="cours-star">
-                                                    <li className="active">
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li className="active">
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li className="active">
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
-                                                    <li>
-                                                        <i className="fa fa-star"></i>
-                                                    </li>
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <li
+                                                            key={star}
+                                                            className={
+                                                                course?.reviews.length &&
+                                                                course.reviews.length > 0 &&
+                                                                star <=
+                                                                    course.reviews.reduce(
+                                                                        (sum, review) => sum + review.star,
+                                                                        0
+                                                                    ) /
+                                                                        course.reviews.length
+                                                                    ? "active"
+                                                                    : ""
+                                                            }>
+                                                            <i className="fa fa-star"></i>
+                                                        </li>
+                                                    ))}
                                                 </ul>
                                             </div>
                                             <div className="price categories">
                                                 <span>Categories</span>
-                                                <h5 className="text-primary">{course?.category.name}</h5>
+                                                <h5 className="text-primary">
+                                                    <Link to={`/courses?category=${course?.category.name}`}>
+                                                        {course?.category.name}
+                                                    </Link>
+                                                </h5>
                                             </div>
                                         </div>
                                         <div className="course-info-list scroll-page">
@@ -233,207 +244,16 @@ export default function CourseDetail() {
                                     </div>
                                     <div className="" id="reviews">
                                         <h4>Reviews</h4>
-                                        <div>
-                                            {course?.reviews.find((review) => review.user === user?.id) ? (
-                                                <p className="text-center text-gray-600">
-                                                    You have already submitted a review for this course.
-                                                </p>
-                                            ) : user?.student?.enrollments?.find(
-                                                  (enrollment) => enrollment.course?.id === course?.id
-                                              ) ? (
-                                                <CourseRating courseId={course?.id || 0} />
-                                            ) : (
-                                                <p className="text-center text-gray-600">
-                                                    You need to enroll in this course to leave a review.
-                                                </p>
-                                            )}
-                                        </div>
-                                        <div className="review-bx">
-                                            <div className="all-review">
-                                                <h2 className="rating-type">
-                                                    {course?.reviews.length
-                                                        ? (
-                                                              course.reviews.reduce(
-                                                                  (sum, review) => sum + review.star,
-                                                                  0
-                                                              ) / course.reviews.length
-                                                          ).toFixed(1)
-                                                        : 0}
-                                                </h2>
-                                                <ul className="cours-star">
-                                                    {[1, 2, 3, 4, 5].map((star) => (
-                                                        <li
-                                                            key={star}
-                                                            className={
-                                                                course?.reviews.length &&
-                                                                star <=
-                                                                    course.reviews.reduce(
-                                                                        (sum, review) => sum + review.star,
-                                                                        0
-                                                                    ) /
-                                                                        course.reviews.length
-                                                                    ? "active"
-                                                                    : ""
-                                                            }>
-                                                            <i className="fa fa-star"></i>
-                                                        </li>
-                                                    ))}
-                                                </ul>
-                                                <span>{course?.reviews.length} Rating</span>
-                                            </div>
-                                            <div className="review-bar">
-                                                <div className="bar-bx">
-                                                    <div className="side">
-                                                        <div>5 star</div>
-                                                    </div>
-                                                    <div className="middle">
-                                                        <div className="bar-container">
-                                                            <div
-                                                                className="bar-5"
-                                                                style={{
-                                                                    width: `${
-                                                                        course?.reviews.length
-                                                                            ? (course.reviews.filter(
-                                                                                  (review) => review.star === 5
-                                                                              ).length /
-                                                                                  course.reviews.length) *
-                                                                              100
-                                                                            : 0
-                                                                    }%`
-                                                                }}></div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="side right">
-                                                        <div>
-                                                            {
-                                                                course?.reviews.filter((review) => review.star === 5)
-                                                                    .length
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="bar-bx">
-                                                    <div className="side">
-                                                        <div>4 star</div>
-                                                    </div>
-                                                    <div className="middle">
-                                                        <div className="bar-container">
-                                                            <div
-                                                                className="bar-5"
-                                                                style={{
-                                                                    width: `${
-                                                                        course?.reviews.length
-                                                                            ? (course.reviews.filter(
-                                                                                  (review) => review.star === 4
-                                                                              ).length /
-                                                                                  course.reviews.length) *
-                                                                              100
-                                                                            : 0
-                                                                    }%`
-                                                                }}></div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="side right">
-                                                        <div>
-                                                            {
-                                                                course?.reviews.filter((review) => review.star === 4)
-                                                                    .length
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="bar-bx">
-                                                    <div className="side">
-                                                        <div>3 star</div>
-                                                    </div>
-                                                    <div className="middle">
-                                                        <div className="bar-container">
-                                                            <div
-                                                                className="bar-5"
-                                                                style={{
-                                                                    width: `${
-                                                                        course?.reviews.length
-                                                                            ? (course.reviews.filter(
-                                                                                  (review) => review.star === 3
-                                                                              ).length /
-                                                                                  course.reviews.length) *
-                                                                              100
-                                                                            : 0
-                                                                    }%`
-                                                                }}></div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="side right">
-                                                        <div>
-                                                            {
-                                                                course?.reviews.filter((review) => review.star === 3)
-                                                                    .length
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="bar-bx">
-                                                    <div className="side">
-                                                        <div>2 star</div>
-                                                    </div>
-                                                    <div className="middle">
-                                                        <div className="bar-container">
-                                                            <div
-                                                                className="bar-5"
-                                                                style={{
-                                                                    width: `${
-                                                                        course?.reviews.length
-                                                                            ? (course.reviews.filter(
-                                                                                  (review) => review.star === 2
-                                                                              ).length /
-                                                                                  course.reviews.length) *
-                                                                              100
-                                                                            : 0
-                                                                    }%`
-                                                                }}></div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="side right">
-                                                        <div>
-                                                            {
-                                                                course?.reviews.filter((review) => review.star === 2)
-                                                                    .length
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <div className="bar-bx">
-                                                    <div className="side">
-                                                        <div>1 star</div>
-                                                    </div>
-                                                    <div className="middle">
-                                                        <div className="bar-container">
-                                                            <div
-                                                                className="bar-5"
-                                                                style={{
-                                                                    width: `${
-                                                                        course?.reviews.length
-                                                                            ? (course.reviews.filter(
-                                                                                  (review) => review.star === 1
-                                                                              ).length /
-                                                                                  course.reviews.length) *
-                                                                              100
-                                                                            : 0
-                                                                    }%`
-                                                                }}></div>
-                                                        </div>
-                                                    </div>
-                                                    <div className="side right">
-                                                        <div>
-                                                            {
-                                                                course?.reviews.filter((review) => review.star === 1)
-                                                                    .length
-                                                            }
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <ReviewOverview reviews={course?.reviews || []} />
+                                        {course?.reviews?.map((review) => (
+                                            <ReviewCard
+                                                key={review.id}
+                                                username={review.reviewer}
+                                                submittedAt={review.submittedAt}
+                                                rating={review.star}
+                                                comment={review.comment}
+                                            />
+                                        ))}
                                     </div>
                                 </div>
                             </div>

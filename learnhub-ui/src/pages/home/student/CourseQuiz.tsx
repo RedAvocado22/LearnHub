@@ -9,7 +9,7 @@ interface CourseQuizProps {
 
 const calculateGrade = (totalCorrect: number, total: number) => {
     if (total === 0) return 0;
-    return (totalCorrect / total) * 10;
+    return parseFloat(((totalCorrect / total) * 10).toFixed(2));
 };
 
 export default function CourseQuiz({ course, material, attempts }: CourseQuizProps) {

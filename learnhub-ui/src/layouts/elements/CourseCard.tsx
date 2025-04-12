@@ -1,12 +1,15 @@
+import { Review } from "../../hooks/useUser";
+
 interface CourseCardProps {
     id: number;
     title: string;
     imagePath: string;
+    reviews?: Review[];
     category: string;
     price: number;
 }
 
-export default function CourseCard({ id, title, imagePath, category, price }: CourseCardProps) {
+export default function CourseCard({ id, title, imagePath, reviews = [], category, price }: CourseCardProps) {
     return (
         <div className="item">
             <div className="cours-bx">
@@ -24,27 +27,24 @@ export default function CourseCard({ id, title, imagePath, category, price }: Co
                 </div>
                 <div className="cours-more-info">
                     <div className="review">
-                        <span>3 Review</span>
+                        <span>{reviews.length || 0} Review</span>
                         <ul className="cours-star">
-                            <li className="active">
-                                <i className="fa fa-star"></i>
-                            </li>
-                            <li className="active">
-                                <i className="fa fa-star"></i>
-                            </li>
-                            <li className="active">
-                                <i className="fa fa-star"></i>
-                            </li>
-                            <li>
-                                <i className="fa fa-star"></i>
-                            </li>
-                            <li>
-                                <i className="fa fa-star"></i>
-                            </li>
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <li
+                                    key={star}
+                                    className={
+                                        reviews.length &&
+                                        reviews.length > 0 &&
+                                        star <= reviews.reduce((sum, review) => sum + review.star, 0) / reviews.length
+                                            ? "active"
+                                            : ""
+                                    }>
+                                    <i className="fa fa-star"></i>
+                                </li>
+                            ))}
                         </ul>
                     </div>
                     <div className="price">
-                        <del>$190</del>
                         <h5>${price}</h5>
                     </div>
                 </div>

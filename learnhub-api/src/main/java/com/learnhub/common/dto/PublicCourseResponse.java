@@ -1,5 +1,9 @@
 package com.learnhub.common.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.learnhub.course.Course;
 import com.learnhub.course.category.Category;
 import com.learnhub.course.chapter.Chapter;
@@ -7,10 +11,6 @@ import com.learnhub.course.chapter.ChapterMaterial;
 import com.learnhub.course.chapter.MaterialType;
 import com.learnhub.course.review.Review;
 import com.learnhub.user.teacher.TeacherProfile;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public record PublicCourseResponse(
         Long id,
@@ -31,15 +31,16 @@ public record PublicCourseResponse(
         }
     }
 
-    static record ReviewResponse(Long id, String reviewer, int star, String comment, Long user, Long course) {
+    static record ReviewResponse(Long id, String reviewer, int star, String comment, Long user, Long course, LocalDateTime submittedAt) {
         public static ReviewResponse from(Review review) {
             return new ReviewResponse(
                     review.getId(),
-                    review.getUser().getUsername(),
+                    review.getUser().getFullName(),
                     review.getStar(),
                     review.getComment(),
                     review.getUser().getId(),
-                    review.getCourse().getId()
+                    review.getCourse().getId(),
+                    review.getCreatedAt()
             );
         }
     }

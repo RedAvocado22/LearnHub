@@ -61,6 +61,7 @@ export interface Review {
     user: number;
     comment: string;
     course: number;
+    submittedAt: Date;
 }
 export interface Course {
     id: number;
@@ -103,6 +104,7 @@ export interface Enrollment {
         teacher: {
             id: number;
             fullName: string;
+            avatar: string;
             major: string;
         };
     };

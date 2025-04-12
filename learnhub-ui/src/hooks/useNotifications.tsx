@@ -28,9 +28,7 @@ export default function NotificationsProvider({ children }: { children: React.Re
             if (resp.data) {
                 setNotifications(resp.data);
             }
-        } catch (err) {
-            toast.error("Failed to fetch notifications");
-        }
+        } catch (err) {}
     };
 
     const deleteNotif = async (id: number | null | undefined) => {

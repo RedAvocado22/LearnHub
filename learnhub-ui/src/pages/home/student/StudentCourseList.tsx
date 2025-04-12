@@ -74,7 +74,11 @@ export default function StudentCourseList({ status }: { status: string }) {
                                         <ul className="col-12 p-0 list-unstyled d-flex " style={{ gap: "100px" }}>
                                             <li className="d-flex align-items-center" style={{ gap: "6px" }}>
                                                 <img
-                                                    src={avaPlaceholder}
+                                                    src={
+                                                        e.course.teacher.avatar
+                                                            ? `https://learnhub-uploads.s3.ap-southeast-2.amazonaws.com/${e.course.teacher.avatar}`
+                                                            : avaPlaceholder
+                                                    }
                                                     loading="lazy"
                                                     style={{ width: "30px", height: "30px", borderRadius: "50%" }}
                                                 />
@@ -102,7 +106,9 @@ export default function StudentCourseList({ status }: { status: string }) {
                                             </div>
                                             <div className="col-3">
                                                 <Link to={`/home/courses/${e.course.id}`} className="btn btn-primary">
-                                                    Continue Course
+                                                    {e.status === EnrollmentStatus.FINISHED
+                                                        ? "Review Course"
+                                                        : "Continue Course"}
                                                 </Link>
                                             </div>
                                         </div>

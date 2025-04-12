@@ -9,6 +9,7 @@ import { Course } from "../../../hooks/useUser";
 import { toast } from "react-toastify";
 import CourseCurriculum from "./CourseCurriculum";
 import { isAxiosError } from "axios";
+import Swal from "sweetalert2";
 
 export const ManagerCourseDetail: React.FC = () => {
     const { id } = useParams();
@@ -27,10 +28,18 @@ export const ManagerCourseDetail: React.FC = () => {
         : defaultThumbnail;
 
     const handleSave = async (newStatus: CourseStatus) => {
+        const { value } = await Swal.fire({
+            title: "Reason",
+            input: "textarea",
+            inputPlaceholder: "Type your message here...",
+            showCancelButton: true
+        });
+        if (!value) return;
         try {
             const resp = await API.put(`courses/managers`, {
                 id: course?.id,
-                status: newStatus
+                status: newStatus,
+                reason: value
             });
 
             if (resp.status === 200) {

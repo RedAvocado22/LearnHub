@@ -131,7 +131,16 @@ export default function TeacherCourseList() {
                                                                             <button
                                                                                 onClick={handleCancel}
                                                                                 className="btn m-b15">
-                                                                                Cancels
+                                                                                Cancel
+                                                                            </button>
+                                                                        </div>
+                                                                    )}
+                                                                    {editingCourse.status === "CANCELLED" && (
+                                                                        <div className="button-container">
+                                                                            <button
+                                                                                onClick={handleCancel}
+                                                                                className="btn m-b15">
+                                                                                Cancel
                                                                             </button>
                                                                         </div>
                                                                     )}
@@ -146,23 +155,29 @@ export default function TeacherCourseList() {
                                                                         #{course.category.name}
                                                                     </span>
                                                                     <div className="review">
-                                                                        <span>3 Review</span>
+                                                                        <span>
+                                                                            {course?.reviews.length || 0} Review
+                                                                        </span>
                                                                         <ul className="cours-star">
-                                                                            <li className="active">
-                                                                                <i className="fa fa-star"></i>
-                                                                            </li>
-                                                                            <li className="active">
-                                                                                <i className="fa fa-star"></i>
-                                                                            </li>
-                                                                            <li className="active">
-                                                                                <i className="fa fa-star"></i>
-                                                                            </li>
-                                                                            <li>
-                                                                                <i className="fa fa-star"></i>
-                                                                            </li>
-                                                                            <li>
-                                                                                <i className="fa fa-star"></i>
-                                                                            </li>
+                                                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                                                <li
+                                                                                    key={star}
+                                                                                    className={
+                                                                                        course?.reviews.length &&
+                                                                                        course.reviews.length > 0 &&
+                                                                                        star <=
+                                                                                            course.reviews.reduce(
+                                                                                                (sum, review) =>
+                                                                                                    sum + review.star,
+                                                                                                0
+                                                                                            ) /
+                                                                                                course.reviews.length
+                                                                                            ? "active"
+                                                                                            : ""
+                                                                                    }>
+                                                                                    <i className="fa fa-star"></i>
+                                                                                </li>
+                                                                            ))}
                                                                         </ul>
                                                                     </div>
                                                                     <div className="price">

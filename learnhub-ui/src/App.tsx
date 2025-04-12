@@ -111,7 +111,7 @@ export default function App() {
                         <Route path="/home/courses/:cid/quizzes/:qid/do-quiz" element={<DoQuiz />} />
                         <Route path="/home/courses/:cid/quizzes/:qid/result/:rid" element={<QuizResult />} />
                         <Route path="/order" element={<Order />} />
-                        <Route path="/paymentcallback" element={<PaymentCallback />} />
+                        <Route path="/payment-callback" element={<PaymentCallback />} />
                         <Route path="/transaction-history" element={<TransactionHistory />} />
                     </Route>
 

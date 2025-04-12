@@ -61,7 +61,7 @@ const userMenus: Record<UserRole, SidebarItem[]> = {
 const userHeader: Record<UserRole, HeaderItem[]> = {
     STUDENT: [
         { label: "Home", icon: "ti-home", link: "/home" },
-        { label: "My Courses", icon: "ti-book", link: "/courses" }
+        { label: "Courses", icon: "ti-book", link: "/courses" }
     ],
     TEACHER: [
         { label: "Dashboard", icon: "ti-home", link: "/home" },

@@ -1,23 +1,43 @@
 package com.learnhub.course;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.validation.Valid;
+
 import com.learnhub.auth.dto.AssignManagerRequest;
 import com.learnhub.course.chapter.ChapterService;
-import com.learnhub.course.chapter.lesson.dto.*;
-import com.learnhub.course.dto.*;
+import com.learnhub.course.chapter.lesson.dto.AddChapterMaterialRequest;
+import com.learnhub.course.chapter.lesson.dto.AddChapterRequest;
+import com.learnhub.course.chapter.lesson.dto.ChapterResponse;
+import com.learnhub.course.chapter.lesson.dto.DeleteLessonFileRequest;
+import com.learnhub.course.chapter.lesson.dto.UpdateChapterMaterialRequest;
+import com.learnhub.course.dto.AdminCourseResponse;
+import com.learnhub.course.dto.ManagerCourseRequest;
+import com.learnhub.course.dto.ManagerCourseResponse;
+import com.learnhub.course.dto.ManagerCoursesResponse;
+import com.learnhub.course.dto.ReviewRequest;
+import com.learnhub.course.dto.UpdateCourseRequest;
 import com.learnhub.course.review.ReviewService;
 import com.learnhub.user.User;
 import com.learnhub.util.ObjectMapper;
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.math.BigDecimal;
-import java.util.List;
 
 @RestController
 @RequestMapping(path = "/api/v1/courses")
@@ -86,7 +106,7 @@ public class CourseController {
 
     @PutMapping("/managers")
     public ResponseEntity<String> changeCourseStatus(@RequestBody ManagerCourseRequest req) {
-        Long id = courseService.changeCourseStatus(req.id(), req.status());
+        Long id = courseService.changeCourseStatus(req.id(), req.status(), req.reason());
         return ResponseEntity.ok("Success update course: " + id);
     }
 

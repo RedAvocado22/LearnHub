@@ -1,5 +1,9 @@
 package com.learnhub.user.dto;
 
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
+
 import com.learnhub.course.Course;
 import com.learnhub.course.CourseStatus;
 import com.learnhub.course.category.Category;
@@ -11,7 +15,12 @@ import com.learnhub.course.chapter.lesson.LessonMaterial;
 import com.learnhub.course.chapter.quiz.Option;
 import com.learnhub.course.chapter.quiz.Question;
 import com.learnhub.course.chapter.quiz.Quiz;
-import com.learnhub.enrollment.*;
+import com.learnhub.course.review.Review;
+import com.learnhub.enrollment.AnsweredQuestion;
+import com.learnhub.enrollment.Enrollment;
+import com.learnhub.enrollment.EnrollmentStatus;
+import com.learnhub.enrollment.FinishedMaterial;
+import com.learnhub.enrollment.QuizAttempt;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRole;
 import com.learnhub.user.UserStatus;
@@ -19,10 +28,6 @@ import com.learnhub.user.manager.ManagerProfile;
 import com.learnhub.user.student.StudentProfile;
 import com.learnhub.user.student.StudentType;
 import com.learnhub.user.teacher.TeacherProfile;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.List;
 
 public record CurrentUserResponse(
         Long id,
@@ -54,14 +59,29 @@ public record CurrentUserResponse(
                     String description,
                     String image,
                     List<CourseResponse.ChapterResponse> chapters,
+                    List<ReviewResponse> reviews,
                     TeacherResponse teacher,
                     LocalDateTime createdAt
             ) {
-                static record TeacherResponse(Long id, String fullName, String major) {
+                static record ReviewResponse(Long id, String reviewer, int star, String comment, Long user, Long course, LocalDateTime submittedAt) {
+                    public static ReviewResponse from(Review review) {
+                        return new ReviewResponse(
+                                review.getId(),
+                                review.getUser().getFullName(),
+                                review.getStar(),
+                                review.getComment(),
+                                review.getUser().getId(),
+                                review.getCourse().getId(),
+                                review.getCreatedAt()
+                        );
+                    }
+                }
+                static record TeacherResponse(Long id, String fullName, String avatar, String major) {
                     public static TeacherResponse from(TeacherProfile teacher) {
                         return new TeacherResponse(
                                 teacher.getId(),
                                 teacher.getUser().getFirstName() + " " + teacher.getUser().getLastName(),
+                                teacher.getUser().getAvatar(),
                                 teacher.getMajor());
                     }
                 }
@@ -76,6 +96,7 @@ public record CurrentUserResponse(
                             course.getDescription(),
                             course.getImage(),
                             course.getChapters().stream().map(CourseResponse.ChapterResponse::from).toList(),
+                            course.getReviews().stream().map(ReviewResponse::from).toList(),
                             TeacherResponse.from(course.getTeacher()),
                             course.getCreatedAt());
                 }
@@ -227,11 +248,25 @@ record CourseResponse(
         String description,
         String image,
         List<ChapterResponse> chapters,
+        List<ReviewResponse> reviews,
         LocalDateTime createdAt,
         LocalDateTime updatedAt,
         LocalDateTime cancelledAt,
         LocalDateTime archivedAt
 ) {
+    static record ReviewResponse(Long id, String reviewer, int star, String comment, Long user, Long course, LocalDateTime submittedAt) {
+        public static ReviewResponse from(Review review) {
+            return new ReviewResponse(
+                    review.getId(),
+                    review.getUser().getEmail(),
+                    review.getStar(),
+                    review.getComment(),
+                    review.getUser().getId(),
+                    review.getCourse().getId(),
+                    review.getCreatedAt()
+            );
+        }
+    }
     static record ChapterResponse(Long id, String name, List<ChapterMaterialResponse> materials) {
         static record ChapterMaterialResponse(
                 Long id,
@@ -325,6 +360,7 @@ record CourseResponse(
                 course.getDescription(),
                 course.getImage(),
                 course.getChapters().stream().map(ChapterResponse::from).toList(),
+                course.getReviews().stream().map(ReviewResponse::from).toList(),
                 course.getCreatedAt(),
                 course.getUpdatedAt(),
                 course.getCancelledAt(),

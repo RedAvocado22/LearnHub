@@ -4,8 +4,10 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+
 import com.learnhub.aws.AwsS3Service;
 import com.learnhub.common.exception.ResourceNotFoundException;
 import com.learnhub.course.category.Category;
@@ -27,6 +29,8 @@ import com.learnhub.notification.NotificationService;
 import com.learnhub.user.User;
 import com.learnhub.user.UserRepository;
 import com.learnhub.user.UserRole;
+import com.learnhub.util.mail.EmailService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +45,7 @@ public class CourseService {
     private final ChapterMaterialRepository chapterMaterialRepository;
     private final AwsS3Service awsS3Service;
     private final NotificationService notificationService;
+    private final EmailService emailService;
 
     @PersistenceContext
     private final EntityManager entityManager;
@@ -53,7 +58,8 @@ public class CourseService {
             ChapterMaterialRepository chapterMaterialRepository,
             AwsS3Service awsS3Service,
             EntityManager entityManager, UserRepository userRepository,
-            NotificationService notificationService) {
+            NotificationService notificationService,
+            EmailService emailService) {
         this.categoryRepository = categoryRepository;
         this.courseRepository = courseRepository;
         this.chapterRepository = chapterRepository;
@@ -62,6 +68,7 @@ public class CourseService {
         this.entityManager = entityManager;
         this.userRepository = userRepository;
         this.notificationService = notificationService;
+        this.emailService = emailService;
     }
 
     public List<Course> getAllPublicCourses() {
@@ -73,16 +80,18 @@ public class CourseService {
     }
 
     @Transactional
-    public Long changeCourseStatus(Long courseId, CourseStatus newStatus) {
+    public Long changeCourseStatus(Long courseId, CourseStatus newStatus, String reason) {
         Course course = courseRepository.findById(courseId).orElseThrow(
                 () -> new ResourceNotFoundException("Course not found"));
         course.setStatus(newStatus);
         Course saved = courseRepository.save(course);
         switch (newStatus) {
             case PRIVATE:
+                emailService.sendRejectCourseEmail(saved.getTeacher().getUser().getEmail(), saved.getName(), reason);
                 notificationService.notifyCourseRejected(saved);
                 break;
             case PUBLIC:
+                emailService.sendApproveCourseEmail(saved.getTeacher().getUser().getEmail(), saved.getName(), reason);
                 notificationService.notifyCoursePublished(saved);
                 break;
             default:
@@ -261,19 +270,21 @@ public class CourseService {
             String videoUrl = awsS3Service.saveFile(video);
             material.getLesson().setVideoUrl(videoUrl);
         }
-        List<LessonMaterial> materials = new ArrayList<>();
-        for (int i = 0; i < materialNames.size(); i++) {
-            String materialUrl = awsS3Service.saveFile(materialFiles.get(i));
-            materials.add(LessonMaterial.builder()
-                    .lesson(material.getLesson())
-                    .name(materialNames.get(i))
-                    .fileUrl(materialUrl)
-                    .build());
+        if (materialNames != null && !materialNames.isEmpty() && materialFiles != null && !materialFiles.isEmpty()) {
+            List<LessonMaterial> materials = new ArrayList<>();
+            for (int i = 0; i < materialNames.size(); i++) {
+                String materialUrl = awsS3Service.saveFile(materialFiles.get(i));
+                materials.add(LessonMaterial.builder()
+                        .lesson(material.getLesson())
+                        .name(materialNames.get(i))
+                        .fileUrl(materialUrl)
+                        .build());
+            }
+            if (material.getLesson().getMaterials() == null) {
+                material.getLesson().setMaterials(new ArrayList<>());
+            }
+            material.getLesson().getMaterials().addAll(materials);
         }
-        if (material.getLesson().getMaterials() == null) {
-            material.getLesson().setMaterials(new ArrayList<>());
-        }
-        material.getLesson().getMaterials().addAll(materials);
         chapterMaterialRepository.save(material);
     }
 
